@@ -23,7 +23,7 @@ import egon.data.config
 import egon.data.subprocess as subproc
 
 
-def run_pypsa_eur_sec():
+def pre_pypsa_eur_sec():
 
     cwd = Path(".")
     filepath = cwd / "run-pypsa-eur-sec"
@@ -47,10 +47,7 @@ def run_pypsa_eur_sec():
             ]
         )
 
-        # subproc.run(
-        #     ["git", "checkout", "4e44822514755cdd0289687556547100fba6218b"],
-        #     cwd=pypsa_eur_repos,
-        # )
+
 
         file_to_copy = os.path.join(
             __path__[0], "datasets", "pypsaeursec", "pypsaeur", "Snakefile"
@@ -62,15 +59,16 @@ def run_pypsa_eur_sec():
         path_to_env = pypsa_eur_repos / "envs" / "environment.yaml"
         with open(path_to_env, "r") as stream:
             env = yaml.safe_load(stream)
-
+    
         env["dependencies"].append("gurobi")
-
+    
         # Write YAML file
         with open(path_to_env, "w", encoding="utf8") as outfile:
             yaml.dump(
                 env, outfile, default_flow_style=False, allow_unicode=True
             )
-
+        
+        # Get pypsa-eur data bundle
         datafile = "pypsa-eur-data-bundle.tar.xz"
         datapath = pypsa_eur_repos / datafile
         if not datapath.exists():
@@ -101,21 +99,27 @@ def run_pypsa_eur_sec():
                 pypsa_eur_sec_repos,
             ]
         )
+    
+        # Get pypsa-eur-sec data bundle
+        datafile = "pypsa-eur-sec-data-bundle.tar.gz"
+        datapath = pypsa_eur_sec_repos_data / datafile
+        if not datapath.exists():
+            urlretrieve(f"https://zenodo.org/record/5824485/files/{datafile}", datapath)
+            tar = tarfile.open(datapath)
+            tar.extractall(pypsa_eur_sec_repos_data)
 
-    datafile = "pypsa-eur-sec-data-bundle.tar.gz"
-    datapath = pypsa_eur_sec_repos_data / datafile
-    if not datapath.exists():
-        urlretrieve(
-            f"https://zenodo.org/record/5824485/files/{datafile}", datapath
-        )
-        tar = tarfile.open(datapath)
-        tar.extractall(pypsa_eur_sec_repos_data)
 
     with open(filepath / "Snakefile", "w") as snakefile:
         snakefile.write(
             resources.read_text("egon.data.datasets.pypsaeursec", "Snakefile")
         )
 
+
+def run_pypsa_eur_sec():
+
+    cwd = Path(".")
+    filepath = cwd / "run-pypsa-eur-sec"
+    
     subproc.run(
         [
             "snakemake",
@@ -1111,6 +1115,7 @@ execute_pypsa_eur_sec = False
 
 if execute_pypsa_eur_sec:
     tasks = (
+        pre_pypsa_eur_sec,
         run_pypsa_eur_sec,
         clean_database,
         neighbor_reduction,
