@@ -40,7 +40,7 @@ from egon.data.datasets.era5 import WeatherData
 from egon.data.datasets.etrago_setup import EtragoSetup
 from egon.data.datasets.fill_etrago_gen import Egon_etrago_gen
 # from egon.data.datasets.fix_ehv_subnetworks import FixEhvSubnetworks
-from egon.data.datasets.gas_areas import GasAreasstatus2019
+from egon.data.datasets.gas_areas import GasAreasstatus2019,GasAreaseGon100RE, GasAreaseGon2035
 from egon.data.datasets.gas_grid import GasNodesAndPipes
 from egon.data.datasets.gas_neighbours import GasNeighbours
 from egon.data.datasets.heat_demand import HeatDemandImport
@@ -80,6 +80,7 @@ from egon.data.datasets.pypsaeursec import PypsaEurSec
 from egon.data.datasets.renewable_feedin import RenewableFeedin
 from egon.data.datasets.saltcavern import SaltcavernData
 from egon.data.datasets.sanity_checks import SanityChecks
+from egon.data.datasets.scenario_capacities import ScenarioCapacities
 from egon.data.datasets.scenario_parameters import ScenarioParameters
 from egon.data.datasets.society_prognosis import SocietyPrognosis
 from egon.data.datasets.storages import Storages
@@ -361,6 +362,17 @@ with airflow.DAG(
         dependencies=[run_pypsaeursec, tyndp_data]
     )
 
+    # Import NEP (Netzentwicklungsplan) data
+    scenario_capacities = ScenarioCapacities(
+        dependencies=[
+            data_bundle,
+            run_pypsaeursec,
+            setup,
+            vg250,
+            zensus_population,
+        ]
+    )
+
     # Import gas grid
     gas_grid_insert_data = GasNodesAndPipes(
         dependencies=[
@@ -371,11 +383,57 @@ with airflow.DAG(
             tasks["etrago_setup.create-tables"],
         ]
     )
+
+    # Import saltcavern storage potentials
+    saltcavern_storage = SaltcavernData(dependencies=[data_bundle, vg250])
+
+    # Insert hydrogen buses
+    insert_hydrogen_buses = HydrogenBusEtrago(
+        dependencies=[
+            gas_grid_insert_data,
+            saltcavern_storage,
+            substation_voronoi,
+        ]
+    )
+
     # Create gas voronoi status2019
     create_gas_polygons_status2019 = GasAreasstatus2019(
         dependencies=[setup_etrago, vg250, gas_grid_insert_data, substation_voronoi]
     )
+    # Create gas voronoi eGon2035
+    create_gas_polygons_egon2035 = GasAreaseGon2035(
+        dependencies=[setup_etrago, insert_hydrogen_buses, vg250]
+    )
 
+    # Insert hydrogen grid
+    insert_h2_grid = HydrogenGridEtrago(
+        dependencies=[
+            create_gas_polygons_egon2035,
+            gas_grid_insert_data,
+            insert_hydrogen_buses,
+            run_pypsaeursec,
+        ]
+    )
+
+    h2_infrastructure = [insert_h2_grid, insert_hydrogen_buses]
+
+    # H2 steel tanks and saltcavern storage
+    insert_H2_storage = HydrogenStoreEtrago(dependencies=h2_infrastructure)
+
+    # Power-to-gas-to-power chain installations
+    insert_power_to_h2_installations = HydrogenPowerLinkEtrago(
+        dependencies=h2_infrastructure
+    )
+
+    # Link between methane grid and respective hydrogen buses
+    insert_h2_to_ch4_grid_links = HydrogenMethaneLinkEtrago(
+        dependencies=[h2_infrastructure, insert_power_to_h2_installations]
+    )
+
+    # Create gas voronoi eGon100RE
+    create_gas_polygons_egon100RE = GasAreaseGon100RE(
+        dependencies=[create_gas_polygons_egon2035, insert_h2_grid, vg250]
+    )
     # Gas abroad
     gas_abroad_insert_data = GasNeighbours(
         dependencies=[
@@ -411,6 +469,7 @@ with airflow.DAG(
             osm_landuse,
             mastr_data,
             mv_grid_districts,
+            scenario_capacities,
         ]
     )
 
