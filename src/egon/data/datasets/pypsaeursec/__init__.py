@@ -45,12 +45,12 @@ def pre_pypsa_eur():
         )
 
 
-	# Alter the pypsa-eur Snakefile 
-        snakefile_to_copy = os.path.join(
-            __path__[0], "datasets", "pypsaeursec", "pypsaeur", "Snakefile"
+	# Alter the pypsa-eur rules 
+        build_electricity_to_copy = os.path.join(
+            __path__[0], "datasets", "pypsaeursec", "pypsaeur", "build_electricity.smk"
         )
-
-        subproc.run(["cp", snakefile_to_copy, pypsa_eur_repos])
+	pypsa_eur_repos_rules = filepath / "pypsa-eur" / "rules"
+        subproc.run(["cp", snakefile_to_copy, pypsa_eur_repos_rules])
 
 	# Alter the config.yaml
 	configfile_to_copy = os.path.join(
