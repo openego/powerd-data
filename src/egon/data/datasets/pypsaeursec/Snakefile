@@ -3,7 +3,7 @@ rule Main:
         "pypsa-eur/envs/environment.yaml"
     shell:
         ( "snakemake"
-          " --directory=pypsa-eur-sec/"
-          " --snakefile=pypsa-eur-sec/Snakefile"
-          " -j1"
+          " --directory=pypsa-eur/"
+          " --snakefile=pypsa-eur/Snakefile"
+          " -call"
         )

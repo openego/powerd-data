@@ -23,17 +23,14 @@ import egon.data.config
 import egon.data.subprocess as subproc
 
 
-def pre_pypsa_eur_sec():
+def pre_pypsa_eur():
 
     cwd = Path(".")
-    filepath = cwd / "run-pypsa-eur-sec"
+    filepath = cwd / "run-pypsa-eur"
     filepath.mkdir(parents=True, exist_ok=True)
 
     pypsa_eur_repos = filepath / "pypsa-eur"
-    pypsa_eur_repos_data = pypsa_eur_repos / "data"
-    technology_data_repos = filepath / "technology-data"
-    pypsa_eur_sec_repos = filepath / "pypsa-eur-sec"
-    pypsa_eur_sec_repos_data = pypsa_eur_sec_repos / "data"
+
 
     if not pypsa_eur_repos.exists():
         subproc.run(
@@ -41,19 +38,27 @@ def pre_pypsa_eur_sec():
                 "git",
                 "clone",
                 "--branch",
-                "v0.4.0",
+                "v0.8.0",
                 "https://github.com/PyPSA/pypsa-eur.git",
                 pypsa_eur_repos,
             ]
         )
 
 
-
-        file_to_copy = os.path.join(
+	# Alter the pypsa-eur Snakefile 
+        snakefile_to_copy = os.path.join(
             __path__[0], "datasets", "pypsaeursec", "pypsaeur", "Snakefile"
         )
 
-        subproc.run(["cp", file_to_copy, pypsa_eur_repos])
+        subproc.run(["cp", snakefile_to_copy, pypsa_eur_repos])
+
+	# Alter the config.yaml
+	configfile_to_copy = os.path.join(
+	    __path__[0], "datasets", "pypsaeursec", "pypsaeur", "config.yaml"
+        )
+
+        subproc.run(["cp", configfile_to_copy, pypsa_eur_repos])
+
 
         # Read YAML file
         path_to_env = pypsa_eur_repos / "envs" / "environment.yaml"
@@ -68,62 +73,44 @@ def pre_pypsa_eur_sec():
                 env, outfile, default_flow_style=False, allow_unicode=True
             )
         
-        # Get pypsa-eur data bundle
-        datafile = "pypsa-eur-data-bundle.tar.xz"
-        datapath = pypsa_eur_repos / datafile
-        if not datapath.exists():
-            urlretrieve(
-                f"https://zenodo.org/record/3517935/files/{datafile}", datapath
-            )
-            tar = tarfile.open(datapath)
-            tar.extractall(pypsa_eur_repos_data)
-
-    if not technology_data_repos.exists():
-        subproc.run(
-            [
-                "git",
-                "clone",
-                "--branch",
-                "v0.3.0",
-                "https://github.com/PyPSA/technology-data.git",
-                technology_data_repos,
-            ]
-        )
-
-    if not pypsa_eur_sec_repos.exists():
-        subproc.run(
-            [
-                "git",
-                "clone",
-                "https://github.com/openego/pypsa-eur-sec.git",
-                pypsa_eur_sec_repos,
-            ]
-        )
-    
-        # Get pypsa-eur-sec data bundle
-        datafile = "pypsa-eur-sec-data-bundle.tar.gz"
-        datapath = pypsa_eur_sec_repos_data / datafile
-        if not datapath.exists():
-            urlretrieve(f"https://zenodo.org/record/5824485/files/{datafile}", datapath)
-            tar = tarfile.open(datapath)
-            tar.extractall(pypsa_eur_sec_repos_data)
-
 
     with open(filepath / "Snakefile", "w") as snakefile:
         snakefile.write(
-            resources.read_text("egon.data.datasets.pypsaeursec", "Snakefile")
+            resources.read_text("egon.data.datasets.pypsaeur", "Snakefile")
         )
 
-
-def run_pypsa_eur_sec():
+def prepare_pypsa_eur():
 
     cwd = Path(".")
-    filepath = cwd / "run-pypsa-eur-sec"
+    filepath = cwd / "run-pypsa-eur"
     
     subproc.run(
         [
             "snakemake",
-            "-j1",
+            "-call",
+            "prepare_sector_network",
+            "-n",
+            "--directory",
+            filepath,
+            "--snakefile",
+            filepath / "Snakefile",
+            "--use-conda",
+            "--conda-frontend=conda",
+            "Main",
+        ]
+    )
+
+def run_pypsa_eur():
+
+    cwd = Path(".")
+    filepath = cwd / "run-pypsa-eur"
+    
+    subproc.run(
+        [
+            "snakemake",
+            "-call",
+            "all",
+            "-n",
             "--directory",
             filepath,
             "--snakefile",
