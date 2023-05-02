@@ -1,0 +1,9 @@
+rule Main:
+    conda:
+        "pypsa-eur/envs/environment.yaml"
+    shell:
+        ( "snakemake"
+          " --directory=pypsa-eur/"
+          " --snakefile=pypsa-eur/Snakefile"
+          " -call"
+        )
