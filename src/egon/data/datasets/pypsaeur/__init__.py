@@ -124,15 +124,15 @@ def run_pypsa_eur():
 
 def read_network():
 
-    # Set execute_pypsa_eur_sec to False until optional task is implemented
-    execute_pypsa_eur_sec = False
+    # Set execute_pypsa_eur to False until optional task is implemented
+    execute_pypsa_eur = False
     cwd = Path(".")
 
-    if execute_pypsa_eur_sec:
-        filepath = cwd / "run-pypsa-eur-sec"
-        pypsa_eur_sec_repos = filepath / "pypsa-eur-sec"
+    if execute_pypsa_eur:
+        filepath = cwd / "run-pypsa-eur"
+        pypsa_eur_repos = filepath / "pypsa-eur"
         # Read YAML file
-        pes_egonconfig = pypsa_eur_sec_repos / "config_egon.yaml"
+        pes_egonconfig = pypsa_eur_repos / "config.yaml"
         with open(pes_egonconfig, "r") as stream:
             data_config = yaml.safe_load(stream)
 
@@ -152,7 +152,7 @@ def read_network():
         )
 
         target_file = (
-            pypsa_eur_sec_repos
+            pypsa_eur_repos
             / "results"
             / data_config["run"]
             / "postnetworks"

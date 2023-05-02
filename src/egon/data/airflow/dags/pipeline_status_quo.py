@@ -76,7 +76,7 @@ from egon.data.datasets.osm_buildings_streets import OsmBuildingsStreets
 from egon.data.datasets.osmtgmod import Osmtgmod
 from egon.data.datasets.power_etrago import OpenCycleGasTurbineEtrago
 from egon.data.datasets.power_plants import PowerPlants
-from egon.data.datasets.pypsaeursec import PypsaEurSec
+from egon.data.datasets.pypsaeur import PypsaEur
 from egon.data.datasets.renewable_feedin import RenewableFeedin
 from egon.data.datasets.saltcavern import SaltcavernData
 from egon.data.datasets.sanity_checks import SanityChecks
@@ -343,7 +343,7 @@ with airflow.DAG(
     )
 
     # run pypsa-eur-sec
-    run_pypsaeursec = PypsaEurSec(
+    run_pypsaeur = PypsaEur(
         dependencies=[
             weather_data,
             hd_abroad,
@@ -358,7 +358,7 @@ with airflow.DAG(
 
     # Deal with electrical neighbours
     foreign_lines = ElectricalNeighbours(
-        dependencies=[run_pypsaeursec, tyndp_data]
+        dependencies=[run_pypsaeur, tyndp_data]
     )
 
     # Import gas grid
@@ -380,7 +380,7 @@ with airflow.DAG(
     gas_abroad_insert_data = GasNeighbours(
         dependencies=[
             gas_grid_insert_data,
-            run_pypsaeursec,
+            run_pypsaeur,
             foreign_lines,
             create_gas_polygons_status2019,
         ]
