@@ -38,7 +38,7 @@ substation_df = gpd.read_postgis(
 
 
 # Read the Destination file from CSV
-lines_df = pd.read_csv("/home/student/testPowerdData/powerd-data/src/egon/data/datasets/egon_etrago_line/egon_etrago_line_new.csv")
+lines_df = pd.read_csv("./egon_etrago_line_new.csv")
 
 existing_lines_df = pd.read_sql(
     """
@@ -134,10 +134,6 @@ for index1, row1 in lines_df.iterrows():
         if scn_name1 == scn_name2:
             lines_df.loc[index1, 'build_year'] = row2['anvisierte Inbetriebnahme']
 
-
 # Save the updated file
-lines_df.to_csv('/home/student/testPowerdData/powerd-data/src/egon/data/datasets/egon_etrago_line/egon_etrago_line_new.csv', index=False)
-
-
-
+lines_df.to_csv('./egon_etrago_line_new.csv', index=False)
 print("Operation successful")
