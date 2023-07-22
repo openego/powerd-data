@@ -18,9 +18,7 @@ engine = create_engine(
 substation_df = pd.read_sql(
     """
     SELECT * FROM grid.egon_ehv_substation
-    UNION
-    SELECT * FROM grid.egon_hvmv_substation;
-    
+  
     """
     , engine)
 
@@ -29,8 +27,6 @@ substation_df = pd.read_sql(
 substation_df = gpd.read_postgis(
     """
     SELECT * FROM grid.egon_ehv_substation
-    UNION
-    SELECT * FROM grid.egon_hvmv_substation;
     
     """
     , engine, geom_col="point")
@@ -67,9 +63,8 @@ existing_lines_df = pd.read_sql(
 #     , engine)
 
 
-# Match Similarity of Source & Destination files 
-best_match_start=None
-best_match_end=None
+# best_match_start=None
+# best_match_end=None
 
 unique_line_id = 29300
 
@@ -84,14 +79,9 @@ for index, row in lines_df.iterrows():
     Startpunkt = str(row['Startpoint'])
     Endpunkt = str(row['Endpoint'])
     
-    # for r in [1.0, 0.9, 0.8, 0.7, 0.6, 0.5]:
-        
-        # if best_match_start is None:
-        #     matching_rows_start = substation_df[substation_df['subst_name'].apply(
-        #         lambda x: any(difflib.SequenceMatcher(None, word, Startpunkt).ratio() >= r for word in x.split()))]
+    # Match Similarity of Source & Destination files for Start point  
     matching_rows_start = substation_df[substation_df['subst_name'].apply(lambda x: any(difflib.SequenceMatcher(None, word, Startpunkt).ratio() >= 1 for word in x.split()))]
     if not matching_rows_start.empty:
-        best_match_start = 1
         
         lines_df.at[index, 'bus0'] = matching_rows_start.iloc[0]['bus_id']
         lines_df.at[index, 'subst_name0'] = matching_rows_start.iloc[0]['subst_name']
@@ -104,32 +94,29 @@ for index, row in lines_df.iterrows():
 
         # Calculate the matching percentage
         matching_percentage_start = difflib.SequenceMatcher(None, Startpunkt, matching_rows_start.iloc[0]['subst_name']).ratio() * 100
-        lines_df.at[index, 'matching1%'] = round(matching_percentage_start,2) 
-                
-        # if best_match_end is None:
-        #     matching_rows_end = substation_df[substation_df['subst_name'].apply(
-        #         lambda x: any(difflib.SequenceMatcher(None, word, Endpunkt).ratio() >= r for word in x.split()))]
-            
-        matching_rows_end = substation_df[substation_df['subst_name'].apply(lambda x: any(difflib.SequenceMatcher(None, word, Endpunkt).ratio() >= 1   for word in x.split()))]
-        if not matching_rows_end.empty:
-            best_match_end = 1
-            lines_df.at[index, 'bus1'] = matching_rows_end.iloc[0]['bus_id']
-            lines_df.at[index, 'subst_name1'] = matching_rows_end.iloc[0]['subst_name']
+        lines_df.at[index, 'matching1%'] = round(matching_percentage_start,2)
+        
+    # Match Similarity of Source & Destination files for End point                           
+    matching_rows_end = substation_df[substation_df['subst_name'].apply(lambda x: any(difflib.SequenceMatcher(None, word, Endpunkt).ratio() >= 1   for word in x.split()))]
+    if not matching_rows_end.empty:
+        
+        lines_df.at[index, 'bus1'] = matching_rows_end.iloc[0]['bus_id']
+        lines_df.at[index, 'subst_name1'] = matching_rows_end.iloc[0]['subst_name']
 
-            # Find coordinate for end point
-            point_1 = matching_rows_end.iloc[0]['point']
-            formatted_point_1 = f"{point_1.x} {point_1.y}"
-            lines_df.at[index, 'Coordinate1'] = formatted_point_1
+        # Find coordinate for end point
+        point_1 = matching_rows_end.iloc[0]['point']
+        formatted_point_1 = f"{point_1.x} {point_1.y}"
+        lines_df.at[index, 'Coordinate1'] = formatted_point_1
 
-            # Calculate the matching percentage
-            matching_percentage_end = difflib.SequenceMatcher(None, Endpunkt, matching_rows_end.iloc[0]['subst_name']).ratio() * 100
-            lines_df.at[index, 'matching2%'] = round(matching_percentage_end,2)
+        # Calculate the matching percentage
+        matching_percentage_end = difflib.SequenceMatcher(None, Endpunkt, matching_rows_end.iloc[0]['subst_name']).ratio() * 100
+        lines_df.at[index, 'matching2%'] = round(matching_percentage_end,2)
 
-            if pd.notna(formatted_point_0) and pd.notna(formatted_point_1):
-                lon0, lat0 = map(float, formatted_point_0.split(' '))
-                lon1, lat1 = map(float, formatted_point_1.split(' '))
-                distance = geodesic((lat0, lon0), (lat1, lon1)).kilometers
-                lines_df.at[index, 'length'] = distance
+        if pd.notna(formatted_point_0) and pd.notna(formatted_point_1):
+            lon0, lat0 = map(float, formatted_point_0.split(' '))
+            lon1, lat1 = map(float, formatted_point_1.split(' '))
+            distance = geodesic((lat0, lon0), (lat1, lon1)).kilometers
+            lines_df.at[index, 'length'] = distance
                     
     best_match_end = None
     best_match_start = None
