@@ -4,7 +4,6 @@ from sqlalchemy import create_engine
 from geopy.distance import geodesic
 import difflib
 
-
 # Create connection with pgAdmin4 - Offline
 engine = create_engine(
     f"postgresql+psycopg2://postgres:"
@@ -15,8 +14,7 @@ engine = create_engine(
 # Read the Source files
 substation_df = pd.read_sql(
     """
-
-    SELECT * FROM grid.egon_hvmv_substation;
+    SELECT * FROM grid.egon_ehv_transfer_buses
     
     """
     , engine)
@@ -24,8 +22,7 @@ substation_df = pd.read_sql(
 
 substation_df = gpd.read_postgis(
     """
-  
-    SELECT * FROM grid.egon_hvmv_substation;
+    SELECT * FROM grid.egon_ehv_transfer_buses
     
     """
     , engine, geom_col="point")
@@ -33,7 +30,8 @@ substation_df = gpd.read_postgis(
 
 existing_lines_df = pd.read_sql(
     """
-    SELECT line_id FROM grid.egon_etrago_line   
+    SELECT line_id FROM grid.egon_etrago_line  
+
     """
     , engine)
 
@@ -98,7 +96,7 @@ for index, row in lines_df.iterrows():
                 lon0, lat0 = map(float, formatted_point_0.split(' '))
                 lon1, lat1 = map(float, formatted_point_1.split(' '))
                 distance = geodesic((lat0, lon0), (lat1, lon1)).kilometers
-                lines_df.at[index, 'length'] = f'MV {round(distance*1.1,1)}'
+                lines_df.at[index, 'length'] = f'TB {round(distance*1.1,1)}'
 
 # Save the updated file
 lines_df.to_csv('./NEP_tables_V2 - first table26July2023 - test.csv', index=False)
