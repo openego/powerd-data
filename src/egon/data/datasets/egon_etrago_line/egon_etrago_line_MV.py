@@ -3,6 +3,7 @@ import geopandas as gpd
 from sqlalchemy import create_engine
 from geopy.distance import geodesic
 import difflib
+import shapely.geometry as sg
 
 
 # Create connection with pgAdmin4 - Offline
@@ -40,13 +41,12 @@ existing_lines_df = pd.read_sql(
 
 # Read the Destination file from CSV
 lines_df = pd.read_csv("./NEP_tables_V2 - first table26July2023 - test.csv")
-
-
 unique_line_id = existing_lines_df['line_id'].max()
-formatted_point_0 = None
-formatted_point_1 = None
+
 
 for index, row in lines_df.iterrows():
+    formatted_point_0 = None
+    formatted_point_1 = None
     # Add Unique line id
     unique_line_id += 1
     lines_df.at[index, 'line_id'] = unique_line_id
@@ -65,9 +65,15 @@ for index, row in lines_df.iterrows():
 
         
         # Find coordinate for start point
-        point_0 = matching_rows_start.iloc[0]['point']
-        formatted_point_0 = f"{point_0.x} {point_0.y}"
-        lines_df.at[index, 'Coordinate0'] = formatted_point_0
+        if pd.isnull(lines_df.at[index, 'Coordinate0']):
+            point_0 = matching_rows_start.iloc[0]['point']
+            formatted_point_0 = f"{point_0.x} {point_0.y}"
+            lines_df.at[index, 'Coordinate0'] = formatted_point_0
+        else : # #just for checking if the geodata from subst_point is right (compare length from pdf with calculation)
+             x, y = map(float, row['Coordinate0'].split())
+             point_0 = sg.Point(x,y)
+             formatted_point_0 = f"{point_0.x} {point_0.y}"
+    
 
         # Calculate the matching percentage
         matching_percentage_start = difflib.SequenceMatcher(None, Startpunkt, matching_rows_start.iloc[0]['subst_name']).ratio() * 100
@@ -84,22 +90,35 @@ for index, row in lines_df.iterrows():
             lines_df.at[index, 'subst_name1'] = matching_rows_end.iloc[0]['subst_name']
 
         # Find coordinate for end point
-        point_1 = matching_rows_end.iloc[0]['point']
-        formatted_point_1 = f"{point_1.x} {point_1.y}"
-        lines_df.at[index, 'Coordinate1'] = formatted_point_1
+        if pd.isnull(lines_df.at[index, 'Coordinate1']):
+            point_1 = matching_rows_end.iloc[0]['point']
+            formatted_point_1 = f"{point_1.x} {point_1.y}"
+            lines_df.at[index, 'Coordinate1'] = formatted_point_1
+        else : # #just for checking if the geodata from subst_point is right (compare length from pdf with calculation)
+             x, y = map(float, row['Coordinate1'].split())
+             point_1 = sg.Point(x,y)
+             formatted_point_1 = f"{point_1.x} {point_1.y}"
 
         # Calculate the matching percentage
         matching_percentage_end = difflib.SequenceMatcher(None, Endpunkt, matching_rows_end.iloc[0]['subst_name']).ratio() * 100
         lines_df.at[index, 'matching1%'] = round(matching_percentage_end,0)
 
         # Calculate lenght of Transmission Line
+    
         if pd.notna(formatted_point_0) and pd.notna(formatted_point_1):
             if pd.isnull(lines_df.at[index, 'length']):
                 lon0, lat0 = map(float, formatted_point_0.split(' '))
                 lon1, lat1 = map(float, formatted_point_1.split(' '))
                 distance = geodesic((lat0, lon0), (lat1, lon1)).kilometers
                 lines_df.at[index, 'length'] = f'MV {round(distance*1.1,1)}'
-
+                lines_df.at[index, 'length_calculated'] = f'MV {round(distance*1.1,1)}'
+            else:    #just for checking if the geodata from subst_point is right
+                if pd.isnull(lines_df.at[index, 'length_calculated']):
+                    lon0, lat0 = map(float, formatted_point_0.split(' '))
+                    lon1, lat1 = map(float, formatted_point_1.split(' '))
+                    distance = geodesic((lat0, lon0), (lat1, lon1)).kilometers
+                    lines_df.at[index, 'length_calculated'] = f'MV {round(distance*1.1,1)}'
+   
 # Save the updated file
 lines_df.to_csv('./NEP_tables_V2 - first table26July2023 - test.csv', index=False)
 print("Operation successful")
