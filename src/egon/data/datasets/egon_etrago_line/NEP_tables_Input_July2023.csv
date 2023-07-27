@@ -13,9 +13,9 @@ tung: Ersatzneubau",Leitung,,,BB,NVA,,,EnLAG Nr. 11,2022,4: Genehmigt oder im Ba
 50HzT-P34,29307,,,,AC,,,,,,,,,,2023,40,,37,,,0,,,,,,BBPIG,39,,Stendal West,, Wolmirstedt,,,,Bestand,,,37,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,,,"BB, ST",NV,,,BBP Nr. 39,"2022,
 2023","3: vor oder im PFV/ Genehmigung nach BImSchG,
 5: Realisiert",,,,
-50HzT-P34,29308,,,,AC,,,,,,,,,,2023,40,,37,,,0,,,,,,BBPIG,39,Parchim / Süd – Perleberg,Parchim Süd,,Perleberg,,,,Bestand,,,37,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,,,"MV, BB",NV,,,BBP Nr. 39,"2022,
+50HzT-P34,29308,,,,AC,,,,,,,,,,2023,40,,37,,,0,,,,,,BBPIG,39,Parchim / Süd – Perleberg,Parchim ,,Perleberg,,,,Bestand,,,37,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,,,"MV, BB",NV,,,BBP Nr. 39,"2022,
 2023",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-50HzT-P34,29309,,,,AC,,,,,,,,,,2026,40,,53,,,0,,,,,,BBPIG,39,x,Güstrow,,Parchim Süd,,,,Bestand,,,53,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,,,MV,NV,,,BBP Nr. 39,"2025,
+50HzT-P34,29309,,,,AC,,,,,,,,,,2026,40,,53,,,0,,,,,,BBPIG,39,x,Güstrow,,Parchim ,,,,Bestand,,,53,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,,,MV,NV,,,BBP Nr. 39,"2025,
 2026",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
 50HzT-P36,29310,,,,AC,,,,,,,,,,2026,40,,32,,,0,,,,,,BBPIG,11,Bertikow – Pasewalk,Bertikow,,Pasewalk,,,,Bestand,,,32,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,,,"BB, MV",NV,,,BBP Nr. 11,"2025,
 2026",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
@@ -23,7 +23,7 @@ tung: Ersatzneubau",Leitung,,,BB,NVA,,,EnLAG Nr. 11,2022,4: Genehmigt oder im Ba
 2025",4: Genehmigt oder im Bau,,,,
 50HzT-P39,29314,,,,AC,,,,,,,,,,2025,40,,66,,,0,,,,,,BBPIG,14,Röhrsdorf – Weida (Abschnitt Ost),Röhrsdorf,,Weida,,,,Bestand,,,66,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,,,"SN, TH",NV,,,BBP Nr. 14,"2024,
 2025",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-50HzT-P39,29315,,,,AC,,,,,,,,,,2026,40,,43,,,0,,,,,,BBPIG,14,Weida – Remptendorf (Abschnitt West),Weida,,Remptendorf (Abschnitt West),,,,Bestand,,,43,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,,,TH,NV,,,BBP Nr. 14,"2025,
+50HzT-P39,29315,,,,AC,,,,,,,,,,2026,40,,43,,,0,,,,,,BBPIG,14,Weida – Remptendorf (Abschnitt West),Weida,,Remptendorf,,,,Bestand,,,43,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,,,TH,NV,,,BBP Nr. 14,"2025,
 2026",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
 50HzT-P180,29316,,,,AC,,,,,,,,,,2026,40,,28,,,0,,,,,,,,Marzahn – Friedrichshain – Mitte – Charlottenburg – Reuter – Teufelsbruch (cabel),Marzahn,,Friedrichshain,,,,Bestand,,,28,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,,,BE,NV,,,,"2025,
 2026","1: Vorbereitung Planungs- und Ge- nehmigungsverfahren, 3: vor oder im PFV/ Genehmigung nach BImSchG,
@@ -40,11 +40,11 @@ tung: Ersatzneubau",Leitung,,,BB,NVA,,,EnLAG Nr. 11,2022,4: Genehmigt oder im Ba
 50HzT-P221,29323,,43774,,DC,,,,,700,,,,,2035,40,,60,2,,1,,,,,,BBP,69,DC-Kabel Hansa PowerBridge (HPB,Umspannwerk Güstrow,,Punkt Bridge (HPB),,,16.277634034498558 61.35776074926747,Ausbau,,60,,,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,700,,MV,,x,,BBP Nr. 69,2035,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,"HVDC, startpoint from Hansabridge I: Umspannwerk güstrow"
 50HzT-P450,29325,,,,AC,,,,,,,,,,2024,40,,89,,,0,,,,,,BBP,61,Ragow – Streumen,Ragow,,Streumen,,,,Bestand,,,89,,horizontal,Leitung,,,"BB, SN",NO,,,BBP Nr. 61,2024,4: Genehmigt oder im Bau,,,,
 AMP-001,29326,,,,AC,,,,,2700,,,,,2022,40,,33,,,0,,,,,,EnLAG,2,Wehrendorf – St. Hülfe,Wehrendorf,,Punkt Lemförde,,,,Bestand,,,33,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,2700,,NI,NV,,,EnLAG Nr. 2,2022,4: Genehmigt oder im Bau,,,,4000A
-AMP-001,29327,,,,AC,,,,,2700,,,,,2023,40,,,,,0,,,,,,EnLAG,2,,Punkt Lemförde,, St. Hülfe,,,,Bestand,,,*,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,2700,,NI,NV,,,EnLAG Nr. 2,2023,4: Genehmigt oder im Bau,,,,4000A
+AMP-001,29327,,,,AC,,,,,2700,,,,,2023,40,,,,,0,,,,,,EnLAG,2,,Punkt Lemförde,,Station Sankt Hülfe,,,,Bestand,,,*,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,2700,,NI,NV,,,EnLAG Nr. 2,2023,4: Genehmigt oder im Bau,,,,4000A
 AMP-009,29328,,,,AC,,,,,,,,,,2023,40,,73,,,0,,,,,,EnLAG,5,Niederrhein – Punkt Wettringen,Niederrhein,,Punkt Wettringen,,,,Bestand,,,73,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,,,NW,NV,x,,EnLAG Nr. 5,2023,"3: vor oder im PFV/ Genehmigung nach BImSchG,
 4: Genehmigt oder im Bau",,,,
 AMP-009,29329,,,,AC,,,,,,,,,,2023,40,,12,,,0,,,,,,EnLAG,5,Niederrhein – Punkt Wettringen (Kabel),Niederrhein,,Punkt Wettringen (Kabel),,,,Bestand,,,12,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,,,NW,NV,x,,EnLAG Nr. 5,2023,4: Genehmigt oder im Bau,,,,
-AMP-009,29330,,,,AC,,,,,,,,,,2023,40,,65,,,0,,,,,,EnLAG,5,Punkt Wettringen – Punkt Meppen,Punkt Wettringen,,Punkt Meppen,,,,Ausbau,,65,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,,,"NI, NW",,x,,EnLAG Nr. 5,2023,"3: vor oder im PFV/ Genehmigung nach BImSchG
+AMP-009,29330,,,,AC,,,,,,,,,,2023,40,,65,,,0,,,,,,EnLAG,5,Punkt Wettringen – Punkt Meppen,Punkt Wettringen,,Meppen,,,,Ausbau,,65,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,,,"NI, NW",,x,,EnLAG Nr. 5,2023,"3: vor oder im PFV/ Genehmigung nach BImSchG
 4: Genehmigt oder im Bau",,,,
 AMP-010,29331,,,,AC,,,,,,,,,,2027,40,,14,,,0,,,,,,EnLAG,"16,18",Punkt Gaste – Lüstringen,Punkt Gaste,,Lüstringen,,,,Bestand,,,14,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung,Leitung,,,NI,NV,,,"EnLAG Nr. 16,
 18","2025,
@@ -58,9 +58,9 @@ AMP-010,29333,,,,AC,,,,,,,,,,2028,40,,29,,,0,,,,,,EnLAG,"16,18",Lüstringen – 
 AMP-010,29334,,,,AC,,,,,,,,,,2027,40,,29,,,0,,,,,,EnLAG,"16,18",Hesseln – Gütersloh,Hesseln,,Gütersloh,,,,Bestand,,,29,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,,,NW,NV,,,"EnLAG Nr. 16,
 18","2026,
 2027",4: Genehmigt oder im Bau,,,,
-AMP-014,29335,,,,AC,,,,,,,,,,2021,40,,7,,,0,,,,,,EnLAG,"14,15",Punkt Fellerhöfe – Punkt St. Tönis,Punkt Fellerhöfe,,Punkt St. Tönis,,,,Bestand,,,7,380,Errichtung einer Leitung: Ersatzneubau,Leitung,,,NW,NV,,,"EnLAG Nr. 14,
+AMP-014,29335,,,,AC,,,,,,,,,,2021,40,,7,,,0,,,,,,EnLAG,"14,15",Punkt Fellerhöfe – Punkt St. Tönis,Punkt Fellerhöfe,,Station St. Tönis,,,,Bestand,,,7,380,Errichtung einer Leitung: Ersatzneubau,Leitung,,,NW,NV,,,"EnLAG Nr. 14,
 15",2021,4: Genehmigt oder im Bau,,,,
-AMP-014,29336,,,,AC,,,,,,,,,,2021,40,,6.5,,,0,,,,,,EnLAG,"14,15",Punkt St. Tönis – Punkt Hüls-West,Punkt St. Tönis,,Punkt Hüls-West,,,,Bestand,,,6.5,380,Änderung oder Erweiterung einer Leitung: Zuoder Umbeseilung,Leitung,,,NW,NV,,,"EnLAG Nr. 14,
+AMP-014,29336,,,,AC,,,,,,,,,,2021,40,,6.5,,,0,,,,,,EnLAG,"14,15",Punkt St. Tönis – Punkt Hüls-West,Station St. Tönis,,Punkt Hüls-West,,,,Bestand,,,6.5,380,Änderung oder Erweiterung einer Leitung: Zuoder Umbeseilung,Leitung,,,NW,NV,,,"EnLAG Nr. 14,
 15",2021,4: Genehmigt oder im Bau,,,,
 AMP-014,29337,,,,AC,,,,,,,,,,2021,40,,14,,,0,,,,,,EnLAG,"14,15",Utfort – Pkt. Hüls-West,Utfort,,Punkt Hüls-West,,,,Bestand,,,14,380,Errichtung einer Leitung: Ersatzneubau,Leitung,,,NW,NV,,,"EnLAG Nr. 14,
 15",2021,4: Genehmigt oder im Bau,,,,
@@ -80,30 +80,28 @@ AMP-022,29344,,,,AC,,,,,,,,,,2025,40,,105,,,0,,,,,,EnLAG,19,Punkt Ochsenkopf –
 2022/
 2026","3: vor oder im PFV/ Genehmigung nach BImSchG,
 4: Genehmigt oder im Bau",,,,new constructuion
-AMP-028,29345,,,,AC,,,,,,,,,,2025,40,,5,,,0,,,,,,,,Punkt Wanne – Punkt Günnigfeld,Punkt Wanne,,Punkt Günnigfeld,,,,Bestand,,,5,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung,Leitung,,,NW,NV,,,,"2024/
+AMP-028,29345,,,,AC,,,,,,,,,,2025,40,,5,,,0,,,,,,,,Punkt Wanne – Punkt Günnigfeld,Station Wanne,,Punkt Günnigfeld,,,,Bestand,,,5,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung,Leitung,,,NW,NV,,,,"2024/
 2025,
 2025/
 2026",1: Vorbereitung Planungs- und Geneh- migungsverfahren,,,,
-AMP-032,29346,,,,AC,,,,,,,,,,2026,40,,21,,,0,,,,,,EnLAG,14,Niederrhein – Utfort,Niederrhein – Utfort,,Niederrhein – Utfort,,,,Bestand,,,21,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,,,NW,NV,,,EnLAG Nr. 14,"2024,
+AMP-032,29346,,,,AC,,,,,,,,,,2026,40,,21,,,0,,,,,,EnLAG,14,Niederrhein – Utfort,Niederrhein ,,Utfort,,,,Bestand,,,21,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,,,NW,NV,,,EnLAG Nr. 14,"2024,
 2026",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
 AMP-P21,29347,,,,AC,,,,,,,,,,2030,40,,31,,,0,,,,,,BBPIG,6,Regelzonengrenze TTG / AMP – Merzen,Regelzonengrenze TTG/AMP,,Merzen,,,,Ausbau,,31,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,,,"NI, NW",,x,,BBP Nr. 6,"2025 (Provisorium) /2030, 2026 (Provisorium) /2031",3: vor oder im Planfeststellungsverfahren/Genehmigung nach Bundes-Immissionsschutzgesetz,,,,
 AMP-P41,29348,,,,AC,,,,,,,,,,2027,40,,105,,,0,,,,,,BBPIG,15,Punkt Metternich – Niederstedem,Punkt Metternich,,Niederstedem,,,,Bestand,,,105,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,,,RP,NV,,,BBP Nr. 15,"2026,
 2027",3: vor oder im Planfeststellungsverfahren/Genehmigung nach Bundes-Immissionsschutzgesetz,,,,
-AMP-P47,29349,,,,AC,,,,,,,,,,2024,40,,66,,,0,,,,,,BBPIG,19,Urberach – Pfungstadt – Weinheim,Urberach,,"Pfungstadt
-",,,,Ausbau,,6,60,380,"Errichtung einer Leitung: Neubau in neuer Trasse, Errichtung einer
+AMP-P47,29349,,,,AC,,,,,,,,,,2024,40,,66,,,0,,,,,,BBPIG,19,Urberach – Pfungstadt – Weinheim,Urberach,,Pfungstadt,,,,Ausbau,,6,60,380,"Errichtung einer Leitung: Neubau in neuer Trasse, Errichtung einer
 Leitung: Ersatzneu- bau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung",Leitung,,,"HE, BW",NVA,x,,BBP Nr. 19,2024,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-AMP-P47,29350,,,,AC,,,,,,,,,,2025,40,,,,,0,,,,,,BBPIG,19,,"Pfungstadt
-",,Weinheim,,,,Bestand,,,*,380,"Errichtung einer Leitung: Neubau in neuer Trasse, Errichtung einer
+AMP-P47,29350,,,,AC,,,,,,,,,,2025,40,,,,,0,,,,,,BBPIG,19,,Pfungstadt,,Weinheim,,,,Bestand,,,*,380,"Errichtung einer Leitung: Neubau in neuer Trasse, Errichtung einer
 Leitung: Ersatzneu- bau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung",Leitung,,,"HE, BW",NVA,x,,BBP Nr. 19,"2024,
 2025",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-AMP-P47a,29351,,,,AC,,,,,,,,,,2025,40,,11,,,0,,,,,,BBPIG,76,Punkt Kriftel – Farbwerke Höchst-Süd,Punkt Kriftel,,Farbwerke Höchst-Süd,,,,Bestand,,,11,380,"Errichtung einer Leitung: Ersatzneubau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung",Leitung,,,HE,NV,,,BBP Nr. 76,"2024,
+AMP-P47a,29351,,,,AC,,,,,,,,,,2025,40,,11,,,0,,,,,,BBPIG,76,Punkt Kriftel – Farbwerke Höchst-Süd,Kriftel,,Farbwerke Höchst-Süd,,,,Bestand,,,11,380,"Errichtung einer Leitung: Ersatzneubau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung",Leitung,,,HE,NV,,,BBP Nr. 76,"2024,
 2025",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
 AMP-P52,29352,,,,AC,,,,,,,,,,2024,40,,61,,,0,,,,,,BBPIG,24,Punkt Rommelsbach – Herbertingen,Punkt Rommelsbach,,Herbertingen,,,,Bestand,,,61,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,,,BW,NV,,,BBP Nr. 24,"2022,
 2024",4: Genehmigt oder im Bau,,,,
 AMP-P52,29353,,,,AC,,,,,,,,,,2021,40,,88,,,0,,,,,,BBPIG,25,Punkt Wullenstetten – Punkt Niederwangen,Punkt Wullenstetten,,Punkt Niederwangen,,,,Bestand,,,88,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung,Leitung,,,"BY, BW",NV,x,,BBP Nr. 25,2021,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-AMP-P310,29355,,,,AC,,,,,,,,,,2023,40,,285,,,0,,,,,,,,Bürstadt – Kühmoos (Kühmoos-Maximiliansau-Weingarten-Mutterstadt-Lambsheim-Bürstadt),Bürstadt,,Anlage Maximiliansau,,,,Bestand,,,285,380,"Errichtung einer Leitung: Ersatzneubau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung",Leitung,,,"HE,
+AMP-P310,29355,,,,AC,,,,,,,,,,2023,40,,285,,,0,,,,,,,,Bürstadt – Kühmoos (Kühmoos-Maximiliansau-Weingarten-Mutterstadt-Lambsheim-Bürstadt),Bürstadt,,Maximiliansau,,,,Bestand,,,285,380,"Errichtung einer Leitung: Ersatzneubau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung",Leitung,,,"HE,
 RP, BW",NV,,,,2023,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,"M485, HTLS"
-AMP-P310,29356,,,,AC,,,,,,,,,,2025,40,,,,,0,,,,,,,,,Anlage Maximiliansau,,Draxlanden,,,,Bestand,,,*,380,,Leitung,,,"HE,
+AMP-P310,29356,,,,AC,,,,,,,,,,2025,40,,,,,0,,,,,,,,,Maximiliansau,,Draxlanden,,,,Bestand,,,*,380,,Leitung,,,"HE,
 RP, BW",NV,,,,"2023,
 2025",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,"M485, spannungsumstllung"
 AMP-P310,29357,,,,AC,,,,,,,,,,2025,40,,,6,,2,,,,,,,,,Draxlanden,,Kühmoos,,,,Bestand,,,*,380,Zubeseilung,Leitung,,6,"HE,
