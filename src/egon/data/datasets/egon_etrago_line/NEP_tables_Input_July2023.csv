@@ -146,25 +146,25 @@ TTG-P46,29381,,,,AC,,,,,2700,,,,,2025,40,,,6,,2,,,,,,BBP,18,,Etzenricht,, Schwan
 2025",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,4000A For both circuits?
 TTG-P48,29382,,,,AC,,,,,2700,,,,,2025,40,,50,3,,1,,,,,,BBP,20,Grafenrheinfeld – Punkt Rittershausen,Grafenrheinfeld,,Punkt Rittershausen,,,10.013017 49.611797,Bestand,,,50,380,Zubeseilung,Leitung,2700,3,BY,NV,,,BBP Nr. 20,"2024 /
 2025",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-TTG-P67,29383,,,,AC,,,,,2700,,,,,2024,40,,13,6,,2,,,,,,BBP,32,Simbach – Matzenhof - Bundesgrenze AT,Simbach,,Matzenhof,,,,Bestand,,,13,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,2700,6,BY,NV,x,x,BBP Nr. 32,2024,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,4000A For both circuits?
-TTG-P67,29384,,43761,,AC,,,,,2700,,,,,2026,40,,,6,,2,,,,,,BBP,32,,Matzenhof,,Bundesgrenze AT,,,13.60427444018489 47.549498217049525,Bestand,,,*,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,2700,6,BY,NV,x,x,BBP Nr. 32,"2024,
+TTG-P67,29383,,,,AC,,,,,2700,,,,,2024,40,,13,6,,2,,,,,,BBP,32,Simbach – Matzenhof - Bundesgrenze AT,Simbach,,Punkt Matzenhof,,,13.013943 48.290369,Bestand,,,13,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,2700,6,BY,NV,x,x,BBP Nr. 32,2024,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,4000A For both circuits?
+TTG-P67,29384,,43761,,AC,,,,,2700,,,,,2026,40,,,6,,2,,,,,,BBP,32,,Punkt Matzenhof,,Bundesgrenze AT,,13.013943 48.290369,13.060147 48.272481,Bestand,,,*,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,2700,6,BY,NV,x,x,BBP Nr. 32,"2024,
 2026",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,4000A For both circuits?
-TTG-P67,29385,,,,AC,,,,,2700,,,,,2026,40,,7,6,,2,,,,,,BBP,32,Altheim – Adlkofen,Altheim,,Adlkofen,,,,Bestand,,,7,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,2700,6,BY,NV,x,x,BBP Nr. 32,"2024,
+TTG-P67,29385,,,,AC,,,,,2700,,,,,2026,40,,7,6,,2,,,,,,BBP,32,Altheim – Adlkofen,Altheim,,Punkt Adlkofen,,,12.260740 48.546736,Bestand,,,7,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,2700,6,BY,NV,x,x,BBP Nr. 32,"2024,
 2026",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,4000A For both circuits?
-TTG-P67,29386,,,,AC,,,,,2700,,,,,2026,40,,66,6,,2,,,,,,BBP,32,Adlkofen – Matzenhof,Adlkofen,,Matzenhof,,,,Bestand,,,66,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,2700,6,BY,NV,x,x,BBP Nr. 32,"2024,
+TTG-P67,29386,,,,AC,,,,,2700,,,,,2026,40,,66,6,,2,,,,,,BBP,32,Adlkofen – Matzenhof,Punkt Adlkofen,,Matzenhof,,12.260740 48.546736,,Bestand,,,66,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,2700,6,BY,NV,x,x,BBP Nr. 32,"2024,
 2026",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,4000A For both circuits?
 TTG-P69,29387,,,,AC,,,,,2400,,,,,2026,40,,61,6,,2,,,,,,BBP,34,Emden / Ost – Conneforde,Emden Ost,,Conneforde,,,,Bestand,,,61,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,2400,6,NI,NV,x,,BBP Nr. 34,"2024,
 2026",4: Genehmigt oder im Bau,,,,3600A for both circuits?
-TTG-P72,29388,,,,AC,,,,,,,,,,2022,40,,50,6,,2,,,,,,BBP,42,Kreis Segeberg – Lübeck / West,Kreis Segeberg,,Lübeck West,,,,Bestand,,,50,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,,6,SH,NV,x,,BBP Nr. 42,"2021,
+TTG-P72,29388,,,,AC,,,,,,,,,,2022,40,,50,6,,2,,,,,,BBP,42,Kreis Segeberg – Lübeck / West,Kreis Segeberg,,Lübeck West,,9.985091 53.742518,,Bestand,,,50,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,,6,SH,NV,x,,BBP Nr. 42,"2021,
 2022",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
 TTG-P118,29389,,,,AC,,,,,2700,,,,,2025,40,,41,6,,2,,,,,,BBP,43,Borken – Mecklar,Borken,,Mecklar,,,,Bestand,,,41,380,Umbeseilung,Leitung,2700,6,HE,NV,,,BBP Nr. 43,2025,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,"HTL Umbeseilung, 4000A for both circuits"
 TTG-P151,29390,,,,AC,,,,,2700,,,,,2024,40,,43,6,,2,,,,,,BBP,45,Borken – Twistetal,Borken,,Twistetal,,,,Bestand,,,43,380,Umbeseilung,Leitung,2700,6,HE,NV,,,BBP Nr. 45,"2023,
 2024","3: vor oder im PFV/ Genehmigung nach BImSchG,
 4: Genehmigt oder im Bau",,,,"HTL Umbeseilung, 4000A for both circuits"
-TTG-P185,29391,,,,AC,,,,,2400,,,,,2023,40,,38,,,,,,,,,BBP,46,Redwitz – Landes- grenze BY / TH (Punkt Tschirn),Redwitz,,Punkt Tschirn (Landes- grenze BY / TH),,,,Bestand,,,38,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung,Leitung,2400,6,BY,NV,,,BBP Nr. 46,"2022,
+TTG-P185,29391,,,,AC,,,,,2400,,,,,2023,40,,38,,,,,,,,,BBP,46,Redwitz – Landes- grenze BY / TH (Punkt Tschirn),Redwitz,,Punkt Tschirn (Landes- grenze BY / TH),,,11.478551 50.432455,Bestand,,,38,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung,Leitung,2400,6,BY,NV,,,BBP Nr. 46,"2022,
 2023",4: Genehmigt oder im Bau,,,,3600A
 TNG-P47,29392,,,,AC,,,,,,,,,,2021,40,,76,,,,,,,,,BBP,19,Weinheim – Daxlanden,Weinheim,,Daxlanden,,,,Bestand,,,76,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,,,BW,NV,,,BBP Nr. 19,2021,2: Im ROV/BFP,,,,
-TNG-P47,29393,,,,AC,,,,,,,,,,2031,40,,17,,,,,,,,,BBP,19,Weinheim – Mannheim (G380),Weinheim,,Mannheim (G380),,,,Bestand,,,17,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,,,BW,NV,,,BBP Nr. 19,"2028,
+TNG-P47,29393,,,,AC,,,,,,,,,,2031,40,,17,,,,,,,,,BBP,19,Weinheim – Mannheim (G380),Weinheim,,Mannheim (G380),,,8.545514 49.439807,Bestand,,,17,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,,,BW,NV,,,BBP Nr. 19,"2028,
 2031",2: Im ROV/BFP,,,,
 TNG-P47,29394,,,,AC,,,,,,,,,,2031,40,,22.5,,,,,,,,,BBP,19,Mannheim (G380) – Altlußheim,Mannheim (G380),,Altlußheim,,,,Bestand,,,22.5,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,,,BW,NV,,,BBP Nr. 19,"2028,
 2031",2: Im ROV/BFP,,,,
