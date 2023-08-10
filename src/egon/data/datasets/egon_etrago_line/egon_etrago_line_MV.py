@@ -3,8 +3,6 @@ import geopandas as gpd
 from sqlalchemy import create_engine
 from geopy.distance import geodesic
 import difflib
-import shapely.geometry as sg
-
 
 # Create connection with pgAdmin4 - Offline
 engine = create_engine(
@@ -16,7 +14,6 @@ engine = create_engine(
 # Read the Source files
 substation_df = pd.read_sql(
     """
-
     SELECT * FROM grid.egon_hvmv_substation;
     
     """
@@ -25,7 +22,6 @@ substation_df = pd.read_sql(
 
 substation_df = gpd.read_postgis(
     """
-  
     SELECT * FROM grid.egon_hvmv_substation;
     
     """
@@ -40,7 +36,7 @@ existing_lines_df = pd.read_sql(
 
 
 # Read the Destination file from CSV
-lines_df = pd.read_csv("./NEP_tables_V2 - first table26July2023 - test.csv")
+lines_df = pd.read_csv("./egon_etrago_line_pdf_test.csv")
 
 unique_line_id = existing_lines_df['line_id'].max()
 formatted_point_0 = None
@@ -100,8 +96,8 @@ for index, row in lines_df.iterrows():
                 coordinate_1_str = str(lines_df.at[index, 'Coordinate1'])
                 lon1, lat1 = map(float, coordinate_1_str.split(' '))
                 distance = geodesic((lat0, lon0), (lat1, lon1)).kilometers
-                lines_df.at[index, 'length'] = f'MV {round(distance*1.1,1)}'
+                lines_df.at[index, 'length'] = f'MV {round(distance*1.14890133371257,1)}'
    
 # Save the updated file
-lines_df.to_csv('./NEP_tables_V2 - first table26July2023 - test.csv', index=False)
+lines_df.to_csv('./egon_etrago_line_pdf_test.csv', index=False)
 print("Operation successful")
