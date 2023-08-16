@@ -90,11 +90,6 @@ AMP-022,29340,33048,32976,,AC,,,,,,,,,1,2025,40,,HV 10.8,,,,,,380,,,,EnLAG,19,li
 2022/
 2026","3: vor oder im PFV/ Genehmigung nach BImSchG,
 4: Genehmigt oder im Bau",,,,new constructuion,100,69
-AMP-022,29341,32976,33983,,AC,,,,,,,,,1,2025,40,,HV 13.6,,,,,,380,,,,EnLAG,19,line,Punkt Ochsenkopf – Dauersberg,Eiserfeld,Station Eiserfeld,Dauersberg,Station Dauersberg,7.9850674816519875 50.84222549258402,7.863758842197247 50.76808852633666,Bestand,,,*,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,"NW, RP",NV,x,,EnLAG Nr. 19,"2021/
-2025,
-2022/
-2026","3: vor oder im PFV/ Genehmigung nach BImSchG,
-4: Genehmigt oder im Bau",,,,new constructuion,69,71
 AMP-028,29342,31219,2904,,AC,,,,,,,,,1,2025,40,,5,,,,,,380,,,,,,line,Punkt Wanne – Punkt Günnigfeld,Station Wanne,Station Wanne,Punkt Günnigfeld,,7.140650192920247 51.55724834807932,7.1462924 51.504831300000006,Bestand,,,5,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung,Leitung,NW,NV,,,,"2024/
 2025,
 2025/
@@ -127,6 +122,7 @@ AMP-P310,29356,34751,34786,,AC,,,,,,,,,1,2023,40,,HV 29.2,,,,,,380,,,,,,line,,We
 RP, BW",NV,,,,2023,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,"M485, HTLS",100,68
 AMP-P310,29357,34786,32960,,AC,,,,,,,,,1,2023,40,,HV 185.1,,,,,,380,,,,,,line,,Maximiliansau,Umspannwerk Maximiliansau,Kühmoos,Lastverteilung/Schaltanlage Kühmoos,8.273277878035131 49.029394664797195,7.958075914315599 47.59547794527875,Bestand,,,*,380,"Errichtung einer Leitung: Ersatzneubau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung",Leitung,"HE,
 RP, BW",NV,,,,2023,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,"M485, HTLS",68,33
+AMP-P310,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 AMP-P460,29358,31205,,,AC,,,,,400,,,,1,2025,40,,3.4,,,,,,380,,,,,,line,Büscherhof – Umbeseilung und Schaltfelderweiterung,Büscherhof,Station Büscherhof,zu neue 380-kV-Anlage,,6.926758989258765 51.49920569585058,6.967172 51.490748,Bestand,,,3.4,380,"Änderung oder Erweiterung einer Leitung: Zu- oder
 Umbeseilung",Leitung,NW,NV,,,,"2023,
 2025",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,M687,71,
@@ -137,8 +133,6 @@ TTG-006,29361,35074,35332,,AC,,,,,,,,,1,2024,40,,HV 32.2,3,,1,,,380,,,,EnLAG,6,l
 TTG-006,29362,35332,31545,,AC,,,,,,,,,1,2024,40,,HV 93.9,3,,1,,,380,,,,EnLAG,6,line,,Hardegsen,Hardegsen,Mecklar,Mecklar,9.852963912739543 51.64929354898966,9.746026530326525 50.9174270688464,Ausbau,,*,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"NI, HE",,x,,EnLAG Nr. 6,2024,4: Genehmigt oder im Bau,,,,Erdkabel,100,100
 TTG-007,29363,33739,34613,,AC,,,,,2400,,,,1,2024,40,,31,6,,2,,,380,,,,EnLAG,5,line,Dörpen / West – Niederrhein (Punkt Meppen),Dörpen West,Dörpen West,Meppen,Meppen,7.256250263683292 52.98145861782307, 7.211702 52.730448,Ausbau,,31,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,NI,,x,,EnLAG Nr. 5,2024,"4: Genehmigt oder im Bau,
 5: Realisiert",,,,3600A,100,100
-TTG-009,29364,31114,31826,,AC,,,,,,,,,1,2024,40,,61,6,,2,,,380,,,,EnLAG,2,line,Ganderkesee – St. Hülfe,Ganderkesee,Ganderkesee,Station Sankt Hülfe,Station Sankt Hülfe,8.563991876746766 53.03191782682749,8.403502360406835 52.60907601124505,Ausbau,,61,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,NI,,x,,EnLAG Nr. 2,"2023,
-2024",4: Genehmigt oder im Bau,,,,,100,100
 TTG-P21,29365,31026,32653,,AC,,,,,5400,,,,1,2023,40,,56,6,,2,,,380,,,,,,line,Conneforde – Garrel/ Ost – Cappeln/West,Conneforde,Conneforde,Garrel,Garrel,8.052813201940419 53.33191378148668,8.027258408033157 52.96425173221768,Bestand,,,77,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NI,NV,x,,6,"2022,
 2023",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,4000A each circuit,100,100
 TTG-P21,29366,32653,,,AC,,,,,,,,,1,2026,40,,21,6,,2,,,380,,,,,,line,,Garrel,Garrel,Punkt Cappeln West,,8.027258408033157 52.96425173221768,8.017258 52.791597,Bestand,,,*,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NI,NV,x,,6,"2025,

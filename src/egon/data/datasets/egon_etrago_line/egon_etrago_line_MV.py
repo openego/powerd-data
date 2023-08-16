@@ -19,7 +19,6 @@ substation_df = pd.read_sql(
     """
     , engine)
 
-
 substation_df = gpd.read_postgis(
     """
     SELECT * FROM grid.egon_hvmv_substation;
@@ -27,13 +26,11 @@ substation_df = gpd.read_postgis(
     """
     , engine, geom_col="point")
 
-
 existing_lines_df = pd.read_sql(
     """
     SELECT line_id FROM grid.egon_etrago_line   
     """
     , engine)
-
 
 # Read the Destination file from CSV
 lines_df = pd.read_csv("./egon_etrago_line_pdf_test.csv")
