@@ -36,7 +36,7 @@ existing_lines_df = pd.read_sql(
 
 
 # Read the Destination file from CSV
-lines_df = pd.read_csv("./egon_etrago_line_pdf_test_1.csv")
+lines_df = pd.read_csv("./egon_etrago_line_pdf_test.csv")
 
 formatted_point_0 = None
 formatted_point_1 = None
@@ -66,7 +66,7 @@ for index, row in lines_df.iterrows():
             lines_df.at[index, 'Coordinate0'] = formatted_point_0 
         
     # Match Similarity of Source & Destination files for End point                           
-    matching_rows_end = substation_df[substation_df['bus_id'] == bus_1]
+    matching_rows_end = substation_df[substation_df['bus_id'] == bus_1gitt]
     if not matching_rows_end.empty:
         
         # if pd.isnull(lines_df.at[index, 'bus1']):
@@ -92,5 +92,5 @@ for index, row in lines_df.iterrows():
                 lines_df.at[index, 'length'] = f'TB {round(distance*1.14890133371257,1)}'
 
 # Save the updated file
-lines_df.to_csv('./egon_etrago_line_pdf_test_1.csv', index=False)
+lines_df.to_csv('./egon_etrago_line_pdf_test.csv', index=False)
 print("Operation successful")
