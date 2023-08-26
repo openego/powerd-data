@@ -25,7 +25,7 @@ substation_df = gpd.read_postgis(
     SELECT * FROM grid.egon_etrago_bus
     
     """
-    , engine, geom_col="point")
+    , engine, geom_col="geom")
 
 
 existing_lines_df = pd.read_sql(
@@ -36,19 +36,22 @@ existing_lines_df = pd.read_sql(
 
 
 # Read the Destination file from CSV
-lines_df = pd.read_csv("./egon_etrago_line_pdf_test.csv")
+lines_df = pd.read_csv("./egon_etrago_line_pdf_test_1.csv")
 
 formatted_point_0 = None
 formatted_point_1 = None
 
 for index, row in lines_df.iterrows():
 
-
-    Startpunkt = str(row['bus0'])
-    Endpunkt = str(row['bus1'])
+    formatted_point_0 = None
+    formatted_point_1 = None 
+    
+    bus_0 = row['bus0']
+    bus_1 = row['bus1']
     
     # Match Similarity of Source & Destination files for Start point  
-    matching_rows_start = substation_df[substation_df['bus_id'].str.contains(Startpunkt, case=False, na=False, regex=False)]
+    matching_rows_start = substation_df[substation_df['bus_id'] == bus_0]
+
     if not matching_rows_start.empty:
         
         # if pd.isnull(lines_df.at[index, 'bus0']):
@@ -58,12 +61,12 @@ for index, row in lines_df.iterrows():
         
         # Find coordinate for start point
         if pd.isnull(lines_df.at[index, 'Coordinate0']):
-            point_0 = matching_rows_start.iloc[0]['x']
+            point_0 = matching_rows_start.iloc[0]['geom']
             formatted_point_0 = f"{point_0.x} {point_0.y}"
             lines_df.at[index, 'Coordinate0'] = formatted_point_0 
         
     # Match Similarity of Source & Destination files for End point                           
-    matching_rows_end = substation_df[substation_df['bus_id'].str.contains(Endpunkt, case=False, na=False, regex=False)]
+    matching_rows_end = substation_df[substation_df['bus_id'] == bus_1]
     if not matching_rows_end.empty:
         
         # if pd.isnull(lines_df.at[index, 'bus1']):
@@ -73,7 +76,7 @@ for index, row in lines_df.iterrows():
 
         # Find coordinate for End point
         if pd.isnull(lines_df.at[index, 'Coordinate1']):
-            point_1 = matching_rows_end.iloc[0]['y']
+            point_1 = matching_rows_end.iloc[0]['geom']
             formatted_point_1 = f"{point_1.x} {point_1.y}"
             lines_df.at[index, 'Coordinate1'] = formatted_point_1
 
@@ -89,5 +92,5 @@ for index, row in lines_df.iterrows():
                 lines_df.at[index, 'length'] = f'TB {round(distance*1.14890133371257,1)}'
 
 # Save the updated file
-lines_df.to_csv('./egon_etrago_line_pdf_test.csv', index=False)
+lines_df.to_csv('./egon_etrago_line_pdf_test_1.csv', index=False)
 print("Operation successful")
