@@ -96,27 +96,48 @@ for index, row in lines_df.iterrows():
                 coordinate_1_str = str(lines_df.at[index, 'Coordinate1'])
                 lon1, lat1 = map(float, coordinate_1_str.split(' '))
                 distance = geodesic((lat0, lon0), (lat1, lon1)).kilometers
-                lines_df.at[index, 'length'] = f'HV {round(distance*1.14890133371257,1)}'
+                lines_df.at[index, 'length'] = round(distance*1.14890133371257,1)
+                lines_df.at[index, 'length1'] = f'HV {round(distance*1.14890133371257,1)}'
+
+
+    #Filling empty cells
+    if pd.isnull (lines_df.at[index, 's_nom']):
+        if (lines_df.at[index, 'cable/line'] == 'line'):
+            lines_df.at[index,'s_nom'] = 1790
+        if (lines_df.at[index,'cable/line'] == 'cable'):
+            lines_df.at[index,'s_nom'] = 925
+    if pd.isnull (lines_df.at[index, 'cables']):
+        lines_df.at[index, 'cables'] = 3
+        lines_df.at[index, 'num_parallel'] = 1
+    lines_df.at[index, 's_nom_min'] = lines_df.at[index, 's_nom']
+    lines_df.at[index, 's_nom_max'] = 'Infinity'
+    lines_df.at[index, 's_nom_extendable'] = 't'
+    lines_df.at[index, 'v_ang_max'] = 'Infinity'
+    lines_df.at[index, 'v_ang_min'] = '-Infinity'
+    lines_df.at[index, 'terrain_factor'] = 1
 
     #calculation of X, R, Cost
     lines_df['length'] = pd.to_numeric(lines_df['length'], errors='coerce')
     if (lines_df.at[index,'v_nom'] == 380) and (lines_df.at[index, 'cable/line'] == 'line'):
-        lines_df.at[index,'r'] = 0.028 / (lines_df.at[index,'s_nom']/1790 * lines_df.at[index, 'length'])
-        lines_df.at[index,'x'] = 2*3.14159*50*0.001*0.8 / (lines_df.at[index,'s_nom']/1790 * lines_df.at[index, 'length'])
-        lines_df.at[index,'capital_cost'] = 2500000 * lines_df.at[index, 'length']
+        lines_df.at[index,'r'] = 0.028 / (lines_df.at[index,'s_nom']/1790) * lines_df.at[index, 'length']
+        lines_df.at[index,'x'] = 2*3.14159*50*0.001*0.8 / (lines_df.at[index,'s_nom']/1790) * lines_df.at[index, 'length']
+        lines_df.at[index,'capital_cost'] = 2500000 / lines_df.at[index,'s_nom']*lines_df.at[index, 'length']/(lines_df.at[index, 'cables']/3)
 
     if (lines_df.at[index,'v_nom'] == 380) and (lines_df.at[index, 'cable/line'] == 'cable'):
-        lines_df.at[index,'r'] = 0.0175 / (lines_df.at[index,'s_nom']/925 * lines_df.at[index, 'length'])
-        lines_df.at[index,'x'] = 2*3.14159*50*0.001*0.3 / (lines_df.at[index,'s_nom']/925 * lines_df.at[index, 'length'])
-        lines_df.at[index,'capital_cost'] = 11500000 * lines_df.at[index, 'length']
+        lines_df.at[index,'r'] = 0.0175 / (lines_df.at[index,'s_nom']/925) * lines_df.at[index, 'length']
+        lines_df.at[index,'x'] = 2*3.14159*50*0.001*0.3 / (lines_df.at[index,'s_nom']/925) * lines_df.at[index, 'length']
+        lines_df.at[index,'capital_cost'] = 11500000 / lines_df.at[index,'s_nom']*lines_df.at[index, 'length']/(lines_df.at[index, 'cables']/3)
 
     if (lines_df.at[index,'carrier'] == 'DC') and (lines_df.at[index, 'cable/line'] == 'line'):
         lines_df.at[index,'r'] = 0.0175 / (lines_df.at[index,'s_nom']/925 * lines_df.at[index, 'length'])
         lines_df.at[index,'x'] = 2*3.14159*50*0.001*0.3 / (lines_df.at[index,'s_nom']/925 * lines_df.at[index, 'length'])
+        lines_df.at[index,'capital_cost'] = 500000 / lines_df.at[index,'s_nom']*lines_df.at[index, 'length']/(lines_df.at[index, 'cables']/3)
+
     if (lines_df.at[index,'carrier'] == 'DC') and (lines_df.at[index, 'cable/line'] == 'cable'):
         lines_df.at[index,'r'] = 0.0175 / (lines_df.at[index,'s_nom']/925 * lines_df.at[index, 'length'])
         lines_df.at[index,'x'] = 2*3.14159*50*0.001*0.3 / (lines_df.at[index,'s_nom']/925 * lines_df.at[index, 'length'])
-    
+        lines_df.at[index,'capital_cost'] = 3250000 / lines_df.at[index,'s_nom']*lines_df.at[index, 'length']/(lines_df.at[index, 'cables']/3)
+
     
     # # Find similar existing line according to the location
     # if (existing_lines_df['bus0'] == lines_df.at[index, 'bus0']) and (existing_lines_df['bus1'] == lines_df.at[index, 'bus1']):
