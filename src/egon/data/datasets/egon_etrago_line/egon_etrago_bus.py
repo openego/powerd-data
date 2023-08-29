@@ -66,7 +66,7 @@ for index, row in lines_df.iterrows():
             lines_df.at[index, 'Coordinate0'] = formatted_point_0 
         
     # Match Similarity of Source & Destination files for End point                           
-    matching_rows_end = substation_df[substation_df['bus_id'] == bus_1gitt]
+    matching_rows_end = substation_df[substation_df['bus_id']]
     if not matching_rows_end.empty:
         
         # if pd.isnull(lines_df.at[index, 'bus1']):
