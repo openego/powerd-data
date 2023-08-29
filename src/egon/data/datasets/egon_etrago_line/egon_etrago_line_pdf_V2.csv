@@ -1,31 +1,31 @@
 scn_name,line_id,bus0,bus1,type,carrier,x,r,g,b,s_nom,s_nom_extendable,s_nom_min,s_nom_max,s_max_pu,build_year,lifetime,capital_cost,length,cables,terrain_factor,num_parallel,v_ang_min,v_ang_max,v_nom,geom,topo,cable/line,Projekt,Projekt_id,Maßnahme,Startpunkt,subst_name0,Endpunkt,subst_name1,Coordinate0,Coordinate1,distance different (km),Length type,length1,Trassenlänge in km,Trassenlänge in km.1,Spannung,NOVA-Typ,Art,Bundesländer,NOVA-Kategorie,TYNDP,PCI,EnLAG / BBP,anvisierte Inbetriebnahme,Umsetzungsstand,ÜNB,M-Nr.,Szenario,Anmerkung
-50HzT-003,,,,,AC,,,0,,,,,,1,2023,40,,120,6,,2,,,380,,,line,EnLAG,3,Neuenhagen – Vierraden – Bertikow,Neuenhagen,,Vierraden,,,,,Ausbau&Betand,,56,64,380,"Errichtung einer Leitung: Neubau in neuer Trasse,
+50HzT-003,,,,,AC,,,0,,,,,,1,2023,40,,89,6,,2,,,380,,,line,EnLAG,3,Neuenhagen – Vierraden – Bertikow,Neuenhagen,,Vierraden,,,,,Ausbau&Betand,120,56,64,380,"Errichtung einer Leitung: Neubau in neuer Trasse,
 Errichtung einer Lei-
 tung: Ersatzneubau",Leitung,BB,NVA,,,EnLAG Nr. 3,2023,4: Genehmigt oder im Bau,,,,Zusätzliche 380kV Freileitung
 50HzT-003,,,,,AC,,,0,,,,,,1,2023,40,,,3,,1,,,380,,,line,EnLAG,3,,Vierraden,,Bertikow,,,,,Ausbau,,*,*,380,"Errichtung einer Leitung: Neubau in neuer Trasse,
 Errichtung einer Lei-
 tung: Ersatzneubau",Leitung,BB,NVA,,,EnLAG Nr. 3,2023,4: Genehmigt oder im Bau,,,,Zusätzliche 380kV Freileitung
-50HzT-007,,,,,AC,,,0,,,,,,1,2022,40,,75,,,,,,380,,,line,EnLAG,11,Neuenhagen – Wustermark,Umspannwerk Neuenhagen,,Wustermark,,,,,Ausbau&Betand,,14,61,380,"Errichtung einer Leitung: Neubau in neuer Trasse,
+50HzT-007,,,,,AC,,,0,,,,,,1,2022,40,,75,,,,,,380,,,line,EnLAG,11,Neuenhagen – Wustermark,Umspannwerk Neuenhagen,,Wustermark,,,,,Ausbau&Betand,75,14,61,380,"Errichtung einer Leitung: Neubau in neuer Trasse,
 Errichtung einer Lei-
 tung: Ersatzneubau",Leitung,BB,NVA,,,EnLAG Nr. 11,2022,4: Genehmigt oder im Bau,,,,
-50HzT-P34,,,,,AC,,,0,,,,,,1,2028,40,,64,,,,,,380,,,line,BBPIG,39,Perleberg – Stendal / West – Wolmirstedt,Perleberg,,Stendal West,,,,,Bestand,,,64,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,"BB, ST",NV,,,BBP Nr. 39,2028,"3: vor oder im PFV/ Genehmigung nach BImSchG,
+50HzT-P34,,,,,AC,,,0,,,,,,1,2028,40,,64,,,,,,380,,,line,BBPIG,39,Perleberg – Stendal / West – Wolmirstedt,Perleberg,,Stendal West,,,,,Bestand,64,,64,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,"BB, ST",NV,,,BBP Nr. 39,2028,"3: vor oder im PFV/ Genehmigung nach BImSchG,
 5: Realisiert",,,,
-50HzT-P34,,,,,AC,,,0,,,,,,1,2023,40,,37,,,,,,380,,,line,BBPIG,39,,Stendal West,,Wolmirstedt,,,,,Bestand,,,37,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,"BB, ST",NV,,,BBP Nr. 39,"2022,
+50HzT-P34,,,,,AC,,,0,,,,,,1,2023,40,,37,,,,,,380,,,line,BBPIG,39,,Stendal West,,Wolmirstedt,,,,,Bestand,37,,37,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,"BB, ST",NV,,,BBP Nr. 39,"2022,
 2023","3: vor oder im PFV/ Genehmigung nach BImSchG,
 5: Realisiert",,,,
-50HzT-P34,,,,,AC,,,0,,,,,,1,2023,40,,37,,,,,,380,,,line,BBPIG,39,Parchim / Süd – Perleberg,Parchim,,Perleberg,,,,,Bestand,,,37,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,"MV, BB",NV,,,BBP Nr. 39,"2022,
+50HzT-P34,,,,,AC,,,0,,,,,,1,2023,40,,37,,,,,,380,,,line,BBPIG,39,Parchim / Süd – Perleberg,Parchim,,Perleberg,,,,,Bestand,37,,37,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,"MV, BB",NV,,,BBP Nr. 39,"2022,
 2023",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-50HzT-P34,,,,,AC,,,0,,,,,,1,2026,40,,53,,,,,,380,,,line,BBPIG,39,x,Güstrow,,Parchim,,,,,Bestand,,,53,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,MV,NV,,,BBP Nr. 39,"2025,
+50HzT-P34,,,,,AC,,,0,,,,,,1,2026,40,,53,,,,,,380,,,line,BBPIG,39,x,Güstrow,,Parchim,,,,,Bestand,53,,53,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,MV,NV,,,BBP Nr. 39,"2025,
 2026",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-50HzT-P36,,,,,AC,,,0,,,,,,1,2026,40,,32,,,,,,380,,,line,BBPIG,11,Bertikow – Pasewalk,Bertikow,,Pasewalk,,,,,Bestand,,,32,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,"BB, MV",NV,,,BBP Nr. 11,"2025,
+50HzT-P36,,,,,AC,,,0,,,,,,1,2026,40,,32,,,,,,380,,,line,BBPIG,11,Bertikow – Pasewalk,Bertikow,,Pasewalk,,,,,Bestand,32,,32,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,"BB, MV",NV,,,BBP Nr. 11,"2025,
 2026",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-50HzT-P38,,,,,AC,,,0,,,,,,1,2025,40,,105,,,,,,380,,,line,BBPIG,13,Pulgar – Geußnitz (Abschnitt Ost),Pulgar,,Vieselbach,,,,,Bestand,,,105,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung,Leitung,SN,NV,,,BBP Nr. 13,"2024,
+50HzT-P38,,,,,AC,,,0,,,,,,1,2025,40,,105,,,,,,380,,,line,BBPIG,13,Pulgar – Geußnitz (Abschnitt Ost),Pulgar,,Vieselbach,,,,,Bestand,105,,105,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung,Leitung,SN,NV,,,BBP Nr. 13,"2024,
 2025",4: Genehmigt oder im Bau,,,,
-50HzT-P39,,,,,AC,,,0,,,,,,1,2025,40,,66,,,,,,380,,,line,BBPIG,14,Röhrsdorf – Weida (Abschnitt Ost),Röhrsdorf,,Weida,,,,,Bestand,,,66,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,"SN, TH",NV,,,BBP Nr. 14,"2024,
+50HzT-P39,,,,,AC,,,0,,,,,,1,2025,40,,66,,,,,,380,,,line,BBPIG,14,Röhrsdorf – Weida (Abschnitt Ost),Röhrsdorf,,Weida,,,,,Bestand,66,,66,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,"SN, TH",NV,,,BBP Nr. 14,"2024,
 2025",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-50HzT-P39,,,,,AC,,,0,,,,,,1,2026,40,,43,,,,,,380,,,line,BBPIG,14,Weida – Remptendorf (Abschnitt West),Weida,,Remptendorf,,,,,Bestand,,,43,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,TH,NV,,,BBP Nr. 14,"2025,
+50HzT-P39,,,,,AC,,,0,,,,,,1,2026,40,,43,,,,,,380,,,line,BBPIG,14,Weida – Remptendorf (Abschnitt West),Weida,,Remptendorf,,,,,Bestand,43,,43,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,TH,NV,,,BBP Nr. 14,"2025,
 2026",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-50HzT-P180,,,,,AC,,,0,,,,,,1,2026,40,,28,,,,,,380,,,cable,,,Marzahn – Friedrichshain – Mitte – Charlottenburg – Reuter – Teufelsbruch (cabel),Marzahn,,Friedrichshain,,,,,Bestand,,,28,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BE,NV,,,,"2025,
+50HzT-P180,,,,,AC,,,0,,,,,,1,2026,40,,4,,,,,,380,,,cable,,,Marzahn – Friedrichshain – Mitte – Charlottenburg – Reuter – Teufelsbruch (cabel),Marzahn,,Friedrichshain,,,,,Bestand,28,,28,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BE,NV,,,,"2025,
 2026","1: Vorbereitung Planungs- und Ge- nehmigungsverfahren, 3: vor oder im PFV/ Genehmigung nach BImSchG,
 4: Genehmigt oder im Bau",,,,M406
 50HzT-P180,,,,,AC,,,0,,,,,,1,2030,40,,,,,,,,380,,,cable,,,,Friedrichshain,,Mitte,,,,,Bestand,,,*,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BE,NV,,,,2030,"1: Vorbereitung Planungs- und Ge- nehmigungsverfahren, 3: vor oder im PFV/ Genehmigung nach BImSchG,
@@ -35,47 +35,47 @@ tung: Ersatzneubau",Leitung,BB,NVA,,,EnLAG Nr. 11,2022,4: Genehmigt oder im Bau,
 50HzT-P180,,,,,AC,,,0,,,,,,1,2030,40,,,,,,,,380,,,cable,,,,Charlottenburg,,Reuter,,,,,Bestand,,,*,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BE,NV,,,,2030,"1: Vorbereitung Planungs- und Ge- nehmigungsverfahren, 3: vor oder im PFV/ Genehmigung nach BImSchG,
 4: Genehmigt oder im Bau",,,,
 50HzT-P180,,,,,AC,,,0,,,,,,1,2030,40,,,,,,,,380,,,cable,,,,Reuter,,Teufelsbruch,,,,,Bestand,,,*,,,,,,,,,2030,,,,,
-50HzT-P213,,,43773,,AC,,,0,,,,,,1,2035,40,,8,6,,2,,,380,,,line,EnLAG,12,Interkonnektor DE – PL,Eisenhüttenstadt,,punkt Deutsch-Polnischen,,,,,Ausbau,,8,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,BB,,x,,EnLAG Nr. 12,,2: Im ROV/BFP,,,,double line
-50HzT-P213,,,13447,,AC,,,0,,,,,,1,2035,40,,7,,,,,,380,,,line,EnLAG,12,Einschleifung Eisenhüttenstadt,Eisenhüttenstadt,,Leitung Preilack – Neuenhagen,,,,,Ausbau,,7,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,BB,,,,EnLAG Nr. 12,2035,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-50HzT-P221,,,43774,,DC,,,0,,700,,,,1,2035,40,,60,2,,1,,,,,,cable,BBP,69,DC-Kabel Hansa PowerBridge (HPB,Umspannwerk Güstrow,,Punkt Bridge (HPB),,,,1000,Ausbau,,60,,,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,MV,,x,,BBP Nr. 69,2035,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,"HVDC, startpoint from Hansabridge I: Umspannwerk güstrow"
-50HzT-P450,,,,,AC,,,0,,,,,,1,2024,40,,89,,,,,,380,,,line,BBP,61,Ragow – Streumen,Ragow,,Streumen,,,,,Bestand,,,89,,horizontal,Leitung,"BB, SN",NO,,,BBP Nr. 61,2024,4: Genehmigt oder im Bau,,,,
-AMP-001,,,8292,,AC,,,0,,2700,,,,1,2022,40,,33,,,,,,380,,,line,EnLAG,2,Wehrendorf – St. Hülfe,Wehrendorf,,Punkt Lemförde,,,,,Bestand,,,33,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NI,NV,,,EnLAG Nr. 2,2022,4: Genehmigt oder im Bau,,,,4000A
+50HzT-P213,,,43773,,AC,,,0,,,,,,1,2035,40,,8,6,,2,,,380,,,line,EnLAG,12,Interkonnektor DE – PL,Eisenhüttenstadt,,punkt Deutsch-Polnischen,,,,,Ausbau,8,8,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,BB,,x,,EnLAG Nr. 12,,2: Im ROV/BFP,,,,double line
+50HzT-P213,,,13447,,AC,,,0,,,,,,1,2035,40,,7,,,,,,380,,,line,EnLAG,12,Einschleifung Eisenhüttenstadt,Eisenhüttenstadt,,Leitung Preilack – Neuenhagen,,,,,Ausbau,7,7,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,BB,,,,EnLAG Nr. 12,2035,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
+50HzT-P221,,,43774,,DC,,,0,,700,,,,1,2035,40,,60,2,,1,,,,,,cable,BBP,69,DC-Kabel Hansa PowerBridge (HPB,Umspannwerk Güstrow,,Punkt Bridge (HPB),,,,1000,Ausbau,60,60,,,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,MV,,x,,BBP Nr. 69,2035,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,"HVDC, startpoint from Hansabridge I: Umspannwerk güstrow"
+50HzT-P450,,,,,AC,,,0,,,,,,1,2024,40,,89,,,,,,380,,,line,BBP,61,Ragow – Streumen,Ragow,,Streumen,,,,,Bestand,89,,89,,horizontal,Leitung,"BB, SN",NO,,,BBP Nr. 61,2024,4: Genehmigt oder im Bau,,,,
+AMP-001,,,8292,,AC,,,0,,2700,,,,1,2022,40,,18.6,,,,,,380,,,line,EnLAG,2,Wehrendorf – St. Hülfe,Wehrendorf,,Punkt Lemförde,,,,,Bestand,33,,33,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NI,NV,,,EnLAG Nr. 2,2022,4: Genehmigt oder im Bau,,,,4000A
 AMP-001,,8292,,,AC,,,0,,2700,,,,1,2023,40,,,,,,,,380,,,line,EnLAG,2,,Punkt Lemförde,,Station Sankt Hülfe,,,,,Bestand,,,*,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NI,NV,,,EnLAG Nr. 2,2023,4: Genehmigt oder im Bau,,,,4000A
-AMP-009,,,4583,,AC,,,0,,,,,,1,2023,40,,73,,,,,,380,,,line,EnLAG,5,Niederrhein – Punkt Wettringen,Niederrhein,,Punkt Wettringen,,,,,Bestand,,,73,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NW,NV,x,,EnLAG Nr. 5,2023,"3: vor oder im PFV/ Genehmigung nach BImSchG,
+AMP-009,,,4583,,AC,,,0,,,,,,1,2023,40,,73,,,,,,380,,,line,EnLAG,5,Niederrhein – Punkt Wettringen,Niederrhein,,Punkt Wettringen,,,,,Bestand,73,,73,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NW,NV,x,,EnLAG Nr. 5,2023,"3: vor oder im PFV/ Genehmigung nach BImSchG,
 4: Genehmigt oder im Bau",,,,
-AMP-009,,,4583,,AC,,,0,,,,,,1,2023,40,,12,,,,,,380,,,cable,EnLAG,5,Niederrhein – Punkt Wettringen (Kabel),Niederrhein,,Punkt Wettringen (Kabel),,,,,Bestand,,,12,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NW,NV,x,,EnLAG Nr. 5,2023,4: Genehmigt oder im Bau,,,,
-AMP-009,,4583,,,AC,,,0,,,,,,1,2023,40,,65,,,,,,380,,,line,EnLAG,5,Punkt Wettringen – Punkt Meppen,Punkt Wettringen,,Meppen,,,,,Ausbau,,65,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"NI, NW",,x,,EnLAG Nr. 5,2023,"3: vor oder im PFV/ Genehmigung nach BImSchG
+AMP-009,,,4583,,AC,,,0,,,,,,1,2023,40,,12,,,,,,380,,,cable,EnLAG,5,Niederrhein – Punkt Wettringen (Kabel),Niederrhein,,Punkt Wettringen (Kabel),,,,,Bestand,12,,12,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NW,NV,x,,EnLAG Nr. 5,2023,4: Genehmigt oder im Bau,,,,
+AMP-009,,4583,,,AC,,,0,,,,,,1,2023,40,,65,,,,,,380,,,line,EnLAG,5,Punkt Wettringen – Punkt Meppen,Punkt Wettringen,,Meppen,,,,,Ausbau,65,65,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"NI, NW",,x,,EnLAG Nr. 5,2023,"3: vor oder im PFV/ Genehmigung nach BImSchG
 4: Genehmigt oder im Bau",,,,
-AMP-010,,11042,,,AC,,,0,,,,,,1,2027,40,,14,,,,,,380,,,line,EnLAG,"16,18",Punkt Gaste – Lüstringen,Punkt Gaste,,Lüstringen,,,,,Bestand,,,14,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung,Leitung,NI,NV,,,"EnLAG Nr. 16,
+AMP-010,,11042,,,AC,,,0,,,,,,1,2027,40,,14,,,,,,380,,,line,EnLAG,"16,18",Punkt Gaste – Lüstringen,Punkt Gaste,,Lüstringen,,,,,Bestand,14,,14,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung,Leitung,NI,NV,,,"EnLAG Nr. 16,
 18","2025,
 2027",4: Genehmigt oder im Bau,,,,
-AMP-010,,,,,AC,,,0,,,,,,1,2028,40,,21,,,,,,380,,,line,EnLAG,"16,18",Lüstringen – Wehrendorf,Lüstringen,,Wehrendorf,,,,,Bestand,,,21,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NI,NV,,,"EnLAG Nr. 16,
+AMP-010,,,,,AC,,,0,,,,,,1,2028,40,,21,,,,,,380,,,line,EnLAG,"16,18",Lüstringen – Wehrendorf,Lüstringen,,Wehrendorf,,,,,Bestand,21,,21,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NI,NV,,,"EnLAG Nr. 16,
 18","2026,
 2028",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-AMP-010,,,,,AC,,,0,,,,,,1,2028,40,,29,,,,,,380,,,line,EnLAG,"16,18",Lüstringen – Hesseln,Lüstringen,,Hesseln,,,,,Bestand,,,29,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,"NI, NW",NV,,,"EnLAG Nr. 16,
+AMP-010,,,,,AC,,,0,,,,,,1,2028,40,,29,,,,,,380,,,line,EnLAG,"16,18",Lüstringen – Hesseln,Lüstringen,,Hesseln,,,,,Bestand,29,,29,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,"NI, NW",NV,,,"EnLAG Nr. 16,
 18","2027,
 2028",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-AMP-010,,,,,AC,,,0,,,,,,1,2027,40,,29,,,,,,380,,,line,EnLAG,"16,18",Hesseln – Gütersloh,Hesseln,,Blankenhagen,,,,,Bestand,,,29,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NW,NV,,,"EnLAG Nr. 16,
+AMP-010,,,,,AC,,,0,,,,,,1,2027,40,,29,,,,,,380,,,line,EnLAG,"16,18",Hesseln – Gütersloh,Hesseln,,Blankenhagen,,,,,Bestand,29,,29,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NW,NV,,,"EnLAG Nr. 16,
 18","2026,
 2027",4: Genehmigt oder im Bau,,,,
-AMP-014,,4243,,,AC,,,0,,,,,,1,2021,40,,7,,,,,,380,,,line,EnLAG,"14,15",Punkt Fellerhöfe – Punkt St. Tönis,Punkt Fellerhöfe,,Station St. Tönis,,,,,Bestand,,,7,380,Errichtung einer Leitung: Ersatzneubau,Leitung,NW,NV,,,"EnLAG Nr. 14,
+AMP-014,,4243,,,AC,,,0,,,,,,1,2021,40,,7,,,,,,380,,,line,EnLAG,"14,15",Punkt Fellerhöfe – Punkt St. Tönis,Punkt Fellerhöfe,,Station St. Tönis,,,,,Bestand,7,,7,380,Errichtung einer Leitung: Ersatzneubau,Leitung,NW,NV,,,"EnLAG Nr. 14,
 15",2021,4: Genehmigt oder im Bau,,,,
-AMP-014,,,3979,,AC,,,0,,,,,,1,2021,40,,6.5,,,,,,380,,,line,EnLAG,"14,15",Punkt St. Tönis – Punkt Hüls-West,Station St. Tönis,,Punkt Hüls-West,,,,,Bestand,,,6.5,380,Änderung oder Erweiterung einer Leitung: Zuoder Umbeseilung,Leitung,NW,NV,,,"EnLAG Nr. 14,
+AMP-014,,,3979,,AC,,,0,,,,,,1,2021,40,,6.5,,,,,,380,,,line,EnLAG,"14,15",Punkt St. Tönis – Punkt Hüls-West,Station St. Tönis,,Punkt Hüls-West,,,,,Bestand,6.5,,6.5,380,Änderung oder Erweiterung einer Leitung: Zuoder Umbeseilung,Leitung,NW,NV,,,"EnLAG Nr. 14,
 15",2021,4: Genehmigt oder im Bau,,,,
-AMP-014,,,3979,,AC,,,0,,,,,,1,2021,40,,14,,,,,,380,,,line,EnLAG,"14,15",Utfort – Pkt. Hüls-West,Utfort,,Punkt Hüls-West,,,,,Bestand,,,14,380,Errichtung einer Leitung: Ersatzneubau,Leitung,NW,NV,,,"EnLAG Nr. 14,
+AMP-014,,,3979,,AC,,,0,,,,,,1,2021,40,,14,,,,,,380,,,line,EnLAG,"14,15",Utfort – Pkt. Hüls-West,Utfort,,Punkt Hüls-West,,,,,Bestand,14,,14,380,Errichtung einer Leitung: Ersatzneubau,Leitung,NW,NV,,,"EnLAG Nr. 14,
 15",2021,4: Genehmigt oder im Bau,,,,
-AMP-014,,,,,AC,,,0,,,,,,1,2021,40,,20,,,,,,380,,,line,EnLAG,"14,15",Osterath – Gohrpunkt,Osterath,,Gohrpunkt,,,,,Bestand,,,20,380,Errichtung einer Leitung: Ersatzneubau,Leitung,NW,NV,,,"EnLAG Nr. 14,
+AMP-014,,,,,AC,,,0,,,,,,1,2021,40,,20,,,,,,380,,,line,EnLAG,"14,15",Osterath – Gohrpunkt,Osterath,,Gohrpunkt,,,,,Bestand,20,,20,380,Errichtung einer Leitung: Ersatzneubau,Leitung,NW,NV,,,"EnLAG Nr. 14,
 15",2021,4: Genehmigt oder im Bau,,,,
-AMP-014,,,,,AC,,,0,,,,,,1,2021,40,,10,,,,,,380,,,line,EnLAG,"14,15",Gohrpunkt – Rommerskirchen,Gohrpunkt,,Rommerskirchen,,,,,Bestand,,,10,380,Errichtung einer Leitung: Ersatzneubau,Leitung,NW,NV,,,"EnLAG Nr. 14,
+AMP-014,,,,,AC,,,0,,,,,,1,2021,40,,10,,,,,,380,,,line,EnLAG,"14,15",Gohrpunkt – Rommerskirchen,Gohrpunkt,,Rommerskirchen,,,,,Bestand,10,,10,380,Errichtung einer Leitung: Ersatzneubau,Leitung,NW,NV,,,"EnLAG Nr. 14,
 15",2021,4: Genehmigt oder im Bau,,,,
-AMP-014,,,,,AC,,,0,,,,,,1,2021,40,,50,,,,,,380,,,line,EnLAG,"14,15",Utfort – Osterath,Utfort,,Osterath,,,,,Bestand,,,50,380,Änderung oder Erweiterung einer Leitung: Zuoder Umbeseilung,Leitung,NW,NV,,,"EnLAG Nr. 14,
+AMP-014,,,,,AC,,,0,,,,,,1,2021,40,,50,,,,,,380,,,line,EnLAG,"14,15",Utfort – Osterath,Utfort,,Osterath,,,,,Bestand,50,,50,380,Änderung oder Erweiterung einer Leitung: Zuoder Umbeseilung,Leitung,NW,NV,,,"EnLAG Nr. 14,
 15",2021,4: Genehmigt oder im Bau,,,,
-AMP-014,,4941,5449,,AC,,,0,,,,,,1,2021,40,,2,,,,,,380,,,line,EnLAG,"14,15",Punkt Birkenhof – Gellep,Punkt Birkenhof,,Gellep,,,,,Bestand,,,2,380,Errichtung einer Leitung: Ersatzneubau,Leitung,NW,NV,,,"EnLAG Nr. 14,
+AMP-014,,4941,5449,,AC,,,0,,,,,,1,2021,40,,2,,,,,,380,,,line,EnLAG,"14,15",Punkt Birkenhof – Gellep,Punkt Birkenhof,,Gellep,,,,,Bestand,2,,2,380,Errichtung einer Leitung: Ersatzneubau,Leitung,NW,NV,,,"EnLAG Nr. 14,
 15",2021,4: Genehmigt oder im Bau,,,,
-AMP-018,,,,,AC,,,0,,,,,,1,2021,40,,38,6,,2,,,380,,,line,15,15,Rommerskirchen – Sechtem,Rommerskirchen,,Sechtem,,,,,Bestand,,,38,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NW,NV,,,15,2021,4: Genehmigt oder im Bau,,,,"one existing, two new circuit"
-AMP-022,,,,,AC,,,0,,,,,,1,2024,40,,21,,,,,,380,,,line,EnLAG,19,Kruckel – Punkt Ochsenkopf,Kruckel,,Garenfeld,,,,,Bestand,,,21,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NW,NV,,,EnLAG Nr. 19,"2022,
+AMP-018,,,,,AC,,,0,,,,,,1,2021,40,,38,6,,2,,,380,,,line,15,15,Rommerskirchen – Sechtem,Rommerskirchen,,Sechtem,,,,,Bestand,38,,38,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NW,NV,,,15,2021,4: Genehmigt oder im Bau,,,,"one existing, two new circuit"
+AMP-022,,,,,AC,,,0,,,,,,1,2024,40,,21,,,,,,380,,,line,EnLAG,19,Kruckel – Punkt Ochsenkopf,Kruckel,,Garenfeld,,,,,Bestand,21,,21,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NW,NV,,,EnLAG Nr. 19,"2022,
 2024",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,new constructuion
-AMP-022,,,,,AC,,,0,,,,,,1,2024,40,,105,,,,,,380,,,line,EnLAG,19,Kruckel – Punkt Ochsenkopf,Garenfeld,,Altenkleusheim,,,,,Bestand,,,*,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NW,NV,,,EnLAG Nr. 19,"2022,
+AMP-022,,,,,AC,,,0,,,,,,1,2024,40,,67.6,,,,,,380,,,line,EnLAG,19,Kruckel – Punkt Ochsenkopf,Garenfeld,,Altenkleusheim,,,,,Bestand,105,,*,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NW,NV,,,EnLAG Nr. 19,"2022,
 2024",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,new constructuion
 AMP-022,,,,,AC,,,0,,,,,,1,2025,40,,,,,,,,380,,,line,EnLAG,19,Punkt Ochsenkopf – Dauersberg,Altenkleusheim,,Setzer Wiese,,,,,Bestand,,,*,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,"NW, RP",NV,x,,EnLAG Nr. 19,"2021/
 2025,
@@ -92,28 +92,28 @@ AMP-022,,,,,AC,,,0,,,,,,1,2025,40,,,,,,,,380,,,line,EnLAG,19,Punkt Ochsenkopf �
 2022/
 2026","3: vor oder im PFV/ Genehmigung nach BImSchG,
 4: Genehmigt oder im Bau",,,,new constructuion
-AMP-028,,,2712,,AC,,,0,,,,,,1,2025,40,,5,,,,,,380,,,line,,,Punkt Wanne – Punkt Günnigfeld,Station Wanne,,Punkt Günnigfeld,,,,,Bestand,,,5,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung,Leitung,NW,NV,,,,"2024/
+AMP-028,,,2712,,AC,,,0,,,,,,1,2025,40,,5,,,,,,380,,,line,,,Punkt Wanne – Punkt Günnigfeld,Station Wanne,,Punkt Günnigfeld,,,,,Bestand,5,,5,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung,Leitung,NW,NV,,,,"2024/
 2025,
 2025/
 2026",1: Vorbereitung Planungs- und Geneh- migungsverfahren,,,,
-AMP-032,,,,,AC,,,0,,,,,,1,2026,40,,21,,,,,,380,,,line,EnLAG,14,Niederrhein – Utfort,Niederrhein,,Utfort,,,,,Bestand,,,21,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NW,NV,,,EnLAG Nr. 14,"2024,
+AMP-032,,,,,AC,,,0,,,,,,1,2026,40,,21,,,,,,380,,,line,EnLAG,14,Niederrhein – Utfort,Niederrhein,,Utfort,,,,,Bestand,21,,21,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NW,NV,,,EnLAG Nr. 14,"2024,
 2026",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-AMP-P41,,7095,,,AC,,,0,,,,,,1,2027,40,,105,,,,,,380,,,line,BBPIG,15,Punkt Metternich – Niederstedem,Punkt Metternich,,Wengerohr,,,,,Bestand,,,105,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,RP,NV,,,BBP Nr. 15,"2026,
+AMP-P41,,7095,,,AC,,,0,,,,,,1,2027,40,,67.8,,,,,,380,,,line,BBPIG,15,Punkt Metternich – Niederstedem,Punkt Metternich,,Wengerohr,,,,,Bestand,105,,105,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,RP,NV,,,BBP Nr. 15,"2026,
 2027",3: vor oder im Planfeststellungsverfahren/Genehmigung nach Bundes-Immissionsschutzgesetz,,,,
 AMP-P41,,,,,AC,,,0,,,,,,1,2027,40,,,,,,,,380,,,line,BBPIG,15,Punkt Metternich – Niederstedem,Wengerohr,,Niederstedem,,,,,Bestand,,,*,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,RP,NV,,,BBP Nr. 15,"2026,
 2027",3: vor oder im Planfeststellungsverfahren/Genehmigung nach Bundes-Immissionsschutzgesetz,,,,
-AMP-P47,,,,,AC,,,0,,,,,,1,2024,40,,66,,,,,,380,,,line,BBPIG,19,Urberach – Pfungstadt – Weinheim,Urberach,,Pfungstadt,,,,,Ausbau,,6,60,380,"Errichtung einer Leitung: Neubau in neuer Trasse, Errichtung einer
+AMP-P47,,,,,AC,,,0,,,,,,1,2024,40,,31.1,,,,,,380,,,line,BBPIG,19,Urberach – Pfungstadt – Weinheim,Urberach,,Pfungstadt,,,,,Ausbau,66,6,60,380,"Errichtung einer Leitung: Neubau in neuer Trasse, Errichtung einer
 Leitung: Ersatzneu- bau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung",Leitung,"HE, BW",NVA,x,,BBP Nr. 19,2024,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
 AMP-P47,,,,,AC,,,0,,,,,,1,2025,40,,,,,,,,380,,,line,BBPIG,19,,Pfungstadt,,Weinheim,,,,,Bestand,,,*,380,"Errichtung einer Leitung: Neubau in neuer Trasse, Errichtung einer
 Leitung: Ersatzneu- bau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung",Leitung,"HE, BW",NVA,x,,BBP Nr. 19,"2024,
 2025",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-AMP-P47a,,,31006,,AC,,,0,,,,,,1,2025,40,,11,,,,,,380,,,line,BBPIG,76,Punkt Kriftel – Farbwerke Höchst-Süd,Kriftel,,Farbwerke Höchst-Süd,,,,,Bestand,,,11,380,"Errichtung einer Leitung: Ersatzneubau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung",Leitung,HE,NV,,,BBP Nr. 76,"2024,
+AMP-P47a,,,31006,,AC,,,0,,,,,,1,2025,40,,11,,,,,,380,,,line,BBPIG,76,Punkt Kriftel – Farbwerke Höchst-Süd,Kriftel,,Farbwerke Höchst-Süd,,,,,Bestand,11,,11,380,"Errichtung einer Leitung: Ersatzneubau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung",Leitung,HE,NV,,,BBP Nr. 76,"2024,
 2025",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-AMP-P52,,12967,,,AC,,,0,,,,,,1,2024,40,,61,,,,,,380,,,line,BBPIG,24,Punkt Rommelsbach – Herbertingen,Punkt Rommelsbach,,Herbertingen,,,,,Bestand,,,61,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BW,NV,,,BBP Nr. 24,"2022,
+AMP-P52,,12967,,,AC,,,0,,,,,,1,2024,40,,61,,,,,,380,,,line,BBPIG,24,Punkt Rommelsbach – Herbertingen,Punkt Rommelsbach,,Herbertingen,,,,,Bestand,61,,61,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BW,NV,,,BBP Nr. 24,"2022,
 2024",4: Genehmigt oder im Bau,,,,
-AMP-P52,,7994,,,AC,,,0,,,,,,1,2021,40,,88,,,,,,380,,,line,BBPIG,25,Punkt Wullenstetten – Punkt Niederwangen,Punkt Wullenstetten,,Dellmensingen,,,,,Bestand,,,88,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung,Leitung,"BY, BW",NV,x,,BBP Nr. 25,2021,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-AMP-P52,,,10363,,AC,,,0,,,,,,1,2021,40,,88,,,,,,380,,,line,BBPIG,25,Punkt Wullenstetten – Punkt Niederwangen,Dellmensingen,,Punkt Niederwangen,,,,,Bestand,,,*,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung,Leitung,"BY, BW",NV,x,,BBP Nr. 25,2021,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-AMP-P310,,,,,AC,,,0,,,,,,1,2023,40,,285,,,,,,380,,,line,,,Bürstadt – Kühmoos (Kühmoos-Maximiliansau-Weingarten-Mutterstadt-Lambsheim-Bürstadt),Bürstadt,,Lambsheim,,,,,Bestand,,,285,380,"Errichtung einer Leitung: Ersatzneubau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung",Leitung,"HE,
+AMP-P52,,7994,,,AC,,,0,,,,,,1,2021,40,,88,,,,,,380,,,line,BBPIG,25,Punkt Wullenstetten – Punkt Niederwangen,Punkt Wullenstetten,,Dellmensingen,,,,,Bestand,88,,88,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung,Leitung,"BY, BW",NV,x,,BBP Nr. 25,2021,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
+AMP-P52,,,10363,,AC,,,0,,,,,,1,2021,40,,88,,,,,,380,,,line,BBPIG,25,Punkt Wullenstetten – Punkt Niederwangen,Dellmensingen,,Punkt Niederwangen,,,,,Bestand,88,,*,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung,Leitung,"BY, BW",NV,x,,BBP Nr. 25,2021,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
+AMP-P310,,,,,AC,,,0,,,,,,1,2023,40,,36,,,,,,380,,,line,,,Bürstadt – Kühmoos (Kühmoos-Maximiliansau-Weingarten-Mutterstadt-Lambsheim-Bürstadt),Bürstadt,,Lambsheim,,,,,Bestand,285,,285,380,"Errichtung einer Leitung: Ersatzneubau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung",Leitung,"HE,
 RP, BW",NV,,,,2023,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,"M485, HTLS"
 AMP-P310,,,,,AC,,,0,,,,,,1,2023,40,,,,,,,,380,,,line,,,,Lambsheim,,Mutterstadt,,,,,Bestand,,,*,380,"Errichtung einer Leitung: Ersatzneubau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung",Leitung,"HE,
 RP, BW",NV,,,,2023,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,"M485, HTLS"
@@ -123,135 +123,135 @@ AMP-P310,,,,,AC,,,0,,,,,,1,2023,40,,,,,,,,380,,,line,,,,Weingarten,,Maximiliansa
 RP, BW",NV,,,,2023,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,"M485, HTLS"
 AMP-P310,,,,,AC,,,0,,,,,,1,2023,40,,,,,,,,380,,,line,,,,Maximiliansau,,Kühmoos,,,,,Bestand,,,*,380,"Errichtung einer Leitung: Ersatzneubau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung",Leitung,"HE,
 RP, BW",NV,,,,2023,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,"M485, HTLS"
-AMP-P460,,,33918,,AC,,,0,,400,,,,1,2025,40,,3.4,,,,,,380,,,line,,,Büscherhof – Umbeseilung und Schaltfelderweiterung,Büscherhof,,zu neue 380-kV-Anlage,,,,,Bestand,,,3.4,380,"Änderung oder Erweiterung einer Leitung: Zu- oder
+AMP-P460,,,33918,,AC,,,0,,400,,,,1,2025,40,,3.4,,,,,,380,,,line,,,Büscherhof – Umbeseilung und Schaltfelderweiterung,Büscherhof,,zu neue 380-kV-Anlage,,,,,Bestand,3.4,,3.4,380,"Änderung oder Erweiterung einer Leitung: Zu- oder
 Umbeseilung",Leitung,NW,NV,,,,"2023,
 2025",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,M687
-TTG-006,,,,,AC,,,0,,,,,,1,2024,40,,221,3,,1,,,380,,,line,EnLAG,6,Wahle – Mecklar,Wahle,,Lamspringe,,,,,Ausbau,,221,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"NI, HE",,x,,EnLAG Nr. 6,"2023,
+TTG-006,,,,,AC,,,0,,,,,,1,2024,40,,86,3,,1,,,380,,,line,EnLAG,6,Wahle – Mecklar,Wahle,,Lamspringe,,,,,Ausbau,221,221,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"NI, HE",,x,,EnLAG Nr. 6,"2023,
 2024",4: Genehmigt oder im Bau,,,,
 TTG-006,,,,,AC,,,0,,,,,,1,2024,40,,,3,,1,,,380,,,line,EnLAG,6,,Lamspringe,,Erzhausen,,,,,Ausbau,,*,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"NI, HE",,x,,EnLAG Nr. 6,2024,4: Genehmigt oder im Bau,,,,Erdkabel
 TTG-006,,,,,AC,,,0,,,,,,1,2024,40,,,3,,1,,,380,,,line,EnLAG,6,,Erzhausen,,Hardegsen,,,,,Ausbau,,*,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"NI, HE",,x,,EnLAG Nr. 6,2024,4: Genehmigt oder im Bau,,,,Erdkabel
 TTG-006,,,,,AC,,,0,,,,,,1,2024,40,,,3,,1,,,380,,,line,EnLAG,6,,Hardegsen,,Mecklar,,,,,Ausbau,,*,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"NI, HE",,x,,EnLAG Nr. 6,2024,4: Genehmigt oder im Bau,,,,Erdkabel
-TTG-007,,,,,AC,,,0,,2400,,,,1,2024,40,,31,6,,2,,,380,,,line,EnLAG,5,Dörpen / West – Niederrhein (Punkt Meppen),Dörpen West,,Meppen,,,,,Ausbau,,31,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,NI,,x,,EnLAG Nr. 5,2024,"4: Genehmigt oder im Bau,
+TTG-007,,,,,AC,,,0,,2400,,,,1,2024,40,,31,6,,2,,,380,,,line,EnLAG,5,Dörpen / West – Niederrhein (Punkt Meppen),Dörpen West,,Meppen,,,,,Ausbau,31,31,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,NI,,x,,EnLAG Nr. 5,2024,"4: Genehmigt oder im Bau,
 5: Realisiert",,,,3600A
-TTG-009,,,,,AC,,,0,,,,,,1,2024,40,,61,6,,2,,,380,,,line,EnLAG,2,Ganderkesee – St. Hülfe,Ganderkesee,,Station Sankt Hülfe,,,,,Ausbau,,61,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,NI,,x,,EnLAG Nr. 2,"2023,
+TTG-009,,,,,AC,,,0,,,,,,1,2024,40,,61,6,,2,,,380,,,line,EnLAG,2,Ganderkesee – St. Hülfe,Ganderkesee,,Station Sankt Hülfe,,,,,Ausbau,61,61,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,NI,,x,,EnLAG Nr. 2,"2023,
 2024",4: Genehmigt oder im Bau,,,,
-TTG-P21,,,,,AC,,,0,,5400,,,,1,2023,40,,77(54),6,,2,,,380,,,line,,,Conneforde – Garrel/ Ost – Cappeln/West,Conneforde,,Garrel,,,,,Bestand,,,77,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NI,NV,x,,6,"2022,
+TTG-P21,,,,,AC,,,0,,5400,,,,1,2023,40,,54,6,,2,,,380,,,line,,,Conneforde – Garrel/ Ost – Cappeln/West,Conneforde,,Garrel,,,,,Bestand,77,,77,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NI,NV,x,,6,"2022,
 2023",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,4000A each circuit
-TTG-P21,,,32640,,AC,,,0,,,,,,1,2026,40,,23,6,,2,,,380,,,line,,,,Garrel,,Punkt Cappeln West,,,,,Bestand,,,*,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NI,NV,x,,6,"2025,
+TTG-P21,,,32640,,AC,,,0,,,,,,1,2026,40,,23,6,,2,,,380,,,line,,,,Garrel,,Punkt Cappeln West,,,,,Bestand,23,,*,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NI,NV,x,,6,"2025,
 2026",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-TTG-P21/AMP-P21,,32640,2153,,AC,,,0,,,,,,1,2026,40,,21,6,,2,,,380,,,line,,,Cappeln/West – Regelzonengrenze TTG/AMP-Merzen,Punkt Cappeln West,,Merzen,,,,,Ausbau,,21,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,NI,,x,,6,"2025,
+TTG-P21/AMP-P21,,32640,2153,,AC,,,0,,,,,,1,2026,40,,21,6,,2,,,380,,,line,,,Cappeln/West – Regelzonengrenze TTG/AMP-Merzen,Punkt Cappeln West,,Merzen,,,,,Ausbau,21,21,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,NI,,x,,6,"2025,
 2026",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-TTG-P24,,,,,AC,,,0,,5400,,,,1,2026,40,,10,6,,2,,,380,,,line,BBP,7,Stade/West – Dollern,Stade-West,,Dollern,,,,,Bestand,,,10,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NI,NV,x,,BBP Nr. 7,"2025,
+TTG-P24,,,,,AC,,,0,,5400,,,,1,2026,40,,10,6,,2,,,380,,,line,BBP,7,Stade/West – Dollern,Stade-West,,Dollern,,,,,Bestand,10,,10,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NI,NV,x,,BBP Nr. 7,"2025,
 2026",4: Genehmigt oder im Bau,,,,4000A each circuit
-TTG-P24,,,,,AC,,,0,,5400,,,,1,2021,40,,60,6,,2,,,380,,,line,BBP,7,Dollern – Sottrum,Dollern,,Sottrum,,,,,Bestand,,,60,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NI,NV,x,,BBP Nr. 7,2021,"3: vor oder im PFV/ Genehmigung nach BImSchG,
+TTG-P24,,,,,AC,,,0,,5400,,,,1,2021,40,,60,6,,2,,,380,,,line,BBP,7,Dollern – Sottrum,Dollern,,Sottrum,,,,,Bestand,60,,60,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NI,NV,x,,BBP Nr. 7,2021,"3: vor oder im PFV/ Genehmigung nach BImSchG,
 4: Genehmigt oder im Bau",,,,4000A each circuit
-TTG-P24,,,,,AC,,,0,,5400,,,,1,2026,40,,42,6,,2,,,380,,,line,BBP,7,Sottrum – Mehringen (Grafschaft Hoya),Sottrum,,Hoya,,,,,Bestand,,,42,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NI,NV,x,,BBP Nr. 7,2026,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,4000A each circuit
-TTG-P24,,,,,AC,,,0,,5400,,,,1,2026,40,,45,6,,2,,,380,,,line,BBP,7,Mehringen (Grafschaft Hoya) – Landesbergen,Hoya,,Landesbergen,,,,,Bestand,,,45,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NI,NV,x,,BBP Nr. 7,2026,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,4000A each circuit
-TTG-P25,,,,,AC,,,0,,,,,,1,2026,40,,46,6,,2,,,380,,,line,BBP,8,Heide/West – Husum/Nord,Heide-West,,Husum Nord,,,,,Ausbau,,46,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,SH,,x,,BBP Nr. 8,2026,4: Genehmigt oder im Bau,,,,
-TTG-P25,,,,,AC,,,0,,,,,,1,2021,40,,38,6,,2,,,380,,,line,BBP,8,Husum/Nord – Klixbüll/Süd,Husum Nord,,Niebüll,,,,,Ausbau,,38,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,SH,,x,,BBP Nr. 8,2021,4: Genehmigt oder im Bau,,,,
-TTG-P25,,,,,AC,,,0,,,,,,1,2022,40,,16,6,,2,,,380,,,line,BBP,8,Klixbüll/Süd – Bundesgrenze DK,Niebüll,,Punkt Bundesgrenze DK,,,,,Ausbau,,16,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,SH,,x,x,BBP Nr. 8,2022,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-TTG-P33,,,,,AC,,,0,,,,,,1,2023,40,,65,6,,2,,,380,,,line,BBP,10,Wahle – Hattorf – Helmstedt – Landes- grenze NI/ST (Mast 6) – Wolmirstedt,Wahle,,Hattorf,,,,,Bestand,,,65,380,Umbeseilung,Leitung,NI,NV,,,BBP Nr. 10,2023,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
+TTG-P24,,,,,AC,,,0,,5400,,,,1,2026,40,,42,6,,2,,,380,,,line,BBP,7,Sottrum – Mehringen (Grafschaft Hoya),Sottrum,,Hoya,,,,,Bestand,42,,42,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NI,NV,x,,BBP Nr. 7,2026,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,4000A each circuit
+TTG-P24,,,,,AC,,,0,,5400,,,,1,2026,40,,45,6,,2,,,380,,,line,BBP,7,Mehringen (Grafschaft Hoya) – Landesbergen,Hoya,,Landesbergen,,,,,Bestand,45,,45,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NI,NV,x,,BBP Nr. 7,2026,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,4000A each circuit
+TTG-P25,,,,,AC,,,0,,,,,,1,2026,40,,46,6,,2,,,380,,,line,BBP,8,Heide/West – Husum/Nord,Heide-West,,Husum Nord,,,,,Ausbau,46,46,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,SH,,x,,BBP Nr. 8,2026,4: Genehmigt oder im Bau,,,,
+TTG-P25,,,,,AC,,,0,,,,,,1,2021,40,,38,6,,2,,,380,,,line,BBP,8,Husum/Nord – Klixbüll/Süd,Husum Nord,,Niebüll,,,,,Ausbau,38,38,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,SH,,x,,BBP Nr. 8,2021,4: Genehmigt oder im Bau,,,,
+TTG-P25,,,,,AC,,,0,,,,,,1,2022,40,,16,6,,2,,,380,,,line,BBP,8,Klixbüll/Süd – Bundesgrenze DK,Niebüll,,Punkt Bundesgrenze DK,,,8.910507 54.903755,,Ausbau,16,16,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,SH,,x,x,BBP Nr. 8,2022,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
+TTG-P33,,,,,AC,,,0,,,,,,1,2023,40,,36.6,6,,2,,,380,,,line,BBP,10,Wahle – Hattorf – Helmstedt – Landes- grenze NI/ST (Mast 6) – Wolmirstedt,Wahle,,Hattorf,,,,,Bestand,65,,65,380,Umbeseilung,Leitung,NI,NV,,,BBP Nr. 10,2023,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
 TTG-P33,,,,,AC,,,0,,,,,,1,2025,40,,,6,,2,,,380,,,line,BBP,10,Wahle – Hattorf – Helmstedt – Landes- grenze NI/ST (Mast 6) – Wolmirstedt,Hattorf,,Helmstedt,,,,,Bestand,,,*,380,Umbeseilung,Leitung,NI,NV,,,BBP Nr. 10,2025,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-TTG-P33,,,,,AC,,,0,,3600,,,,1,2025,40,,65,6,,2,,,380,,,line,BBP,10,Wahle – Hattorf – Helmstedt – Landes- grenze NI/ST (Mast 6) – Wolmirstedt,Helmstedt,,Wolmirstedt,,,,,Bestand,,,*,380,Umbeseilung,Leitung,NI,NV,,,BBP Nr. 10,2025,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-TTG-P46,,,,,AC,,,0,,2700,,,,1,2022,40,,182,6,,2,,,380,,,line,BBP,18,Redwitz – Mechlenreuth – Etzenricht – Schwandorf (Ostbayernring),Redwitz,,Mechlenreuth,,,,,Bestand,,,182,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BY,NV,,,BBP Nr. 18,2022,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,4000A For both circuits?
+TTG-P33,,,,,AC,,,0,,3600,,,,1,2025,40,,65,6,,2,,,380,,,line,BBP,10,Wahle – Hattorf – Helmstedt – Landes- grenze NI/ST (Mast 6) – Wolmirstedt,Helmstedt,,Wolmirstedt,,,,,Bestand,65,,*,380,Umbeseilung,Leitung,NI,NV,,,BBP Nr. 10,2025,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
+TTG-P46,,,,,AC,,,0,,2700,,,,1,2022,40,,107.1,6,,2,,,380,,,line,BBP,18,Redwitz – Mechlenreuth – Etzenricht – Schwandorf (Ostbayernring),Redwitz,,Mechlenreuth,,,,,Bestand,182,,182,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BY,NV,,,BBP Nr. 18,2022,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,4000A For both circuits?
 TTG-P46,,,,,AC,,,0,,2700,,,,1,2025,40,,,6,,2,,,380,,,line,BBP,18,,Mechlenreuth,,Etzenricht,,,,,Bestand,,,*,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BY,NV,,,BBP Nr. 18,"2024 /
 2025",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,4000A For both circuits?
-TTG-P46,,,,,AC,,,0,,2700,,,,1,2025,40,,44.4,6,,2,,,380,,,line,BBP,18,,Etzenricht,,Schwandorf,,,,,Bestand,,,*,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BY,NV,,,BBP Nr. 18,"2024 /
+TTG-P46,,,,,AC,,,0,,2700,,,,1,2025,40,,44.4,6,,2,,,380,,,line,BBP,18,,Etzenricht,,Schwandorf,,,,,Bestand,44.4,,*,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BY,NV,,,BBP Nr. 18,"2024 /
 2025",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,4000A For both circuits?
-TTG-P48,,,13093,,AC,,,0,,2700,,,,1,2025,40,,50,3,,1,,,380,,,line,BBP,20,Grafenrheinfeld – Punkt Rittershausen,Grafenrheinfeld,,Punkt Rittershausen,,,,,Bestand,,,50,380,Zubeseilung,Leitung,BY,NV,,,BBP Nr. 20,"2024 /
+TTG-P48,,,13093,,AC,,,0,,2700,,,,1,2025,40,,50,3,,1,,,380,,,line,BBP,20,Grafenrheinfeld – Punkt Rittershausen,Grafenrheinfeld,,Punkt Rittershausen,,,,,Bestand,50,,50,380,Zubeseilung,Leitung,BY,NV,,,BBP Nr. 20,"2024 /
 2025",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-TTG-P67,,,,,AC,,,0,,2700,,,,1,2024,40,,13,6,,2,,,380,,,line,BBP,32,Simbach – Matzenhof - Bundesgrenze AT,Simbach,,Punkt Matzenhof,,,,,Bestand,,,13,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BY,NV,x,x,BBP Nr. 32,2024,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,4000A For both circuits?
-TTG-P67,,,,,AC,,,0,,2700,,,,1,2026,40,,,6,,2,,,380,,,line,BBP,32,,Punkt Matzenhof,,Bundesgrenze AT,,,,,Bestand,,,*,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BY,NV,x,x,BBP Nr. 32,"2024,
+TTG-P67,,,13016,,AC,,,0,,2700,,,,1,2024,40,,13,6,,2,,,380,,,line,BBP,32,Simbach – Matzenhof - Bundesgrenze AT,Simbach,,Punkt Matzenhof,,,,,Bestand,13,,13,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BY,NV,x,x,BBP Nr. 32,2024,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,4000A For both circuits?
+TTG-P67,,13016,,,AC,,,0,,2700,,,,1,2026,40,,7,6,,2,,,380,,,line,BBP,32,,Punkt Matzenhof,,Bundesgrenze AT,,,13.060147 48.272481,,Bestand,,,*,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BY,NV,x,x,BBP Nr. 32,"2024,
 2026",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,4000A For both circuits?
-TTG-P67,,,,,AC,,,0,,2700,,,,1,2026,40,,7,6,,2,,,380,,,line,BBP,32,Altheim – Adlkofen,Altheim,,Punkt Adlkofen,,,,,Bestand,,,7,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BY,NV,x,x,BBP Nr. 32,"2024,
+TTG-P67,,,34998,,AC,,,0,,2700,,,,1,2026,40,,7,6,,2,,,380,,,line,BBP,32,Altheim – Adlkofen,Altheim,,Punkt Adlkofen,,,,,Bestand,7,,7,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BY,NV,x,x,BBP Nr. 32,"2024,
 2026",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,4000A For both circuits?
-TTG-P67,,,,,AC,,,0,,2700,,,,1,2026,40,,66,6,,2,,,380,,,line,BBP,32,Adlkofen – Matzenhof,Punkt Adlkofen,,Matzenhof,,,,,Bestand,,,66,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BY,NV,x,x,BBP Nr. 32,"2024,
+TTG-P67,,34998,13016,,AC,,,0,,2700,,,,1,2026,40,,66,6,,2,,,380,,,line,BBP,32,Adlkofen – Matzenhof,Punkt Adlkofen,,Matzenhof,,,,,Bestand,66,,66,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BY,NV,x,x,BBP Nr. 32,"2024,
 2026",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,4000A For both circuits?
-TTG-P69,,,,,AC,,,0,,2400,,,,1,2026,40,,61,6,,2,,,380,,,line,BBP,34,Emden / Ost – Conneforde,Emden-Borssum,,Conneforde,,,,,Bestand,,,61,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NI,NV,x,,BBP Nr. 34,"2024,
+TTG-P69,,,,,AC,,,0,,2400,,,,1,2026,40,,61,6,,2,,,380,,,line,BBP,34,Emden / Ost – Conneforde,Emden-Borssum,,Conneforde,,,,,Bestand,61,,61,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,NI,NV,x,,BBP Nr. 34,"2024,
 2026",4: Genehmigt oder im Bau,,,,3600A for both circuits?
-TTG-P72,,,,,AC,,,0,,,,,,1,2022,40,,50,6,,2,,,380,,,line,BBP,42,Kreis Segeberg – Lübeck / West,Hamburg Nord,,Lübeck,,,,,Bestand,,,50,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,SH,NV,x,,BBP Nr. 42,"2021,
+TTG-P72,,,,,AC,,,0,,,,,,1,2022,40,,50,6,,2,,,380,,,line,BBP,42,Kreis Segeberg – Lübeck / West,Hamburg Nord,,Lübeck,,,,,Bestand,50,,50,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,SH,NV,x,,BBP Nr. 42,"2021,
 2022",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-TTG-P118,,,,,AC,,,0,,2700,,,,1,2025,40,,41,6,,2,,,380,,,line,BBP,43,Borken – Mecklar,Borken,,Mecklar,,,,,Bestand,,,41,380,Umbeseilung,Leitung,HE,NV,,,BBP Nr. 43,2025,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,"HTL Umbeseilung, 4000A for both circuits"
-TTG-P151,,,,,AC,,,0,,2700,,,,1,2024,40,,43,6,,2,,,380,,,line,BBP,45,Borken – Twistetal,Borken,,Twistetal,,,,,Bestand,,,43,380,Umbeseilung,Leitung,HE,NV,,,BBP Nr. 45,"2023,
+TTG-P118,,,,,AC,,,0,,2700,,,,1,2025,40,,41,6,,2,,,380,,,line,BBP,43,Borken – Mecklar,Borken,,Mecklar,,,,,Bestand,41,,41,380,Umbeseilung,Leitung,HE,NV,,,BBP Nr. 43,2025,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,"HTL Umbeseilung, 4000A for both circuits"
+TTG-P151,,,,,AC,,,0,,2700,,,,1,2024,40,,43,6,,2,,,380,,,line,BBP,45,Borken – Twistetal,Borken,,Twistetal,,,,,Bestand,43,,43,380,Umbeseilung,Leitung,HE,NV,,,BBP Nr. 45,"2023,
 2024","3: vor oder im PFV/ Genehmigung nach BImSchG,
 4: Genehmigt oder im Bau",,,,"HTL Umbeseilung, 4000A for both circuits"
-TTG-P185,,,12982,,AC,,,0,,2400,,,,1,2023,40,,38,,,,,,380,,,line,BBP,46,Redwitz – Landes- grenze BY / TH (Punkt Tschirn),Redwitz,,Punkt Tschirn (Landes- grenze BY / TH),,,,,Bestand,,,38,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung,Leitung,BY,NV,,,BBP Nr. 46,"2022,
+TTG-P185,,,12982,,AC,,,0,,2400,,,,1,2023,40,,38,,,,,,380,,,line,BBP,46,Redwitz – Landes- grenze BY / TH (Punkt Tschirn),Redwitz,,Punkt Tschirn (Landes- grenze BY / TH),,,,,Bestand,38,,38,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung,Leitung,BY,NV,,,BBP Nr. 46,"2022,
 2023",4: Genehmigt oder im Bau,,,,3600A
-TNG-P47,,,,,AC,,,0,,,,,,1,2021,40,,76,,,,,,380,,,line,BBP,19,Weinheim – Daxlanden,Weinheim,,Daxlanden,,,,,Bestand,,,76,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BW,NV,,,BBP Nr. 19,2021,2: Im ROV/BFP,,,,
-TNG-P47,,,,,AC,,,0,,,,,,1,2031,40,,17,,,,,,380,,,line,BBP,19,Weinheim – Mannheim (G380),Weinheim,,Rheinau,,,,,Bestand,,,17,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BW,NV,,,BBP Nr. 19,"2028,
+TNG-P47,,,,,AC,,,0,,,,,,1,2021,40,,76,,,,,,380,,,line,BBP,19,Weinheim – Daxlanden,Weinheim,,Daxlanden,,,,,Bestand,76,,76,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BW,NV,,,BBP Nr. 19,2021,2: Im ROV/BFP,,,,
+TNG-P47,,,,,AC,,,0,,,,,,1,2031,40,,17,,,,,,380,,,line,BBP,19,Weinheim – Mannheim (G380),Weinheim,,Rheinau,,,,,Bestand,17,,17,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BW,NV,,,BBP Nr. 19,"2028,
 2031",2: Im ROV/BFP,,,,
-TNG-P47,,,,,AC,,,0,,,,,,1,2031,40,,22.5,,,,,,380,,,line,BBP,19,Mannheim (G380) – Altlußheim,Rheinau,,Altlußheim,,,,,Bestand,,,22.5,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BW,NV,,,BBP Nr. 19,"2028,
+TNG-P47,,,,,AC,,,0,,,,,,1,2031,40,,22.5,,,,,,380,,,line,BBP,19,Mannheim (G380) – Altlußheim,Rheinau,,Altlußheim,,,,,Bestand,22.5,,22.5,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BW,NV,,,BBP Nr. 19,"2028,
 2031",2: Im ROV/BFP,,,,
-TNG-P47,,,,,AC,,,0,,,,,,1,2031,40,,42,,,,,,380,,,line,BBP,19,Altlußheim – Daxlanden,Altlußheim,,Daxlanden,,,,,Bestand,,,42,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BW,NV,,,BBP Nr. 19,"2028,
+TNG-P47,,,,,AC,,,0,,,,,,1,2031,40,,42,,,,,,380,,,line,BBP,19,Altlußheim – Daxlanden,Altlußheim,,Daxlanden,,,,,Bestand,42,,42,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BW,NV,,,BBP Nr. 19,"2028,
 2031",2: Im ROV/BFP,,,,Bestehende Leitung erneuert
-TNG-P48,,13093,,,AC,,,0,,,,,,1,2031,40,,51,3,,1,,,380,,,line,BBP,20,Punkt Rittershausen – Kupferzell,Punkt Rittershausen,,Kupferzell,,,,,Bestand,,,51,380,Zubeseilung,Leitung,"BY, BW",NV,,,BBP Nr. 20,"2028,
+TNG-P48,,13093,,,AC,,,0,,,,,,1,2031,40,,51,3,,1,,,380,,,line,BBP,20,Punkt Rittershausen – Kupferzell,Punkt Rittershausen,,Kupferzell,,,,,Bestand,51,,51,380,Zubeseilung,Leitung,"BY, BW",NV,,,BBP Nr. 20,"2028,
 2031",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-TNG-P48,,,,,AC,,,0,,,,,,1,2025,40,,48,3,,1,,,380,,,line,BBP,20,Kupferzell – Großgartach,Kupferzell,,Großgartach,,,,,Bestand,,,48,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BW,NV,,,BBP Nr. 20,2025,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,Ersatzneubau
-TNG-P49,,,,,AC,,,0,,,,,,1,2025,40,,119,,,,,,380,,,line,BBP,21,Daxlanden – Bühl/ Kuppenheim – Weier – Eichstetten,Daxlanden,,Kuppenheim,,,,,Bestand,,,119,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BW,NV,,,BBP Nr. 21,2025,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,Teilweise HTLS_Beseilung
-TNG-P49,,,,,AC,,,0,,,,,,1,2025,40,,119,,,,,,380,,,line,BBP,21,Daxlanden – Bühl/ Kuppenheim – Weier – Eichstetten,Kuppenheim,,Bühl,,,,,Bestand,,,*,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BW,NV,,,BBP Nr. 21,2025,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,Teilweise HTLS_Beseilung
-TNG-P49,,,,,AC,,,0,,,,,,1,2025,40,,119,,,,,,380,,,line,BBP,21,Daxlanden – Bühl/ Kuppenheim – Weier – Eichstetten,Bühl,,Weier,,,,,Bestand,,,*,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BW,NV,,,BBP Nr. 21,2025,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,Teilweise HTLS_Beseilung
+TNG-P48,,,,,AC,,,0,,,,,,1,2025,40,,48,3,,1,,,380,,,line,BBP,20,Kupferzell – Großgartach,Kupferzell,,Großgartach,,,,,Bestand,48,,48,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BW,NV,,,BBP Nr. 20,2025,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,Ersatzneubau
+TNG-P49,,,,,AC,,,0,,,,,,1,2025,40,,13.3,,,,,,380,,,line,BBP,21,Daxlanden – Bühl/ Kuppenheim – Weier – Eichstetten,Daxlanden,,Kuppenheim,,,,,Bestand,119,,119,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BW,NV,,,BBP Nr. 21,2025,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,Teilweise HTLS_Beseilung
+TNG-P49,,,,,AC,,,0,,,,,,1,2025,40,,,,,,,,380,,,line,BBP,21,Daxlanden – Bühl/ Kuppenheim – Weier – Eichstetten,Kuppenheim,,Bühl,,,,,Bestand,119,,*,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BW,NV,,,BBP Nr. 21,2025,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,Teilweise HTLS_Beseilung
+TNG-P49,,,,,AC,,,0,,,,,,1,2025,40,,,,,,,,380,,,line,BBP,21,Daxlanden – Bühl/ Kuppenheim – Weier – Eichstetten,Bühl,,Weier,,,,,Bestand,119,,*,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BW,NV,,,BBP Nr. 21,2025,3: vor oder im PFV/ Genehmigung nach BImSchG,,,,Teilweise HTLS_Beseilung
 TNG-P49,,,,,AC,,,0,,,,,,1,2029,40,,,,,,,,380,,,line,BBP,21,,Weier,,Eichstetten,,,,,Bestand,,,*,380,Errichtung einer Lei- tung: Ersatzneubau,Leitung,BW,NV,,,BBP Nr. 21,"2028,
 2029",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,
-TNG-P70,,,32076,,AC,,,0,,,,,,1,2029,40,,25.7,,,,,,380,,,line,BBP,35,Birkenfeld – Mast 115A,Birkenfeld,,Mast 115A,,,,,Ausbau,,11.5,14.2,380,"Errichtung einer Leitung: Neubau in neuer Trasse, Zubeseilung",Leitung,BW,NVA,,,BBP Nr. 35,"2028,
+TNG-P70,,,32076,,AC,,,0,,,,,,1,2029,40,,25.7,,,,,,380,,,line,BBP,35,Birkenfeld – Mast 115A,Birkenfeld,,Mast 115A,,,,,Ausbau,25.7,11.5,14.2,380,"Errichtung einer Leitung: Neubau in neuer Trasse, Zubeseilung",Leitung,BW,NVA,,,BBP Nr. 35,"2028,
 2029",3: vor oder im PFV/ Genehmigung nach BImSchG,,,,Einbindung in Leitung: Pulverdingen – Philippsburg
-DC1,,,,,DC,,,0,,2000,,,,1,2022,40,,300,,,,,,,,,line,BBP,1,Emden / Ost – Osterath (A-Nord),Emden-Borssum,,Osterath,,,,,Ausbau,,300,,,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"NI, NW",,x,,BBP Nr. 1,"2021,
+DC1,,,,,DC,,,0,,2000,,,,1,2022,40,,300,,,,,,,,,line,BBP,1,Emden / Ost – Osterath (A-Nord),Emden-Borssum,,Osterath,,,,,Ausbau,300,300,,,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"NI, NW",,x,,BBP Nr. 1,"2021,
 2022",3: vor oder im PFV/ Genehmigung nach BImSchG,AMP,,,Nur Leistungsanagbe 2 GW (Nennleistung)
-DC2,,,,,DC,,,0,,2000,,,,1,2027,40,,340,,,,,,,,,line,BBP,2,Osterath – Philippsburg (Ultranet),Osterath,,Rheinau,,,,,Bestand,,,340,380,"Errichtung einer Leitung: Ersatzneu- bau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung",Leitung,"NW,
+DC2,,,,,DC,,,0,,2000,,,,1,2027,40,,340,,,,,,,,,line,BBP,2,Osterath – Philippsburg (Ultranet),Osterath,,Rheinau,,,,,Bestand,340,,340,380,"Errichtung einer Leitung: Ersatzneu- bau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung",Leitung,"NW,
 HE, BW",NV,x,x,BBP Nr. 2,"2025,
 2027",3: vor oder im PFV/ Genehmigung nach BImSchG,"AMP, TNG",,,Nur Leistungsanagbe 2 GW (Nennleistung)
-DC2,,,,,DC,,,0,,2000,,,,1,2027,40,,340,,,,,,,,,line,BBP,2,Osterath – Philippsburg (Ultranet),Rheinau,,Philippsburg,,,,,Bestand,,,*,380,"Errichtung einer Leitung: Ersatzneu- bau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung",Leitung,"NW,
+DC2,,,,,DC,,,0,,2000,,,,1,2027,40,,340,,,,,,,,,line,BBP,2,Osterath – Philippsburg (Ultranet),Rheinau,,Philippsburg,,,,,Bestand,340,,*,380,"Errichtung einer Leitung: Ersatzneu- bau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung",Leitung,"NW,
 HE, BW",NV,x,x,BBP Nr. 2,"2025,
 2027",3: vor oder im PFV/ Genehmigung nach BImSchG,"AMP, TNG",,,Nur Leistungsanagbe 2 GW (Nennleistung)
-DC3,,,,,DC,,,0,,2000,,,,1,2024,40,,689,,,,,,,,,line,BBP,3,Brunsbüttel – Großgartach (SuedLink),Brunsbüttel,,Großgartach,,,,,Ausbau,,689,,,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"SH,NI,HE,TH,BY, BW",,x,x,BBP Nr. 3,"2023/
+DC3,,,,,DC,,,0,,2000,,,,1,2024,40,,689,,,,,,,,,line,BBP,3,Brunsbüttel – Großgartach (SuedLink),Brunsbüttel,,Großgartach,,,,,Ausbau,689,689,,,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"SH,NI,HE,TH,BY, BW",,x,x,BBP Nr. 3,"2023/
 2024,
 2026",3: vor oder im PFV/ Genehmigung nach BImSchG,"TTG, TNG",,,Nur Leistungsanagbe 2 GW (Nennleistung)
-DC4,,,,,DC,,,0,,2000,,,,1,2028,40,,538,,,,,,,,,line,BBP,4,Wilster / West – Bergrheinfeld / West (SuedLink),Wilster,,Bergrheinfeld,,,,,Ausbau,,538,,,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"SH,
+DC4,,,,,DC,,,0,,2000,,,,1,2028,40,,538,,,,,,,,,line,BBP,4,Wilster / West – Bergrheinfeld / West (SuedLink),Wilster,,Bergrheinfeld,,,,,Ausbau,538,538,,,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"SH,
 NI,
 HE,
 TH, BY",,x,x,BBP Nr. 4,"2026,
 2028",3: vor oder im PFV/ Genehmigung nach BImSchG,"TTG, TNG",,,Nur Leistungsanagbe 2 GW (Nennleistung)
-DC5,,,,,DC,,,0,,2000,,,,1,2028,40,,539,,,,,,,,,line,BBP,5,Wolmirstedt – Isar,Wolmirstedt,,Isar,,,,,Ausbau,,539,,,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"ST,
+DC5,,,,,DC,,,0,,2000,,,,1,2028,40,,539,,,,,,,,,line,BBP,5,Wolmirstedt – Isar,Wolmirstedt,,Isar,,,,,Ausbau,539,539,,,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"ST,
 TH,
 SN, BY",,x,x,BBP Nr. 5,"2026,
 2028",3: vor oder im PFV/ Genehmigung nach BImSchG,"50HzT, TTG",,,Nur Leistungsanagbe 2 GW (Nennleistung)
-DC1a,,,,,DC,,,0,,2400,,,,1,2027,40,,300,,,,,,,,,line,BBPIG,1,Emden / Ost – Osterath,Emden-Borssum,,Osterath,,,,,Bestand,,,300,,Optimierung,Leitung,"NI, NW",NO,x,,,"2025,
+DC1a,,,,,DC,,,0,,2400,,,,1,2027,40,,300,,,,,,,,,line,BBPIG,1,Emden / Ost – Osterath,Emden-Borssum,,Osterath,,,,,Bestand,300,,300,,Optimierung,Leitung,"NI, NW",NO,x,,,"2025,
 2027",3: Vor oder im PFV/ Genehmigung nach BImSchG,AMP,DC1a,x,"HVDC 2.4 GW, Nutzung inhärenter Reserven"
-DC20,,,,,DC,,,0,,2000,,,,1,2027,40,,759,,,,,,,,,line,BBPIG,5a,Klein Rogahn – Isar,Görries,,Isar,,,,,Ausbau/Bestand,,220,539,,"Errichtung einer Leitung: Neubau in neuer Trasse, Errichtung einer Leitung: Paral- lelneubau",Leitung,"MV,
+DC20,,,,,DC,,,0,,2000,,,,1,2027,40,,759,,,,,,,,,line,BBPIG,5a,Klein Rogahn – Isar,Görries,,Isar,,,,,Ausbau/Bestand,759,220,539,,"Errichtung einer Leitung: Neubau in neuer Trasse, Errichtung einer Leitung: Paral- lelneubau",Leitung,"MV,
 NI,
 ST,
 SN,
 TH, BY",NVA,,,,"2025,
 2027",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren 3: Vor oder im PFV/ Genehmigung nach BImSchG,"50HzT, TTG",DC20,x,HVDC 2 GW
-DC21,,,35112,,DC,,,0,,2000,,,,1,2032,40,,267,,,,,,,,,line,BBPIG,49,Wilhelmshaven 2 - Region Hamm,Wilhelmshaven,,Region Hamm,,,,1,Ausbau,,267,,,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"NI, NW",,x,,,"2030,
+DC21,,,35112,,DC,,,0,,2000,,,,1,2032,40,,267,,,,,,,,,line,BBPIG,49,Wilhelmshaven 2 - Region Hamm,Wilhelmshaven,,Region Hamm,,,,1,Ausbau,267,267,,,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"NI, NW",,x,,,"2030,
 2032",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,"AMP, TTG",DC21b,x,HVDC 2 GW
-DC25,,,,,DC,,,0,,2000,,,,1,2031,40,,407,,,,,,,,,line,BBPIG,48,Heide / West – Polsum,Heide-West,,Polsum,,,,,Ausbau,,407,,,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"SH,
+DC25,,,,,DC,,,0,,2000,,,,1,2031,40,,407,,,,,,,,,line,BBPIG,48,Heide / West – Polsum,Heide-West,,Polsum,,,,,Ausbau,407,407,,,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"SH,
 NI, NW",,x,,,"2030,
 2031",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,"AMP, TTG",DC25,x,HVDC 2 GW
-DC31,,,,,DC,,,0,,2000,,,,1,2031,40,,212,,,,,,,,,line,,,Heide / West – Klein Rogahn,Heide-West,,Görries,,,,,Ausbau,,212,,,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"SH, MV",,,,,"2030,
+DC31,,,,,DC,,,0,,2000,,,,1,2031,40,,212,,,,,,,,,line,,,Heide / West – Klein Rogahn,Heide-West,,Görries,,,,,Ausbau,212,212,,,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"SH, MV",,,,,"2030,
 2031",,"50HzT, TTG",DC31,x,HVDC 2 GW
-DC34,,,,,DC,,,0,,2000,,,,1,2035,40,,528,,,,,,,,,line,,,Suchraum Rastede – Bürstadt,Rastede,,Bürstadt,,,,,Ausbau,,528,,,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"NI, HE",,,,,2035,,"AMP, TTG",DC34,,
-P20,,,,,AC,,,0,,5400,,,,1,2035,40,,30,6,,2,,,380,,,line,BBPIG,37,Emden / Ost – Halbemond,Emden-Borssum,,Halbemond,,,,,Ausbau/Bestand,,30,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,NI,,x,,,2035,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M69,x,each 4000A
-P22,,,,,AC,,,0,,5400,,,,1,2030,40,,36,6,,2,,,380,,,line,BBPIG,55,Elsfleth / West – Ganderkesee (über Niedervieland),Elsfleth,,Niedervieland,,,,,Bestand,,,36,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,"NI, HB",NV,,,,2030,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M80,x,each 4000A
+DC34,,,,,DC,,,0,,2000,,,,1,2035,40,,528,,,,,,,,,line,,,Suchraum Rastede – Bürstadt,Rastede,,Bürstadt,,,,,Ausbau,528,528,,,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"NI, HE",,,,,2035,,"AMP, TTG",DC34,,
+P20,,,,,AC,,,0,,5400,,,,1,2035,40,,30,6,,2,,,380,,,line,BBPIG,37,Emden / Ost – Halbemond,Emden-Borssum,,Halbemond,,,,,Ausbau/Bestand,30,30,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,NI,,x,,,2035,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M69,x,each 4000A
+P22,,,,,AC,,,0,,5400,,,,1,2030,40,,23.3,6,,2,,,380,,,line,BBPIG,55,Elsfleth / West – Ganderkesee (über Niedervieland),Elsfleth,,Niedervieland,,,,,Bestand,36,,36,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,"NI, HB",NV,,,,2030,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M80,x,each 4000A
 P22,,,,,AC,,,0,,5400,,,,1,2031,40,,,6,,2,,,380,,,line,BBPIG,55,,Niedervieland,,Ganderkesee,,,,,Bestand,,,*,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,"NI, HB",NV,,,,"2030,
 2031",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M80,x,each 4000A
-P22,,,,,AC,,,0,,5400,,,,1,2031,40,,32,3,,1,,,380,,,line,BBPIG,54,Conneforde – Unterweser,Conneforde,,Unterweser,,,,,Bestand,,,32,380,Änderung oder Erweiterung einer Leitung: Spannungs- umstellung,Leitung,NI,NO,,,,"2030,
+P22,,,,,AC,,,0,,5400,,,,1,2031,40,,32,3,,1,,,380,,,line,BBPIG,54,Conneforde – Unterweser,Conneforde,,Unterweser,,,,,Bestand,32,,32,380,Änderung oder Erweiterung einer Leitung: Spannungs- umstellung,Leitung,NI,NO,,,,"2030,
 2031",3: Vor oder im PFV/ Genehmigung nach BImSchG,TTG,M92,x,
-P23,,,,,AC,,,0,,5400,,,,1,2025,40,,100,6,,2,,,380,,,line,BBPIG,38,Dollern – Elsfleth / West,Dollern,,Alfstedt,,,,,Bestand,,,100,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NI,NV,x,,,2025,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M20,x,each 4000A
+P23,,,,,AC,,,0,,5400,,,,1,2025,40,,27.6,6,,2,,,380,,,line,BBPIG,38,Dollern – Elsfleth / West,Dollern,,Alfstedt,,,,,Bestand,100,,100,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NI,NV,x,,,2025,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M20,x,each 4000A
 P23,,,,,AC,,,0,,5400,,,,1,2029,40,,,6,,2,,,380,,,line,BBPIG,38,,Alfstedt,,Farge,,,,,Bestand,,,*,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NI,NV,x,,,"2028,
 2029",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M20,x,each 4000A
 P23,,,,,AC,,,0,,5400,,,,1,2029,40,,,6,,2,,,380,,,line,BBPIG,38,,Farge,,Elsfleth,,,,,Bestand,,,*,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NI,NV,x,,,"2028,
 2029",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M20,x,each 4000A
-P26,,,,,AC,,,0,,5400,,,,1,2029,40,,3,6,,2,,,380,,,line,BBPIG,50,Brunsbüttel – Büttel,Brunsbüttel,,Büttel,,,,,Bestand,,,3,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,SH,NV,,,,"2028,
+P26,,,,,AC,,,0,,5400,,,,1,2029,40,,3,6,,2,,,380,,,line,BBPIG,50,Brunsbüttel – Büttel,Brunsbüttel,,Büttel,,,,,Bestand,3,,3,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,SH,NV,,,,"2028,
 2029",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M432,x,each 4000A
-P26,,,,,AC,,,0,,5400,,,,1,2030,40,,8,6,,2,,,380,,,line,BBPIG,50,Büttel – Wilster/West,Büttel,,Wilster,,,,,Bestand,,,8,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,SH,NV,,,,"2029,
+P26,,,,,AC,,,0,,5400,,,,1,2030,40,,8,6,,2,,,380,,,line,BBPIG,50,Büttel – Wilster/West,Büttel,,Wilster,,,,,Bestand,8,,8,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,SH,NV,,,,"2029,
 2030",1: Vorbereitung Planungs- und Genehmigungsver- fahren,TTG,M76,x,each 4000A
-P26,,,,,AC,,,0,,5400,,,,1,2030,40,,44,6,,2,,,380,,,line,BBPIG,50,Wilster / West – Stade / West,Wilster,,Stade,,,,,Bestand,,,44,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,"SH, NI",NV,,,,"2029,
+P26,,,,,AC,,,0,,5400,,,,1,2030,40,,44,6,,2,,,380,,,line,BBPIG,50,Wilster / West – Stade / West,Wilster,,Stade,,,,,Bestand,44,,44,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,"SH, NI",NV,,,,"2029,
 2030",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M89,x,each 4000A
-P33,,,,,AC,,,0,,2700,,,,1,2030,40,,146,6,,2,,,380,,,line,BBPIG,10,Wolmirstedt – Helmstedt – Hallendorf/Gleidingen– Kreuzung M24b/TTG-006 – Mehrum/Nord,Wolmirstedt,,Helmstadt,,,,,Bestand,,,146,380,Errichtung einer Leitung: Paral- lelneubau,Leitung,"ST, NI",NV,,,,"2029,
+P33,,,,,AC,,,0,,2700,,,,1,2030,40,,62.4,6,,2,,,380,,,line,BBPIG,10,Wolmirstedt – Helmstedt – Hallendorf/Gleidingen– Kreuzung M24b/TTG-006 – Mehrum/Nord,Wolmirstedt,,Helmstedt,,,,,Bestand,146,,146,380,Errichtung einer Leitung: Paral- lelneubau,Leitung,"ST, NI",NV,,,,"2029,
 2030","1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren, 3: Vor oder im PFV/ Genehmigung nach BImSchG","50HzT, TTG",M24b,x,Both 4000A
-P33,,,,,AC,,,0,,2700,,,,1,2032,40,,,6,,2,,,380,,,line,BBPIG,10,*,Helmstadt,,Salzgitter-Hallendorf,,,,,Bestand,,,*,380,Errichtung einer Leitung: Paral- lelneubau,Leitung,"ST, NI",NV,,,,"2032
+P33,,,,,AC,,,0,,2700,,,,1,2032,40,,,6,,2,,,380,,,line,BBPIG,10,*,Helmstedt,,Salzgitter-Hallendorf,,,,,Bestand,,,*,380,Errichtung einer Leitung: Paral- lelneubau,Leitung,"ST, NI",NV,,,,"2032
 ","1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren, 3: Vor oder im PFV/ Genehmigung nach BImSchG","50HzT, TTG",M24b,x,Both 4000A
-P33,,,11121,,AC,,,0,,2700,,,,1,2032,40,,11,6,,2,,,380,,,line,BBPIG,10,*,Salzgitter-Hallendorf,,Kreuzung M24b/ TTG-006,,,,,Bestand,,,*,380,Errichtung einer Leitung: Paral- lelneubau,Leitung,"ST, NI",NV,,,,"2027,
+P33,,,11121,,AC,,,0,,2700,,,,1,2032,40,,11,6,,2,,,380,,,line,BBPIG,10,*,Salzgitter-Hallendorf,,Kreuzung M24b/ TTG-006,,,,,Bestand,11,,*,380,Errichtung einer Leitung: Paral- lelneubau,Leitung,"ST, NI",NV,,,,"2027,
 2028
 (50HzT)
 2031,
@@ -263,200 +263,200 @@ P33,,11121,,,AC,,,0,,2700,,,,1,2032,40,,,6,,2,,,380,,,line,BBPIG,10,*,Kreuzung M
 2031,
 2032
 (TTG)","1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren, 3: Vor oder im PFV/ Genehmigung nach BImSchG","50HzT, TTG",M24b,x,Both 4000A
-P37,,,,,AC,,,0,,2700,,,,1,2032,40,,87,,,,,,380,,,line,BBPIG,12,Vieselbach – Landesgrenze Thüringen/Hessen,Vieselbach,,Eisenach,,,,,Bestand,,,87,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,TH,NV,,,,"2027,
+P37,,,,,AC,,,0,,2700,,,,1,2032,40,,87,,,,,,380,,,line,BBPIG,12,Vieselbach – Landesgrenze Thüringen/Hessen,Vieselbach,,Eisenach,,,,,Bestand,87,,87,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,TH,NV,,,,"2027,
 2028
 (50HzT)
 2031,
 2032
 (TTG)",3: Vor oder im PFV/ Genehmigung nach BImSchG,50HzT,M25a,x,HTL Umbeseilung 4000A
-P37,,,,,AC,,,0,,2700,,,,1,2027,40,,43,,,,,,380,,,line,BBPIG,12,Landesgrenze Thüringen/Hessen – Mecklar,Eisenach,,Mecklar,,,,,Bestand,,,43,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung,Leitung,HE,NV,,,,"2026,
+P37,,,,,AC,,,0,,2700,,,,1,2027,40,,43,,,,,,380,,,line,BBPIG,12,Landesgrenze Thüringen/Hessen – Mecklar,Eisenach,,Mecklar,,,,,Bestand,43,,43,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung,Leitung,HE,NV,,,,"2026,
 2027",3: Vor oder im PFV/ Genehmigung nach BImSchG,TTG,M25b,x,HTL Umbeseilung 4000A
-P43,,,,,AC,,,0,,5400,,,,1,2026,40,,50,6,,2,,,380,,,line,BBPIG,17,Mecklar – Dipperz,Mecklar,,Dipperz,,,,,Bestand,,,50,380,Errichtung einer Leitung: Paral- lelneubau,Leitung,HE,NV,x,,,"2024,
+P43,,,,,AC,,,0,,5400,,,,1,2026,40,,50,6,,2,,,380,,,line,BBPIG,17,Mecklar – Dipperz,Mecklar,,Dipperz,,,,,Bestand,50,,50,380,Errichtung einer Leitung: Paral- lelneubau,Leitung,HE,NV,x,,,"2024,
 2026",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M74a,x,each 4000A
-P43,,,,,AC,,,0,,5400,,,,1,2031,40,,80,6,,2,,,380,,,line,BBPIG,17,Dipperz – Bergrheinfeld / West,Dipperz,,Bergrheinfeld,,,,,Ausbau,,80,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"HE, BY",,x,,,2031,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M74b,x,each 4000A
-P51,,,,,AC,,,0,,,,,,1,2031,40,,27,3,,1,,,380,,,line,BBPIG,22,Großgartach – Endersbach,Großgartach,,Endersbach,,,,,Bestand,,,27,380,"Errichtung einer Leitung: Ersatzneubau
+P43,,,,,AC,,,0,,5400,,,,1,2031,40,,80,6,,2,,,380,,,line,BBPIG,17,Dipperz – Bergrheinfeld / West,Dipperz,,Bergrheinfeld,,,,,Ausbau,80,80,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"HE, BY",,x,,,2031,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M74b,x,each 4000A
+P51,,,,,AC,,,0,,,,,,1,2031,40,,27,3,,1,,,380,,,line,BBPIG,22,Großgartach – Endersbach,Großgartach,,Endersbach,,,,,Bestand,27,,27,380,"Errichtung einer Leitung: Ersatzneubau
 Errichtung einer Leitung: Parallelneubau",Leitung,BW,NV,,,,2031,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TNG,M37,x,
-P52,,9756,10362,,AC,,,0,,,,,,1,2030,40,,7,,,,,,380,,,line,BBPIG,40,Punkt Neuravensburg – Punkt Bundes- grenze (AT),Punkt Neuravensburg,,Punkt Sigmarszell/Bundes- grenze (AT),,,,,Bestand,,,7,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,"BW, BY",NV,x,,,2030,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,"AMP, TNG",M94b,x,
-P53,,,,,AC,,,0,,,,,,1,2030,40,,45,6,,2,,,380,,,line,BBPIG,41,Raitersaich/West– Ludersheim,Raitersaich,,Ludersheim,,,,,Bestand,,,45,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,BY,NV,,,,2030,2: Im ROV/BFP,TTG,M54,x,
-P53,,,,,AC,,,0,,5400,,,,1,2030,40,,114,6,,2,,,380,,,line,BBPIG,41,Ludersheim - Sittling - Suchraum Stadt Rottenburg/Gemeinde Neufahrn - Altheim,Ludersheim,,Sittling,,,,,Bestand,,,114,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,BY,NV,,,,"2029,
+P52,,9756,10362,,AC,,,0,,,,,,1,2030,40,,7,,,,,,380,,,line,BBPIG,40,Punkt Neuravensburg – Punkt Bundes- grenze (AT),Punkt Neuravensburg,,Punkt Sigmarszell/Bundes- grenze (AT),,,,,Bestand,7,,7,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,"BW, BY",NV,x,,,2030,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,"AMP, TNG",M94b,x,
+P53,,,,,AC,,,0,,,,,,1,2030,40,,45,6,,2,,,380,,,line,BBPIG,41,Raitersaich/West– Ludersheim,Raitersaich,,Ludersheim,,,,,Bestand,45,,45,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,BY,NV,,,,2030,2: Im ROV/BFP,TTG,M54,x,
+P53,,,,,AC,,,0,,5400,,,,1,2030,40,,114,6,,2,,,380,,,line,BBPIG,41,Ludersheim - Sittling - Suchraum Stadt Rottenburg/Gemeinde Neufahrn - Altheim,Ludersheim,,Sittling,,,,,Bestand,114,,114,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,BY,NV,,,,"2029,
 2030",2: Im ROV/BFP,TTG,M350,x,Each 4000A
-P53,,,28213,,AC,,,0,,5400,,,,1,2029,40,,25,6,,2,,,380,,,line,BBPIG,41,,Sittling,,Suchraum Stadt Rottenburg/Gemeinde Neufahrn,,,,,Bestand,,,*,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,BY,NV,,,,"2028,
+P53,,,28213,,AC,,,0,,5400,,,,1,2029,40,,4.3,6,,2,,,380,,,line,BBPIG,41,,Sittling,,Suchraum Stadt Rottenburg/Gemeinde Neufahrn,,,,,Bestand,25,,*,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,BY,NV,,,,"2028,
 2029",2: Im ROV/BFP,TTG,M350,x,Each 4000A
 P53,,28213,,,AC,,,0,,5400,,,,1,2029,40,,,6,,2,,,380,,,line,BBPIG,41,,Suchraum Stadt Rottenburg/Gemeinde Neufahrn,,Altheim,,,,,Bestand,,,*,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,BY,NV,,,,"2028,
 2029",2: Im ROV/BFP,TTG,M350,x,Each 4000A
-P72,,,,,AC,,,0,,,,,,1,2029,40,,14,6,,2,,,380,,,line,BBPIG,42,Lübeck / West – Siems,Lübeck,,Siems,,,,,Bestand,,,14,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,SH,NV,x,,,"2028,
+P72,,,,,AC,,,0,,,,,,1,2029,40,,14,6,,2,,,380,,,line,BBPIG,42,Lübeck / West – Siems,Lübeck,,Siems,,,,,Bestand,14,,14,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,SH,NV,x,,,"2028,
 2029",3: Vor oder im PFV/ Genehmigung nach BImSchG,TTG,M49,x,
-P72,,,,,AC,,,0,,,,,,1,2026,40,,40,6,,2,,,380,,,line,BBPIG,42,Abzweig Göhl,Siems,,Göhl,,,,,Ausbau,,40,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,SH,,x,,,2026,3: Vor oder im PFV/ Genehmigung nach BImSchG,TTG,M351,x,
-P74,,,,,AC,,,0,,,,,,1,2027,40,,110,3,,1,,,380,,,line,TYNDP,47,Vöhringen - Punkt Bundesgrenze (AT),Vöhringen,,Memmingen,,,,,Bestand,,,110,380,Zubeseilung,Leitung,,,,,,2027,1: Vorbereitung Planungs- und Genehmigungsverfahren,AMP,M96,,between Bavarian Swabia and Austria
+P72,,,,,AC,,,0,,,,,,1,2026,40,,40,6,,2,,,380,,,line,BBPIG,42,Abzweig Göhl,Siems,,Göhl,,,,,Ausbau,40,40,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,SH,,x,,,2026,3: Vor oder im PFV/ Genehmigung nach BImSchG,TTG,M351,x,
+P74,,,,,AC,,,0,,,,,,1,2027,40,,77,3,,1,,,380,,,line,TYNDP,47,Vöhringen - Punkt Bundesgrenze (AT),Vöhringen,,Memmingen,,,,,Bestand,110,,110,380,Zubeseilung,Leitung,,,,,,2027,1: Vorbereitung Planungs- und Genehmigungsverfahren,AMP,M96,,between Bavarian Swabia and Austria
 P74,,,,,AC,,,0,,,,,,1,2030,40,,,3,,1,,,380,,,line,TYNDP,47,,Memmingen,,Leupolz,,,,,Bestand,,,*,380,Zubeseilung,Leitung,,,,,,2030,1: Vorbereitung Planungs- und Genehmigungsverfahren,,M96,,between Bavarian Swabia and Austria
-P74,,,10362,,AC,,,0,,,,,,1,2030,40,,36,3,,1,,,380,,,line,TYNDP,47,,Leupolz,,Punkt Bundesgrenze (AT),,,,131,Bestand,,,*,380,Umbeseilung,Leitung,,,,,,2030,1: Vorbereitung Planungs- und Genehmigungsverfahren,AMP,M96,,between Bavarian Swabia and Austria
-P84,,,,,AC,,,0,,,,,,1,2030,40,,31,,,,,,380,,,line,BBPIG,51,Hamburg / Nord– Hamburg / Ost ,Hamburg Nord,,Hamburg/Ost,,,,,Bestand,,,31,380,Umbeseilung,Leitung,HH,NV,,,,2030,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,50HzT,M367,x,HTLS Umbeseilung
-P84,,,,,AC,,,0,,,,,,1,2032,40,,28,12,,4,,,380,,,line,BBPIG,51,Hamburg / Ost – Krümmel,Hamburg/Ost,,Krümmel,,,,,Bestand,,,28,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,"HH, SH",NV,,,,"2030,
+P74,,,10362,,AC,,,0,,,,,,1,2030,40,,36,3,,1,,,380,,,line,TYNDP,47,,Leupolz,,Punkt Bundesgrenze (AT),,,,131,Bestand,36,,*,380,Umbeseilung,Leitung,,,,,,2030,1: Vorbereitung Planungs- und Genehmigungsverfahren,AMP,M96,,between Bavarian Swabia and Austria
+P84,,,,,AC,,,0,,,,,,1,2030,40,,31,,,,,,380,,,line,BBPIG,51,Hamburg / Nord– Hamburg / Ost ,Hamburg Nord,,Hamburg/Ost,,,,,Bestand,31,,31,380,Umbeseilung,Leitung,HH,NV,,,,2030,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,50HzT,M367,x,HTLS Umbeseilung
+P84,,,,,AC,,,0,,,,,,1,2032,40,,28,12,,4,,,380,,,line,BBPIG,51,Hamburg / Ost – Krümmel,Hamburg/Ost,,Krümmel,,,,,Bestand,28,,28,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,"HH, SH",NV,,,,"2030,
 2032",,50HzT,M368,x,
-P112,,,29392,,AC,,,0,,5400,,,,1,2032,40,,43,6,,2,,,380,,,line,BBPIG,32,Pleinting - St. Peter,Pleinting,,St.Peter,,,,852,Bestand,,,43,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,BY,NV,x,,,"2030,
+P112,,,29392,,AC,,,0,,5400,,,,1,2032,40,,43,6,,2,,,380,,,line,BBPIG,32,Pleinting - St. Peter,Pleinting,,St.Peter,,,,852,Bestand,43,,43,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,BY,NV,x,,,"2030,
 2032",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M201,x,Each 4000A
-P112,,29392,,,AC,,,0,,,,,,1,2030,40,,27,6,,2,,,380,,,line,BBPIG,32,Abzweig Pirach,St.Peter,,Pirach,,,,852,Bestand,,,27,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,BY,NV,x,,,"2028,
+P112,,29392,,,AC,,,0,,,,,,1,2030,40,,27,6,,2,,,380,,,line,BBPIG,32,Abzweig Pirach,St.Peter,,Pirach,,,,852,Bestand,27,,27,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,BY,NV,x,,,"2028,
 2030",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M212,x,
-P113,,,,,AC,,,0,,5400,,,,1,2030,40,,54,6,,2,,,380,,,line,BBPIG,58,Krümmel – Lüneburg – Stadorf,Krümmel,,Lüneburg,,,,,Bestand,,,54,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,"SH, NI",NV,,,,"2028,
+P113,,,,,AC,,,0,,5400,,,,1,2030,40,,25.1,6,,2,,,380,,,line,BBPIG,58,Krümmel – Lüneburg – Stadorf,Krümmel,,Lüneburg,,,,,Bestand,54,,54,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,"SH, NI",NV,,,,"2028,
 2030",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M202a,x,Each 4000 A
 P113,,,,,AC,,,0,,5400,,,,1,2031,40,,,6,,2,,,380,,,line,BBPIG,58,,Lüneburg,,Stadorf,,,,,Bestand,,,*,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,"SH, NI",NV,,,,"2030,
 2031",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M202a,x,Each 4000 A
-P113,,,,,AC,,,0,,5400,,,,1,2031,40,,86,6,,2,,,380,,,line,BBPIG,58,Stadorf – Wahle,Stadorf,,Wahle,,,,,Bestand,,,86,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NI,NV,,,,"2030,
+P113,,,,,AC,,,0,,5400,,,,1,2031,40,,86,6,,2,,,380,,,line,BBPIG,58,Stadorf – Wahle,Stadorf,,Wahle,,,,,Bestand,86,,86,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NI,NV,,,,"2030,
 2031",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M203,x,Each 4000 A
-P116,,,,,AC,,,0,,5400,,,,1,2031,40,,118,6,,2,,,380,,,line,BBPIG,57,Dollern – Samtgemeinde Sottrum – Mehringen – Punkt Landesbergen (Steyerberg),Dollern,,Sottrum,,,,,Bestand,,,118,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NI,NV,,,,"2030,
+P116,,,,,AC,,,0,,5400,,,,1,2031,40,,118,6,,2,,,380,,,line,BBPIG,57,Dollern – Samtgemeinde Sottrum – Mehringen – Punkt Landesbergen (Steyerberg),Dollern,,Sottrum,,,,,Bestand,118,,118,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NI,NV,,,,"2030,
 2031",,TTG,M206,x,Each 4000A
-P116,,,405,,AC,,,0,,5400,,,,1,2033,40,,42,6,,2,,,380,,,line,BBPIG,57,,Sottrum,,Mehringen,,,,,Bestand,,,*,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NI,NV,,,,"2032,
+P116,,,405,,AC,,,0,,5400,,,,1,2033,40,,5.5,6,,2,,,380,,,line,BBPIG,57,,Sottrum,,Mehringen,,,,,Bestand,42,,*,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NI,NV,,,,"2032,
 2033",,TTG,M206,x,Each 4000A
 P116,,405,,,AC,,,0,,5400,,,,1,2033,40,,,6,,2,,,380,,,line,BBPIG,57,,Mehringen,,Landesbergen,,,,,Bestand,,,*,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NI,NV,,,,"2032,
 2033",,TTG,M206,x,Each 4000A
-P116,,,,,AC,,,0,,2700,,,,1,2033,40,,20,6,,2,,,380,,,line,BBPIG,57,Punkt Landesbergen (Steyerberg) – Ovenstädt,Landesbergen,,Ovenstädt,,,,,Bestand,,,20,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,"NI, NW",NV,,,,"2032,
+P116,,,,,AC,,,0,,2700,,,,1,2033,40,,20,6,,2,,,380,,,line,BBPIG,57,Punkt Landesbergen (Steyerberg) – Ovenstädt,Landesbergen,,Ovenstädt,,,,,Bestand,20,,20,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,"NI, NW",NV,,,,"2032,
 2033",,TTG,M494,x,Both 4000A
-P119,,,,,AC,,,0,,5400,,,,1,2033,40,,26,6,,2,,,380,,,line,BBPIG,56,Conneforde – Suchraum Rastede – Elsfleth /West mit Anschluss Huntorf,Conneforde,,Rastede,,,,,Bestand,,,26,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NI,NV,,,,"2032,
+P119,,,,,AC,,,0,,5400,,,,1,2033,40,,8.9,6,,2,,,380,,,line,BBPIG,56,Conneforde – Suchraum Rastede – Elsfleth /West mit Anschluss Huntorf,Conneforde,,Rastede,,,,,Bestand,26,,26,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NI,NV,,,,"2032,
 2033",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M90,x,each 4000A
 P119,,,,,AC,,,0,,5400,,,,1,2031,40,,,6,,2,,,380,,,line,BBPIG,56,,Rastede,,Elsfleth,,,,,Bestand,,,*,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NI,NV,,,,"2030,
 2031",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M90,x,each 4000A
 P119,,,,,AC,,,0,,5400,,,,1,2031,40,,,6,,2,,,380,,,line,BBPIG,56,,Elsfleth,,Huntorf,,,,,Bestand,,,*,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NI,NV,,,,"2030,
 2031",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M90,x,each 4000A
-P119,,,,,AC,,,0,,5400,,,,1,2031,40,,86,6,,2,,,380,,,line,BBPIG,56,Elsfleth / West – Abzweig Blockland – Samtgemeinde Sottrum,Elsfleth,,Blockland,,,,,Bestand,,,86,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NI,NV,,,,"2030,
+P119,,,,,AC,,,0,,5400,,,,1,2031,40,,52.5,6,,2,,,380,,,line,BBPIG,56,Elsfleth / West – Abzweig Blockland – Samtgemeinde Sottrum,Elsfleth,,Blockland,,,,,Bestand,86,,86,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NI,NV,,,,"2030,
 2031",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M535,x,each 4000A
 P119,,,,,AC,,,0,,5400,,,,1,2031,40,,,6,,2,,,380,,,line,BBPIG,56,,Blockland,,Sottrum,,,,,Bestand,,,*,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NI,NV,,,,"2030,
 2031",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M535,x,each 4000A
-P124,,,,,AC,,,0,,,,,,1,2031,40,,117,,,,,,380,,,line,BBPIG,60,Wolmirstedt – Klostermansfeld,Wolmirstedt,,Klostermansfeld,,,,,Bestand,,,117,380,Umbeseilung,Leitung,ST,NV,,,,"2030,
+P124,,,,,AC,,,0,,,,,,1,2031,40,,117,,,,,,380,,,line,BBPIG,60,Wolmirstedt – Klostermansfeld,Wolmirstedt,,Klostermansfeld,,,,,Bestand,117,,117,380,Umbeseilung,Leitung,ST,NV,,,,"2030,
 2031",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,50HzT,M209a,x,
-P124,,,23074,,AC,,,0,,,,,,1,2029,40,,39,,,,,,380,,,line,BBPIG,60,Klostermansfeld – Schraplau/Obhausen – Lauchstädt,Klostermansfeld,,Schraplau/Obhausen,,,,4,Bestand,,,39,380,Umbeseilung,Leitung,ST,NV,,,,"2028,
+P124,,,23074,,AC,,,0,,,,,,1,2029,40,,23.7,,,,,,380,,,line,BBPIG,60,Klostermansfeld – Schraplau/Obhausen – Lauchstädt,Klostermansfeld,,Schraplau/Obhausen,,,,4,Bestand,39,,39,380,Umbeseilung,Leitung,ST,NV,,,,"2028,
 2029",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,50HzT,M209b,x,
 P124,,23074,,,AC,,,0,,,,,,1,2028,40,,,,,,,,380,,,line,BBPIG,60,,Schraplau/Obhausen,,Lauchstädt,,,,4,Bestand,,,*,380,Umbeseilung,Leitung,ST,NV,,,,"2027,
 2028",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,50HzT,M209b,x,
-P133,,,,,AC,,,0,,5400,,,,1,2028,40,,73,,,,,,380,,,line,BBPIG,65,Borken – Gießen / Nord,Borken,,Gießen Nord,,,,,Bestand,,,73,380,Umbeseilung,Leitung,HE,NV,,,,"2027,
+P133,,,,,AC,,,0,,5400,,,,1,2028,40,,73,,,,,,380,,,line,BBPIG,65,Borken – Gießen / Nord,Borken,,Gießen Nord,,,,,Bestand,73,,73,380,Umbeseilung,Leitung,HE,NV,,,,"2027,
 2028",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M253,x,each 4000A
-P135,,,,,AC,,,0,,5400,,,,1,2031,40,,60,,,,,,380,,,line,BBPIG,57,Ovenstädt – Eickum – Bechterdissen,Ovenstädt,,Eickum,,,,,Bestand,,,60,380,Umbeseilung,Leitung,NW,NV,,,,"2030,
+P135,,,,,AC,,,0,,5400,,,,1,2031,40,,44.8,,,,,,380,,,line,BBPIG,57,Ovenstädt – Eickum – Bechterdissen,Ovenstädt,,Eickum,,,,,Bestand,60,,60,380,Umbeseilung,Leitung,NW,NV,,,,"2030,
 2031",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M255,x,"Each 4000A, HTL Umbeseilung"
 P135,,,,,AC,,,0,,5400,,,,1,2031,40,,,,,,,,380,,,line,BBPIG,57,,Eickum,,Bechterdissen,,,,,Bestand,,,*,380,Umbeseilung,Leitung,NW,NV,,,,"2030,
 2031",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M255,x,"Each 4000A, HTL Umbeseiolung"
-P150,,23074,,,AC,,,0,,,,,,1,2031,40,,71,,,,,,380,,,line,BBPIG,44,Schraplau / Obhausen – Wolkramshausen,Schraplau/Obhausen,,Wolkramshausen,,,,,Bestand,,,71,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,"ST, TH",NV,,,,"2030,
+P150,,23074,,,AC,,,0,,,,,,1,2031,40,,71,,,,,,380,,,line,BBPIG,44,Schraplau / Obhausen – Wolkramshausen,Schraplau/Obhausen,,Wolkramshausen,,,,,Bestand,71,,71,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,"ST, TH",NV,,,,"2030,
 2031",2: Im ROV/BFP,50HzT,M352a,x,
-P150,,,,,AC,,,0,,,,,,1,2029,40,,66,,,,,,380,,,line,BBPIG,44,Wolkramshausen – Vieselbach,Wolkramshausen,,Vieselbach,,,,,Bestand,,,66,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,TH,NV,,,,"2028,
+P150,,,,,AC,,,0,,,,,,1,2029,40,,66,,,,,,380,,,line,BBPIG,44,Wolkramshausen – Vieselbach,Wolkramshausen,,Vieselbach,,,,,Bestand,66,,66,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,TH,NV,,,,"2028,
 2029",2: Im ROV/BFP,50HzT,M463,x,
-P159,,,8910,,AC,,,0,,,,,,1,2029,40,,13,,,,,,380,,,line,BBPIG,67,Bürstadt – BASF,Bürstadt,,Punkt Roxheim,,,,,Bestand,,,13,380,Errichtung einer Leitung: Parallelneubau,Leitung,"HE, RP",NVA,,,,"2028,
+P159,,,8910,,AC,,,0,,,,,,1,2029,40,,13,,,,,,380,,,line,BBPIG,67,Bürstadt – BASF,Bürstadt,,Punkt Roxheim,,,,,Bestand,13,,13,380,Errichtung einer Leitung: Parallelneubau,Leitung,"HE, RP",NVA,,,,"2028,
 2029",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,AMP,M62,x,"BASF build in future, Connection to BASF direct"
-P159,,8910,,,AC,,,0,,,,,,1,2029,40,,5,,,,,,380,,,line,BBPIG,67,Bürstadt – BASF,Punkt Roxheim,,BASF,,,,,Ausbau,,5,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"HE, RP",NVA,,,,2029,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,AMP,M62,x,BASF build in future
-P161,,,,,AC,,,0,,,,,,1,2029,40,,24,,,,,,380,,,line,BBPIG,66,Großkrotzenburg– Urberach,Großkrotzenburg,,Dettingen,,,,,Bestand,,,24,380,Umbeseilung,Leitung,HE,NV,,,,2029,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,"AMP, TTG",M91,x,
+P159,,8910,,,AC,,,0,,,,,,1,2029,40,,5,,,,,,380,,,line,BBPIG,67,Bürstadt – BASF,Punkt Roxheim,,BASF,,,,,Ausbau,5,5,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"HE, RP",NVA,,,,2029,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,AMP,M62,x,BASF build in future
+P161,,,,,AC,,,0,,,,,,1,2029,40,,3,,,,,,380,,,line,BBPIG,66,Großkrotzenburg– Urberach,Großkrotzenburg,,Dettingen,,,,,Bestand,24,,24,380,Umbeseilung,Leitung,HE,NV,,,,2029,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,"AMP, TTG",M91,x,
 P161,,,,,AC,,,0,,,,,,1,2028,40,,,,,,,,380,,,line,BBPIG,66,,Dettingen,,Urberach,,,,,Bestand,,,*,380,Umbeseilung,Leitung,HE,NV,,,,"2027,
 2028",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,"AMP, TTG",M91,x,
-P170,,,,,AC,,,0,,,,,,1,2028,40,,34,,,,,,380,,,line,TYNDP,244,Uchtelfangen – Ensdorf – Bundesgrenze (FR),Uchtelfangen,,Ensdorf,,,,,Bestand,,,34,380,Umbeseilung,Leitung,SL,NV,,,,"2027,
+P170,,,,,AC,,,0,,,,,,1,2028,40,,34,,,,,,380,,,line,TYNDP,244,Uchtelfangen – Ensdorf – Bundesgrenze (FR),Uchtelfangen,,Ensdorf,,,,,Bestand,34,,34,380,Umbeseilung,Leitung,SL,NV,,,,"2027,
 2028",1: Vorbereitung Planungs- und Genehmigungsverfahren,AMP,M380,,between Germany and France
-P170,,,43767,,AC,,,0,,,,,,1,2030,40,,13,,,,,,380,,,line,TYNDP,244,,Ensdorf,,Punkt Oranna (Bundesgrenze (FR)),,,,434,Bestand,,,*,380,Umbeseilung,Leitung,SL,NV,,,,2030,1: Vorbereitung Planungs- und Genehmigungsverfahren,AMP,M380,,between Germany and France
-P175,,,,,AC,,,0,,5400,,,,1,2030,40,,15,6,,2,,,380,,,line,BBPIG,73,Wilhelmshaven 2 – Fedderwarden,Wilhelmshaven,,Fedderwarden,,,,,Ausbau,,15,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,NI,,,,,2030,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M385,x,each 4000A
+P170,,,43767,,AC,,,0,,,,,,1,2030,40,,13,,,,,,380,,,line,TYNDP,244,,Ensdorf,,Punkt Oranna (Bundesgrenze (FR)),,,,434,Bestand,13,,*,380,Umbeseilung,Leitung,SL,NV,,,,2030,1: Vorbereitung Planungs- und Genehmigungsverfahren,AMP,M380,,between Germany and France
+P175,,,,,AC,,,0,,5400,,,,1,2030,40,,15,6,,2,,,380,,,line,BBPIG,73,Wilhelmshaven 2 – Fedderwarden,Wilhelmshaven,,Fedderwarden,,,,,Ausbau,15,15,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,NI,,,,,2030,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M385,x,each 4000A
 P175,,,,,AC,,,0,,5400,,,,1,2029,40,,36,6,,2,,,380,,,line,BBPIG,73,"Wilhelmshaven 2
-– Conneforde",Wilhelmshaven,,Conneforde,,,,,Bestand,,,36,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NI,NV,,,,2029,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M466,x,each 4000A
-P176,,,43767,,AC,,,0,,,,,,1,2029,40,,18,,,,,,380,,,line,BBPIG,72,Eichstetten – Bundesgrenze [FR],Eichstetten,,Um Muhlbach (Bundesgrenze [FR]),,,,411,Bestand,,,18,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,BW,NV,x,,,2029,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TNG,M387,x,
-P200,,,2344,,AC,,,0,,,,,,1,2026,40,,16,6,,2,,,380,,,line,BBPIG,74,Punkt Blatzheim– Oberzier,Oberzier,,Punkt Blatzheim,,,,,Bestand,,,16,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NW,NV,,,,2026,3: Vor oder im PFV/ Genehmigung nach BImSchG,AMP,M425,x,two additional circuits?
-P204,,,43763,,AC,,,0,,,,,,1,2027,40,,4,,,,,,380,,,line,TYNDP,231,Tiengen – Bundesgrenze (CH),Tiengen,,Bundesgrenze (CH),,,,103,Bestand,,,4,380,Errichtung einer Leitung: Ersatzneubau,Leitung,BW,NV,,,,"2025,
+– Conneforde",Wilhelmshaven,,Conneforde,,,,,Bestand,36,,36,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NI,NV,,,,2029,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M466,x,each 4000A
+P176,,,43767,,AC,,,0,,,,,,1,2029,40,,18,,,,,,380,,,line,BBPIG,72,Eichstetten – Bundesgrenze [FR],Eichstetten,,Um Muhlbach (Bundesgrenze [FR]),,,,411,Bestand,18,,18,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,BW,NV,x,,,2029,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TNG,M387,x,
+P200,,,2344,,AC,,,0,,,,,,1,2026,40,,16,6,,2,,,380,,,line,BBPIG,74,Punkt Blatzheim– Oberzier,Oberzier,,Punkt Blatzheim,,,,,Bestand,16,,16,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NW,NV,,,,2026,3: Vor oder im PFV/ Genehmigung nach BImSchG,AMP,M425,x,two additional circuits?
+P204,,,43763,,AC,,,0,,,,,,1,2027,40,,4,,,,,,380,,,line,TYNDP,231,Tiengen – Bundesgrenze (CH),Tiengen,,Bundesgrenze (CH),,,,103,Bestand,4,,4,380,Errichtung einer Leitung: Ersatzneubau,Leitung,BW,NV,,,,"2025,
 2027",,AMP,M430,,Germany and Swizerland
-P206,,,33704,,AC,,,0,,,,,,1,2030,40,,140,6,,2,,,380,,,line,BBPIG,23,Herbertingen – Kreis Konstanz – Beuren – Gurtweil / Tiengen,Herbertingen,,Kreis Konstanz,,,,,Bestand,,,140,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,BW,NV,,,,2030,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,"AMP, TNG",M417,x,
+P206,,,33704,,AC,,,0,,,,,,1,2030,40,,45.7,6,,2,,,380,,,line,BBPIG,23,Herbertingen – Kreis Konstanz – Beuren – Gurtweil / Tiengen,Herbertingen,,Kreis Konstanz,,,,,Bestand,140,,140,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,BW,NV,,,,2030,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,"AMP, TNG",M417,x,
 P206,,33704,,,AC,,,0,,,,,,1,2032,40,,,6,,2,,,380,,,line,BBPIG,23,,Kreis Konstanz,,Beuren,,,,,Bestand,,,*,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,BW,NV,,,,"2030,
 2032",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,"AMP, TNG",M417,x,
 P206,,,,,AC,,,0,,,,,,1,2032,40,,,6,,2,,,380,,,line,BBPIG,23,,Beuren,,Tiengen,,,,,Bestand,,,*,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,BW,NV,,,,"2030,
 2032",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,"AMP, TNG",M417,x,
-P211,,,,,AC,,,0,,5400,,,,1,2032,40,,51,,,,,,380,,,line,BBPIG,65,Gießen / Nord – Karben,Gießen Nord,,Karben,,,,,Bestand,,,51,380,Umbeseilung,Leitung,HE,NV,,,,"2030,
+P211,,,,,AC,,,0,,5400,,,,1,2032,40,,51,,,,,,380,,,line,BBPIG,65,Gießen / Nord – Karben,Gießen Nord,,Karben,,,,,Bestand,51,,51,380,Umbeseilung,Leitung,HE,NV,,,,"2030,
 2032",,TTG,M434,x,each 4000A
-P212,,,,,AC,,,0,,5400,,,,1,2031,40,,73,,,,,,380,,,line,,,Landesbergen – Grohnde,Landesbergen,,Grohnde,,,,,Bestand,,,73,380,Umbeseilung,Leitung,NI,NV,,,,"2030,
+P212,,,,,AC,,,0,,5400,,,,1,2031,40,,73,,,,,,380,,,line,,,Landesbergen – Grohnde,Landesbergen,,Grohnde,,,,,Bestand,73,,73,380,Umbeseilung,Leitung,NI,NV,,,,"2030,
 2031",,TTG,M797,,Each 4000A
-P212,,,,,AC,,,0,,5400,,,,1,2040,40,,57,,,,,,380,,,line,,,Grohnde – Vörden – Würgassen,Grohnde,,Vörden,,,,,Bestand,,,57,380,Umbeseilung,Leitung,"NI, NW",NV,,,,2040,,TTG,M435,,Each 4000A
+P212,,,,,AC,,,0,,5400,,,,1,2040,40,,31.7,,,,,,380,,,line,,,Grohnde – Vörden – Würgassen,Grohnde,,Vörden,,,,,Bestand,57,,57,380,Umbeseilung,Leitung,"NI, NW",NV,,,,2040,,TTG,M435,,Each 4000A
 P212,,,,,AC,,,0,,5400,,,,1,2040,40,,,,,,,,380,,,line,,,,Vörden,,Würgassen,,,,,Bestand,,,*,380,Umbeseilung,Leitung,"NI, NW",NV,,,,2040,,TTG,M435,,Each 4000A
-P212,,,,,AC,,,0,,5400,,,,1,2040,40,,57,,,,,,380,,,line,,,Würgassen – Sanders- hausen / Ost – Bergshausen,Würgassen,,Sandershausen/Ost,,,,,Bestand,,,57,380,Umbeseilung,Leitung,"NW, HE",NV,,,,2040,,TTG,M472,,Each 4000A
+P212,,,,,AC,,,0,,5400,,,,1,2040,40,,46.1,,,,,,380,,,line,,,Würgassen – Sanders- hausen / Ost – Bergshausen,Würgassen,,Sandershausen/Ost,,,,,Bestand,57,,57,380,Umbeseilung,Leitung,"NW, HE",NV,,,,2040,,TTG,M472,,Each 4000A
 P212,,,,,AC,,,0,,5400,,,,1,2040,40,,,,,,,,380,,,line,,,,Sandershausen/Ost,,Bergshausen,,,,,Bestand,,,*,380,Umbeseilung,Leitung,"NW, HE",NV,,,,2040,,TTG,M472,,Each 4000A
-P212,,,,,AC,,,0,,5400,,,,1,2040,40,,30,,,,,,380,,,line,,,Bergshausen – Borken,Bergshausen,, Borken,,,,,Bestand,,,30,380,Umbeseilung,Leitung,HE,NV,,,,2040,,TTG,M473,,Each 4000A
-P215,,,,,AC,,,0,,,,,,1,2040,40,,68,,,,,,380,,,line,BBPIG,52,Güstrow – Bentwisch– Suchraum Gemeinden Sanitz/ Dettmannsdorf,Güstrow,,Bentwisch,,,,,Bestand,,,68,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,MV,NV,,,,2040,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,50HzT,M454,x,
+P212,,,,,AC,,,0,,5400,,,,1,2040,40,,30,,,,,,380,,,line,,,Bergshausen – Borken,Bergshausen,, Borken,,,,,Bestand,30,,30,380,Umbeseilung,Leitung,HE,NV,,,,2040,,TTG,M473,,Each 4000A
+P215,,,,,AC,,,0,,,,,,1,2040,40,,48.9,,,,,,380,,,line,BBPIG,52,Güstrow – Bentwisch– Suchraum Gemeinden Sanitz/ Dettmannsdorf,Güstrow,,Bentwisch,,,,,Bestand,68,,68,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,MV,NV,,,,2040,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,50HzT,M454,x,
 P215,,,35212,,AC,,,0,,,,,,1,2030,40,,,,,,,,380,,,line,BBPIG,52,,Bentwisch,,Sanitz Dettmannsdorf,,,,7,Bestand,,,*,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,MV,NV,,,,"2029,
 2030",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,50HzT,M454,x,
-P216,,,,,AC,,,0,,,,,,1,2030,40,,90,,,,,,380,,,line,BBPIG,53,Güstrow – Siedenbrünzow – Iven/Krusenfelde/Krien/ Spantekow/Wer- der/Bartow,Güstrow,,Siedenbrünzow,,,,,Bestand,,,90,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,MV,NV,,,,"2029,
+P216,,,,,AC,,,0,,,,,,1,2030,40,,65.8,,,,,,380,,,line,BBPIG,53,Güstrow – Siedenbrünzow – Iven/Krusenfelde/Krien/ Spantekow/Wer- der/Bartow,Güstrow,,Siedenbrünzow,,,,,Bestand,90,,90,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,MV,NV,,,,"2029,
 2030",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,50HzT,M455,x,
 P216,,,,,AC,,,0,,,,,,1,2033,40,,,,,,,,380,,,line,BBPIG,53,,Siedenbrünzow,,Iven,,,,,Bestand,,,*,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,MV,NV,,,,"2032,
 2033",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,50HzT,M455,x,
-P216,,,,,AC,,,0,,,,,,1,2033,40,,62,,,,,,380,,,line,BBPIG,53,Iven/Krusenfelde/Krien/ Spantekow/ Werder/Bartow – Pasewalk / Nord– Pasewalk,Iven,,Pasewalk,,,,,Bestand,,,62,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,MV,NV,,,,"2032,
+P216,,,,,AC,,,0,,,,,,1,2033,40,,62,,,,,,380,,,line,BBPIG,53,Iven/Krusenfelde/Krien/ Spantekow/ Werder/Bartow – Pasewalk / Nord– Pasewalk,Iven,,Pasewalk,,,,,Bestand,62,,62,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,MV,NV,,,,"2032,
 2033",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,50HzT,M523,x,
-P221,,,43774,,DC,,,0,,700,,,,1,2030,40,,35,2,,1,,,,,,line,TYNDP,267,50Hz T-Regalzone - Südschweden,Umspannwerk Güstrow,,Südschweden,,,,,Ausbau,,35,,,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,MV,,,,,"2029,
+P221,,,43774,,DC,,,0,,700,,,,1,2030,40,,35,2,,1,,,,,,line,TYNDP,267,50Hz T-Regalzone - Südschweden,Umspannwerk Güstrow,,Südschweden,,,,,Ausbau,35,35,,,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,MV,,,,,"2029,
 2030",,50HzT,M461a,,"HDVC, 700 MW( Ausbau von 700W auf 1,4GW)"
-P222,,,,,AC,,,0,,5400,,,,1,2035,40,,47,6,,2,,,380,,,line,BBPIG,47,Oberbachern – Ottenhofen,Oberbachern,,Ottenhofen,,,,,Bestand,,,47,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,BY,NV,,,,2035,2: Im ROV/BFP,TTG,M461,x,each 4000A
-P223,,,,,AC,,,0,,5400,,,,1,2029,40,,147,,,,,,380,,,line,,,Güstrow – Wessin – Görries– Klein Rogahn– Krümmel,Güstrow,,Wessin,,,,,Bestand,,,147,380,Umbeseilung,Leitung,"MV, SH",NV,,,,"2027,
+P222,,,,,AC,,,0,,5400,,,,1,2035,40,,47,6,,2,,,380,,,line,BBPIG,47,Oberbachern – Ottenhofen,Oberbachern,,Ottenhofen,,,,,Bestand,47,,47,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,BY,NV,,,,2035,2: Im ROV/BFP,TTG,M461,x,each 4000A
+P223,,,,,AC,,,0,,5400,,,,1,2029,40,,45.1,,,,,,380,,,line,,,Güstrow – Wessin – Görries– Klein Rogahn– Krümmel,Güstrow,,Wessin,,,,,Bestand,147,,147,380,Umbeseilung,Leitung,"MV, SH",NV,,,,"2027,
 2029",,50HzT,M462a,x,Each 4000A
 P223,,,,,AC,,,0,,5400,,,,1,2030,40,,,,,,,,380,,,line,,,,Wessin,,Görries,,,,,Bestand,,,*,380,Umbeseilung,Leitung,"MV, SH",NV,,,,2030,,50HzT,M462a,x,Each 4000A
 P223,,,,,AC,,,0,,5400,,,,1,2030,40,,,,,,,,380,,,line,,,,Görries,,Krümmel,,,,,Bestand,,,*,380,Umbeseilung,Leitung,"MV, SH",NV,,,,2030,,50HzT,M462a,x,Each 4000A
-P225,,,,,AC,,,0,,5400,,,,1,2030,40,,8,9,,3,,,380,,,line,BBPIG,77,Altheim – Isar,Altheim,,Isar,,,,,Ausbau,,8,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,BY,,,,,2030,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M464a,x,4000A
-P227,,,,,AC,,,0,,,,,,1,2030,40,,80,6,,2,,,380,,,line,,,Lübeck / West – Krümmel,Lübeck,,Krümmel,,,,,Ausbau,,80,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,SH,,,,,"2029,
+P225,,,,,AC,,,0,,5400,,,,1,2030,40,,8,9,,3,,,380,,,line,BBPIG,77,Altheim – Isar,Altheim,,Isar,,,,,Ausbau,8,8,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,BY,,,,,2030,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,TTG,M464a,x,4000A
+P227,,,,,AC,,,0,,,,,,1,2030,40,,80,6,,2,,,380,,,line,,,Lübeck / West – Krümmel,Lübeck,,Krümmel,,,,,Ausbau,80,80,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,SH,,,,,"2029,
 2030",-,TTG,M468,,
-P228,,,,,AC,,,0,,,,,,1,2040,40,,98,6,,2,,,380,,,line,BBPIG,59,Landesbergen – Lehrte / Lahe – Mehrum / Nord,Landesbergen,,Lehrte,,,,,Bestand,,,98,380,Errichtung einer Leitung: Ersatzneubau,Leitung,NI,NV,,,,2040,1: Vorbereitung Planungs- und Genehmigungsverfahren,TTG,M469a,x,
+P228,,,,,AC,,,0,,,,,,1,2040,40,,82.4,6,,2,,,380,,,line,BBPIG,59,Landesbergen – Lehrte / Lahe – Mehrum / Nord,Landesbergen,,Lehrte,,,,,Bestand,98,,98,380,Errichtung einer Leitung: Ersatzneubau,Leitung,NI,NV,,,,2040,1: Vorbereitung Planungs- und Genehmigungsverfahren,TTG,M469a,x,
 P228,,,,,AC,,,0,,,,,,1,2032,40,,,6,,2,,,380,,,line,BBPIG,59,,Lehrte,,Mehrum,,,,,Bestand,,,*,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NI,NV,,,,"2031,
 2032",1: Vorbereitung Planungs- und Genehmigungsverfahren,TTG,M469a,x,
-P252,,,1026,,AC,,,0,,,,,,1,2032,40,,4,,,,,,380,,,line,,,(Marzahn – Punkt Biesdorf/Süd) – Wuhlheide,Marzahn,,Punkt Biesdorf Süd,,,,,Bestand,,,4,380,Errichtung einer Leitung: Ersatzneubau,Leitung,BE,NV,,,,"2031,
+P252,,,1026,,AC,,,0,,,,,,1,2032,40,,4,,,,,,380,,,line,,,(Marzahn – Punkt Biesdorf/Süd) – Wuhlheide,Marzahn,,Punkt Biesdorf Süd,,,,,Bestand,4,,4,380,Errichtung einer Leitung: Ersatzneubau,Leitung,BE,NV,,,,"2031,
 2032",-,50HzT,M534a,x,
-P252,,1026,,,AC,,,0,,,,,,1,2032,40,,4,,,,,,380,,,line,,,(Marzahn – Punkt Biesdorf/Süd) – Wuhlheide,Punkt Biesdorf Süd,,Wuhlheide,,,,,Bestand,,,4,380,Errichtung einer Leitung: Ersatzneubau,Leitung,BE,NV,,,,"2031,
+P252,,1026,,,AC,,,0,,,,,,1,2032,40,,4,,,,,,380,,,line,,,(Marzahn – Punkt Biesdorf/Süd) – Wuhlheide,Punkt Biesdorf Süd,,Wuhlheide,,,,,Bestand,4,,4,380,Errichtung einer Leitung: Ersatzneubau,Leitung,BE,NV,,,,"2031,
 2032",-,50HzT,M534a,x,
-P302,,,,,AC,,,0,,,,,,1,2035,40,,46,,,,,,380,,,line,BBPIG,68,Höpfingen – Hüffenhardt,Höpfingen,,Hüffenhardt,,,,,Bestand,,,46,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung,Leitung,BW,NV,,,,"2030-
+P302,,,,,AC,,,0,,,,,,1,2035,40,,46,,,,,,380,,,line,BBPIG,68,Höpfingen – Hüffenhardt,Höpfingen,,Hüffenhardt,,,,,Bestand,46,,46,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung,Leitung,BW,NV,,,,"2030-
 2035",1: Vorbereitung Planungs- und Genehmigungsverfahren,TNG,M511,x,
-P306,,,,,AC,,,0,,,,,,1,2030,40,,39,,,,,,380,,,line,,,Großgartach – Pulverdingen,Großgartach,,Pulverdingen,,,,,Bestand,,,39,380,"Errichtung einer Leitung: Ersatzneubau, Parallelneubau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung",Leitung,BW,NV,,,,2030,,TNG,M518,x,TransnetBW
-P313,,,43762,,AC,,,0,,,,,,1,2035,40,,15,,,,,,,,,line,TYNDP,225,Deutschland - Belgien,Dahlem,,Punkt Gramme (Belgien),,,,,Bestand,,,15,,"Errichtung einer
+P306,,,,,AC,,,0,,,,,,1,2030,40,,39,,,,,,380,,,line,,,Großgartach – Pulverdingen,Großgartach,,Pulverdingen,,,,,Bestand,39,,39,380,"Errichtung einer Leitung: Ersatzneubau, Parallelneubau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung",Leitung,BW,NV,,,,2030,,TNG,M518,x,TransnetBW
+P313,,,43762,,AC,,,0,,,,,,1,2035,40,,15,,,,,,380,,,line,TYNDP,225,Deutschland - Belgien,Dahlem,,Punkt Gramme (Belgien),,,,,Bestand,15,,15,,"Errichtung einer
 Leitung: Neubau in
 neuer Trasse",Leitung,NW,,,,,2035,,AMP,M488,,HVDC
-P315,,,,,AC,,,0,,,,,,1,2035,40,,94,6,,2,,,380,,,line,BBPIG,63,Hanekenfähr – Gronau,Hanekenfähr,,Gronau,,,,,Bestand,,,94,380,"Errichtung einer Leitung: Ersatzneubau,
+P315,,,,,AC,,,0,,,,,,1,2035,40,,94,6,,2,,,380,,,line,BBPIG,63,Hanekenfähr – Gronau,Hanekenfähr,,Gronau,,,,,Bestand,94,,94,380,"Errichtung einer Leitung: Ersatzneubau,
 Errichtung einer Leitung: Paral- lelneubau",Leitung,"NI, NW",NV,,,,2035,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,AMP,M491,x,
-P328,,,43769,,DC,,,0,,1400,,,,1,2034,40,,200,,,,,,380,,,line,BBPIG,70,Fedderwarden – Großbritannien,Fedderwarden,,Punkt Großbritannien,,,,190miles,Ausbau,,200,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,NI,,x,,,"2033,
+P328,,,43769,,DC,,,0,,1400,,,,1,2034,40,,200,,,,,,380,,,line,BBPIG,70,Fedderwarden – Großbritannien,Fedderwarden,,Punkt Großbritannien,,,,190miles,Ausbau,200,200,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,NI,,x,,,"2033,
 2034",3: Vor oder im PFV/ Genehmigung nach BImSchG,(TTG),M534,x,
-P330,,13093,,,AC,,,0,,,,,,1,2025,40,,42.3,,,,,,,,,line,,,Punkt Rittershausen – Höpfingen,Punkt Rittershausen,,Höpfingen,,,,,Bestand,,,42.3,,Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung,Leitung,"BY, BW",NV,,,,2025,,TNG,M550,x,
-P355,,,,,AC,,,0,,,,,,1,2035,40,,125,6,,2,,,380,,,line,,,Netzverstärkung Neuenhagen – Heinersdorf – Eisenhüttenstadt – Preilack,Neuenhagen,,Heinersdorf,,,,,Bestand,,,125,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,BB,NV,,,,2035,,50HzT,M599,,
+P330,,13093,,,AC,,,0,,,,,,1,2025,40,,42.3,,,,,,380,,,line,,,Punkt Rittershausen – Höpfingen,Punkt Rittershausen,,Höpfingen,,,,,Bestand,42.3,,42.3,,Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung,Leitung,"BY, BW",NV,,,,2025,,TNG,M550,x,
+P355,,,,,AC,,,0,,,,,,1,2035,40,,35.5,6,,2,,,380,,,line,,,Netzverstärkung Neuenhagen – Heinersdorf – Eisenhüttenstadt – Preilack,Neuenhagen,,Heinersdorf,,,,,Bestand,125,,125,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,BB,NV,,,,2035,,50HzT,M599,,
 P355,,,,,AC,,,0,,,,,,1,2035,40,,,6,,2,,,380,,,line,,,,Heinersdorf,,Eisenhüttenstadt,,,,,Bestand,,,*,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,BB,NV,,,,2035,,50HzT,M599,,
 P355,,,,,AC,,,0,,,,,,1,2035,40,,,6,,2,,,380,,,line,,,,Eisenhüttenstadt,,Preilack,,,,,Bestand,,,*,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,BB,NV,,,,2035,,50HzT,M599,,
-P359,,,,,AC,,,0,,,,,,1,2035,40,,37,,,,,,380,,,line,BBPIG,60,Stendal / West – Wolmirstedt,Stendal West,,Wolmirstedt,,,,,Bestand,,,37,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung,Leitung,ST,NV,,,,2035,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,50HzT,M571,x,
-P367,,,43771,,AC,,,0,,,,,,1,2030,40,,26,3,,1,,,380,,,line,TYNDP,1047,Emden / Ost – Eemshaven (Grenze DE / NL),Emden-Borssum,,Punkt Eemshaven (Grenze DE / NL),,,,171,Ausbau,,26,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,NI,,x,,,"2029,
+P359,,,,,AC,,,0,,,,,,1,2035,40,,37,,,,,,380,,,line,BBPIG,60,Stendal / West – Wolmirstedt,Stendal West,,Wolmirstedt,,,,,Bestand,37,,37,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung,Leitung,ST,NV,,,,2035,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,50HzT,M571,x,
+P367,,,43771,,AC,,,0,,,,,,1,2030,40,,26,3,,1,,,380,,,line,TYNDP,1047,Emden / Ost – Eemshaven (Grenze DE / NL),Emden-Borssum,,Punkt Eemshaven (Grenze DE / NL),,,,171,Ausbau,26,26,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,NI,,x,,,"2029,
 2030",,,,,
-P402,,,,,AC,,,0,,,,,,1,2035,40,,126,,,,,,380,,,line,,,Westerkappeln – Gersteinwerk,Westerkappeln,,Gersteinwerk,,,,,Ausbau,,126,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,NW,,,,,2035,,AMP,M602,x,
-P403,,,31254,,AC,,,0,,,,,,1,2033,40,,25,,,,,,380,,,line,BBPIG,64,Hattingen – Linde,Hattingen,,Linderhausen,,,,,Bestand,,,25,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NW,NV,,,,2033,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,AMP,M603,x,
+P402,,,,,AC,,,0,,,,,,1,2035,40,,126,,,,,,380,,,line,,,Westerkappeln – Gersteinwerk,Westerkappeln,,Gersteinwerk,,,,,Ausbau,126,126,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,NW,,,,,2035,,AMP,M602,x,
+P403,,,31254,,AC,,,0,,,,,,1,2033,40,,15.5,,,,,,380,,,line,BBPIG,64,Hattingen – Linde,Hattingen,,Linderhausen,,,,,Bestand,25,,25,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NW,NV,,,,2033,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,AMP,M603,x,
 P403,,31254,,,AC,,,0,,,,,,1,2033,40,,,,,,,,380,,,line,BBPIG,64,,Linderhausen,,Linde,,,,,Bestand,,,*,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NW,NV,,,,"2032,
 2033",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,AMP,M603,x,
-P406,,7406,7069,,AC,,,0,,,,,,1,2033,40,,10,,,,,,380,,,line,BBPIG,71,Aach – Bofferdange,Aach,,Punkt Bofferdange,,,,,Bestand,,,10,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,RP,NV,x,,,"2032,
+P406,,7406,7069,,AC,,,0,,,,,,1,2033,40,,10,,,,,,380,,,line,BBPIG,71,Aach – Bofferdange,Aach,,Punkt Bofferdange,,,,,Bestand,10,,10,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,RP,NV,x,,,"2032,
 2033",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,AMP,M606,x,
-P408,,,,,AC,,,0,,,,,,1,2027,40,,13,,,,,,380,,,line,,,Eiberg – Bochum,Station Eiberg,,Bochum,,,,,Bestand,,,13,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NW,NV,,,,"2026,
+P408,,,,,AC,,,0,,,,,,1,2027,40,,13,,,,,,380,,,line,,,Eiberg – Bochum,Station Eiberg,,Bochum,,,,,Bestand,13,,13,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NW,NV,,,,"2026,
 2027",,AMP,M621,x,
-P408,,,,,AC,,,0,,,,,,1,2035,40,,11,,,,,,380,,,line,,,Bochum – Hattingen,Bochum,,Hattingen,,,,,Bestand,,,11,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NW,NV,,,,2035,,AMP,M622,x,
-P408,,2710,,,AC,,,0,,,,,,1,2035,40,,33,,,,,,380,,,line,,,Emscherbruch – Bochum / Eiberg,Emscherbruch,,Station Eiberg,,,,1,Bestand,,,33,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung,Leitung,NW,NV,,,,2035,,AMP,M744,x,
-P450,,,,,AC,,,0,,,,,,1,2035,40,,98,,,,,,380,,,line,BBPIG,60,Putlitz / Süd – Putlitz – Perleberg – Stendal / West,Putlitz Süd,,Putlitz,,,,,Bestand,,,98,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung,Leitung,"BB, ST",NV,,,,2035,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,50HzT,M678,x,"HTLS, strengthened existing 380"
+P408,,,,,AC,,,0,,,,,,1,2035,40,,11,,,,,,380,,,line,,,Bochum – Hattingen,Bochum,,Hattingen,,,,,Bestand,11,,11,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NW,NV,,,,2035,,AMP,M622,x,
+P408,,2710,,,AC,,,0,,,,,,1,2035,40,,33,,,,,,380,,,line,,,Emscherbruch – Bochum / Eiberg,Emscherbruch,,Station Eiberg,,,,1,Bestand,33,,33,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung,Leitung,NW,NV,,,,2035,,AMP,M744,x,
+P450,,,,,AC,,,0,,,,,,1,2035,40,,3.3,,,,,,380,,,line,BBPIG,60,Putlitz / Süd – Putlitz – Perleberg – Stendal / West,Putlitz Süd,,Putlitz,,,,,Bestand,98,,98,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung,Leitung,"BB, ST",NV,,,,2035,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,50HzT,M678,x,"HTLS, strengthened existing 380"
 P450,,,,,AC,,,0,,,,,,1,2030,40,,,,,,,,380,,,line,BBPIG,60,,Putlitz,,Perleberg,,,,,Bestand,,,*,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung,Leitung,"BB, ST",NV,,,,"2029,
 2030",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,50HzT,M678,x,"HTLS, strengthened existing 380"
 P450,,,,,AC,,,0,,,,,,1,2030,40,,,,,,,,380,,,line,BBPIG,60,,Perleberg,,Stendal West,,,,,Bestand,,,*,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung,Leitung,"BB, ST",NV,,,,"2029,
 2030",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,50HzT,M678,x,"HTLS, strengthened existing 380"
-P450,,,,,AC,,,0,,,,,,1,2030,40,,152,,,,,,380,,,line,BBPIG,60,Güstrow – Siedenbrünzow – Putlitz / Süd,Güstrow,,Siedenbrünzow,,,,,Bestand,,,152,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung,Leitung,"MV, BB",NV,,,,"2029,
+P450,,,,,AC,,,0,,,,,,1,2030,40,,36.9,,,,,,380,,,line,BBPIG,60,Güstrow – Siedenbrünzow – Putlitz / Süd,Güstrow,,Siedenbrünzow,,,,,Bestand,152,,152,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung,Leitung,"MV, BB",NV,,,,"2029,
 2030",,50HzT,M786,x,"HTLS, strengthened existing 380"
 P450,,,,,AC,,,0,,,,,,1,2035,40,,,,,,,,380,,,line,BBPIG,60,,Siedenbrünzow,,Putlitz Süd,,,,,Bestand,,,*,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung,Leitung,"MV, BB",NV,,,,2035,,50HzT,M786,x,"HTLS, strengthened existing 380"
-P451,,,,,AC,,,0,,,,,,1,2035,40,,22,,,,,,380,,,line,BBPIG,62,Graustein – Bärwalde,Graustein,,Bärwalde,,,,,Bestand,,,22,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung,Leitung,"BB, SN",NV,,,,2035,3: Vor oder im PFV/ Genehmigung nach BImSchG,50HzT,M681,x,"HTLS, strengthened existing 380"
-P462,,,,,AC,,,0,,,,,,1,2030,40,,24,,,,,,380,,,line,BBPIG,75,Aachen – Netzerweiterung,Verlautenheide,,Zukunft,,,,,Bestand,,,24,380,"Errichtung einer Leitung: Ersatzneubau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung",Leitung,NW,NV,,,,2030,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,AMP,M689,x,600MW into 110kV grid
+P451,,,,,AC,,,0,,,,,,1,2035,40,,22,,,,,,380,,,line,BBPIG,62,Graustein – Bärwalde,Graustein,,Bärwalde,,,,,Bestand,22,,22,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung,Leitung,"BB, SN",NV,,,,2035,3: Vor oder im PFV/ Genehmigung nach BImSchG,50HzT,M681,x,"HTLS, strengthened existing 380"
+P462,,,,,AC,,,0,,,,,,1,2030,40,,11.3,,,,,,380,,,line,BBPIG,75,Aachen – Netzerweiterung,Verlautenheide,,Zukunft,,,,,Bestand,24,,24,380,"Errichtung einer Leitung: Ersatzneubau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung",Leitung,NW,NV,,,,2030,1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,AMP,M689,x,600MW into 110kV grid
 P462,,,,,AC,,,0,,,,,,1,2028,40,,,,,,,,380,,,line,BBPIG,75,,Zukunft,,Siersdorf,,,,,Bestand,,,*,380,"Errichtung einer Leitung: Ersatzneubau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung",Leitung,NW,NV,,,,"2027,
 2028",1: Vorbereitung Pla- nungs- und Geneh- migungsverfahren,AMP,M689,x,600MW into 110kV grid
-P464,,13049,,,AC,,,0,,,,,,1,2028,40,,3.7,6,,2,,,80,,,line,,,Neubau Punkt Fraulautern – Saarwellingen,Punkt Fraulautern,,Saarwellingen,,,,,Bestand,,,3.7,80,"Errichtung einer Leitung: Ersatzneubau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung",Leitung,SL,NV,,,,"2027,
+P464,,13049,,,AC,,,0,,,,,,1,2028,40,,3.7,6,,2,,,380,,,line,,,Neubau Punkt Fraulautern – Saarwellingen,Punkt Fraulautern,,Saarwellingen,,,,,Bestand,3.7,,3.7,80,"Errichtung einer Leitung: Ersatzneubau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbeseilung",Leitung,SL,NV,,,,"2027,
 2028",,AMP,M691,x,two circute
-P464,,,,,AC,,,0,,,,,,1,2028,40,,0.9,9,,3,,,380,,,line,,,Neubau Diefflen – Saarwellingen,Saarwellingen,,Dieffeln,,,,,Bestand,,,0.9,380,"Errichtung einer Leitung: Ersatzneubau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung",Leitung,SL,NV,,,,2028,,AMP,M691,x,three circute
-P500,,,,,AC,,,0,,,,,,1,2028,40,,29.5,,,,,,380,,,line,,,Aschaffenburg – Urberach,Aschaffenburg,,Urberach,,,,,Ausbau,,29.5,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"BY, HE",NVA,,,,2028,,"AMP, TTG",M737,x,Nur zwischen Aschaffenburg und Urberach
-P501,,,,,AC,,,0,,,,,,1,2035,40,,34,,,,,,380,,,line,,,Gersteinwerk – Lippe – Mengede,Gersteinwerk,,Lippe,,,,,Bestand,,,34,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NW,NV,,,,2035,,AMP,M740,x,
+P464,,,,,AC,,,0,,,,,,1,2028,40,,0.9,9,,3,,,380,,,line,,,Neubau Diefflen – Saarwellingen,Saarwellingen,,Dieffeln,,,,,Bestand,0.9,,0.9,380,"Errichtung einer Leitung: Ersatzneubau, Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung",Leitung,SL,NV,,,,2028,,AMP,M691,x,three circute
+P500,,,,,AC,,,0,,,,,,1,2028,40,,29.5,,,,,,380,,,line,,,Aschaffenburg – Urberach,Aschaffenburg,,Urberach,,,,,Ausbau,29.5,29.5,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,"BY, HE",NVA,,,,2028,,"AMP, TTG",M737,x,Nur zwischen Aschaffenburg und Urberach
+P501,,,,,AC,,,0,,,,,,1,2035,40,,24.4,,,,,,380,,,line,,,Gersteinwerk – Lippe – Mengede,Gersteinwerk,,Lippe,,,,,Bestand,34,,34,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NW,NV,,,,2035,,AMP,M740,x,
 P501,,,,,AC,,,0,,,,,,1,2035,40,,,,,,,,380,,,line,,,Gersteinwerk – Lippe – Mengede,Lippe,,Mengede,,,,,Bestand,,,*,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NW,NV,,,,2035,,AMP,M740,x,
-P502,,,,,AC,,,0,,,,,,1,2035,40,,8.5,,,,,,380,,,line,,,Walsum – Beeck,Walsum,,Beeck,,,,,Bestand,,,8.5,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NW,NV,,,,2035,,AMP,M741,x,
-P503,,,,,AC,,,0,,,,,,1,2028,40,,26.6,,,,,,380,,,line,,,Niederrhein – Walsum,Niederrhein,,Wehofen,,,,,Bestand,,,26.6,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung,Leitung,NW,NV,,,,"2027 /
+P502,,,,,AC,,,0,,,,,,1,2035,40,,8.5,,,,,,380,,,line,,,Walsum – Beeck,Walsum,,Beeck,,,,,Bestand,8.5,,8.5,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,NW,NV,,,,2035,,AMP,M741,x,
+P503,,,,,AC,,,0,,,,,,1,2028,40,,20.7,,,,,,380,,,line,,,Niederrhein – Walsum,Niederrhein,,Wehofen,,,,,Bestand,26.6,,26.6,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung,Leitung,NW,NV,,,,"2027 /
 2028",,AMP,M742,x,Umstellung von 220 kV
 P503,,,,,AC,,,0,,,,,,1,2035,40,,,,,,,,380,,,line,,,,Wehofen,,Walsum,,,,,Bestand,,,*,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung,Leitung,NW,NV,,,,2035,,AMP,M742,x,Umstellung von 220 kV
-P504,,,,,AC,,,0,,,,,,1,2035,40,,77,,,,,,380,,,line,,,Sechtem – Weissenthurm,Sechtem,,Liessem,,,,,Bestand,,,77,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung,Leitung,"NW, RP",NV,,,,2035,,AMP,M743,x,Umbeseilung
+P504,,,,,AC,,,0,,,,,,1,2035,40,,37.1,,,,,,380,,,line,,,Sechtem – Weissenthurm,Sechtem,,Liessem,,,,,Bestand,77,,77,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung,Leitung,"NW, RP",NV,,,,2035,,AMP,M743,x,Umbeseilung
 P504,,,,,AC,,,0,,,,,,1,2030,40,,,,,,,,380,,,line,,,,Liessem,,Weissenthurm,,,,,Bestand,,,*,380,Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung,Leitung,"NW, RP",NV,,,,2030,,AMP,M743,x,Umbeseilung
-P505,,,,,AC,,,0,,,,,,1,2030,40,,22,,,,,,,,,line,,,Netzverstärkung Niederstedem – Bauler – Bundesgrenze,Niederstedem,,Bauler,,,,7,Bestand,,,22,,Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung,Leitung,RP,NV,,,,2030,,AMP,M754,x,"HTLS, existing is 220kV"
-P505,,,43952,,AC,,,0,,,,,,1,2030,40,,,,,,,,,,,line,,,,Bauler,,Deutsch - luxemburgischen (border),,,,31,Bestand,,,*,,Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung,Leitung,RP,NV,,,,2030,,AMP,M754,x,"HTLS, existing is 220kV"
-P509,,,,,AC,,,0,,,,,,1,2030,40,,60,,,,,,380,,,line,,,Limburg – Eschborn – Kriftel,Limburg,,Westerbach,,,,,Ausbau,,60,,380,"Errichtung einer Leitung: Neubau in neuer Trasse, Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung",Leitung,HE,NVA,,,,2030,,AMP,M784,,
-P509,,,,,AC,,,0,,,,,,1,2040,40,,10,,,,,,380,,,line,,,,Westerbach,,Kriftel,,,,,Bestand,,,10,380,"Errichtung einer Leitung: Neubau in neuer Trasse, Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung",Leitung,HE,NVA,,,,2040,,AMP,M784,,
-P528,,,,,AC,,,0,,,,,,1,2040,40,,59,,,,,,380,,,line,,,Netzverstärkung Lauchstädt – Leuna / Merse- burg / Weißenfels– Pulgar,Lauchstädt,,Pulgar,,,,,Bestand,,,59,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,"ST, SN",NV,,,,2040,,50HzT,M750,,
-P531,,,473,,AC,,,0,,,,,,1,2040,40,,25,6,,2,,,380,,,line,,,Thyrow – Mahlow – Berlin / Südost - Lichterfelde – Mitte,Thyrow,,Mahlow,,,,4,Bestand,,,25,380,"Errichtung einer Leitung: Neubau in neuer Trasse, Errichtung einer Leitung: Ersatz- neubau",Leitung,"BB, BE",NVA,,,,2040,,50HzT,M531a,x,
+P505,,,,,AC,,,0,,,,,,1,2030,40,,22,,,,,,380,,,line,,,Netzverstärkung Niederstedem – Bauler – Bundesgrenze,Niederstedem,,Bauler,,,,7,Bestand,22,,22,,Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung,Leitung,RP,NV,,,,2030,,AMP,M754,x,"HTLS, existing is 220kV"
+P505,,,43952,,AC,,,0,,,,,,1,2030,40,,,,,,,,380,,,line,,,,Bauler,,Deutsch - luxemburgischen (border),,,,31,Bestand,,,*,,Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung,Leitung,RP,NV,,,,2030,,AMP,M754,x,"HTLS, existing is 220kV"
+P509,,,,,AC,,,0,,,,,,1,2030,40,,60,,,,,,380,,,line,,,Limburg – Eschborn – Kriftel,Limburg,,Westerbach,,,,,Ausbau,60,60,,380,"Errichtung einer Leitung: Neubau in neuer Trasse, Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung",Leitung,HE,NVA,,,,2030,,AMP,M784,,
+P509,,,,,AC,,,0,,,,,,1,2040,40,,10,,,,,,380,,,line,,,,Westerbach,,Kriftel,,,,,Bestand,10,,10,380,"Errichtung einer Leitung: Neubau in neuer Trasse, Änderung oder Erweiterung einer Leitung: Zu- oder Umbe- seilung",Leitung,HE,NVA,,,,2040,,AMP,M784,,
+P528,,,,,AC,,,0,,,,,,1,2040,40,,59,,,,,,380,,,line,,,Netzverstärkung Lauchstädt – Leuna / Merse- burg / Weißenfels– Pulgar,Lauchstädt,,Pulgar,,,,,Bestand,59,,59,380,Errichtung einer Leitung: Ersatz- neubau,Leitung,"ST, SN",NV,,,,2040,,50HzT,M750,,
+P531,,,473,,AC,,,0,,,,,,1,2040,40,,17.7,6,,2,,,380,,,line,,,Thyrow – Mahlow – Berlin / Südost - Lichterfelde – Mitte,Thyrow,,Mahlow,,,,4,Bestand,25,,25,380,"Errichtung einer Leitung: Neubau in neuer Trasse, Errichtung einer Leitung: Ersatz- neubau",Leitung,"BB, BE",NVA,,,,2040,,50HzT,M531a,x,
 P531,,473,,,AC,,,0,,,,,,1,2035,40,,,6,,2,,,380,,,line,,,,Mahlow,,Umspannwerk Schönefeld Nord,,,,,Bestand,,,*,380,"Errichtung einer Leitung: Neubau in neuer Trasse, Errichtung einer Leitung: Ersatz- neubau",Leitung,"BB, BE",NVA,,,,"2030-
 2035",,50HzT,M531a,x,
-P531,,473,,,AC,,,0,,,,,,1,2035,40,,20,6,,2,,,380,,,line,,,,Mahlow,,Lichterfelde,,,,14,Ausbau,,20,,380,"Errichtung einer Leitung: Neubau in neuer Trasse, Errichtung einer Leitung: Ersatz- neubau",Leitung,"BB, BE",NVA,,,,"2030-
+P531,,473,,,AC,,,0,,,,,,1,2035,40,,8.9,6,,2,,,380,,,line,,,,Mahlow,,Lichterfelde,,,,14,Ausbau,20,20,,380,"Errichtung einer Leitung: Neubau in neuer Trasse, Errichtung einer Leitung: Ersatz- neubau",Leitung,"BB, BE",NVA,,,,"2030-
 2035",,50HzT,M531a,x,
 P531,,,,,AC,,,0,,,,,,1,2035,40,,,6,,2,,,380,,,line,,,,Lichterfelde,,Mitte,,,,,Ausbau,,*,,380,"Errichtung einer Leitung: Neubau in neuer Trasse, Errichtung einer Leitung: Ersatz- neubau",Leitung,"BB, BE",NVA,,,,"2030-
 2035",,50HzT,M531a,x,
-P531,,,,,AC,,,0,,,,,,1,2035,40,,18,,,,,,380,,,line,,,Malchow – Moabit – Reuter,Malchow,,Moabit,,,,,Ausbau,,18,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,BE,,,,,"2030-
+P531,,,,,AC,,,0,,,,,,1,2035,40,,10.1,,,,,,380,,,line,,,Malchow – Moabit – Reuter,Malchow,,Moabit,,,,,Ausbau,18,18,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,BE,,,,,"2030-
 2035",,50HzT,M531b,x,
 P531,,,,,AC,,,0,,,,,,1,2035,40,,,,,,,,380,,,line,,,Malchow – Moabit – Reuter,Moabit,, Reuter,,,,,Ausbau,,*,,380,Errichtung einer Leitung: Neubau in neuer Trasse,Leitung,BE,,,,,"2030-
 2035",,50HzT,M531b,x,

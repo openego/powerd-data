@@ -54,11 +54,6 @@ for index, row in lines_df.iterrows():
 
     if not matching_rows_start.empty:
         
-        # if pd.isnull(lines_df.at[index, 'bus0']):
-        #     lines_df.at[index, 'bus0'] = matching_rows_start.iloc[0]['bus_id']
-        # if pd.isnull(lines_df.at[index, 'subst_name0']):
-        #     lines_df.at[index, 'subst_name0'] = {matching_rows_start.iloc[0]['subst_name']}
-        
         # Find coordinate for start point
         if pd.isnull(lines_df.at[index, 'Coordinate0']):
             point_0 = matching_rows_start.iloc[0]['geom']
@@ -69,11 +64,6 @@ for index, row in lines_df.iterrows():
     matching_rows_end = substation_df[substation_df['bus_id'] == lines_df.at[index, 'bus1']]
     if not matching_rows_end.empty:
         
-        # if pd.isnull(lines_df.at[index, 'bus1']):
-        #     lines_df.at[index, 'bus1'] = matching_rows_end.iloc[0]['bus_id']
-        # if pd.isnull(lines_df.at[index, 'subst_name1']):
-        #     lines_df.at[index, 'subst_name1'] = matching_rows_end.iloc[0]['subst_name']
-
         # Find coordinate for End point
         if pd.isnull(lines_df.at[index, 'Coordinate1']):
             point_1 = matching_rows_end.iloc[0]['geom']
@@ -89,8 +79,50 @@ for index, row in lines_df.iterrows():
                 coordinate_1_str = str(lines_df.at[index, 'Coordinate1'])
                 lon1, lat1 = map(float, coordinate_1_str.split(' '))
                 distance = geodesic((lat0, lon0), (lat1, lon1)).kilometers
-                lines_df.at[index, 'length'] = f'TB {round(distance*1.14890133371257,1)}'
+                lines_df.at[index, 'length'] = round(distance*1.14890133371257,1)
+                lines_df.at[index, 'length1'] = f'B {round(distance*1.14890133371257,1)}'
+                
 
+
+    #Filling empty cells
+    if pd.isnull (lines_df.at[index, 's_nom']):
+        if (lines_df.at[index, 'cable/line'] == 'line'):
+            lines_df.at[index,'s_nom'] = 1790
+        if (lines_df.at[index,'cable/line'] == 'cable'):
+            lines_df.at[index,'s_nom'] = 925
+    if pd.isnull (lines_df.at[index, 'cables']):
+        lines_df.at[index, 'cables'] = 3
+        lines_df.at[index, 'num_parallel'] = 1
+    lines_df.at[index, 's_nom_min'] = lines_df.at[index, 's_nom']
+    lines_df.at[index, 's_nom_max'] = 'Infinity'
+    lines_df.at[index, 's_nom_extendable'] = 't'
+    lines_df.at[index, 'v_ang_max'] = 'Infinity'
+    lines_df.at[index, 'v_ang_min'] = '-Infinity'
+    lines_df.at[index, 'terrain_factor'] = 1
+
+    #calculation of X, R, Cost
+    lines_df['length'] = pd.to_numeric(lines_df['length'], errors='coerce')
+    if (lines_df.at[index,'v_nom'] == 380) and (lines_df.at[index, 'cable/line'] == 'line'):
+        lines_df.at[index,'r'] = 0.028 / (lines_df.at[index,'s_nom']/1790) * lines_df.at[index, 'length']
+        lines_df.at[index,'x'] = 2*3.14159*50*0.001*0.8 / (lines_df.at[index,'s_nom']/1790) * lines_df.at[index, 'length']
+        lines_df.at[index,'capital_cost'] = 2500000 / lines_df.at[index,'s_nom']*lines_df.at[index, 'length']/(lines_df.at[index, 'cables']/3)
+
+    if (lines_df.at[index,'v_nom'] == 380) and (lines_df.at[index, 'cable/line'] == 'cable'):
+        lines_df.at[index,'r'] = 0.0175 / (lines_df.at[index,'s_nom']/925) * lines_df.at[index, 'length']
+        lines_df.at[index,'x'] = 2*3.14159*50*0.001*0.3 / (lines_df.at[index,'s_nom']/925) * lines_df.at[index, 'length']
+        lines_df.at[index,'capital_cost'] = 11500000 / lines_df.at[index,'s_nom']*lines_df.at[index, 'length']/(lines_df.at[index, 'cables']/3)
+
+    if (lines_df.at[index,'carrier'] == 'DC') and (lines_df.at[index, 'cable/line'] == 'line'):
+        lines_df.at[index,'r'] = 0.0175 / (lines_df.at[index,'s_nom']/925) * lines_df.at[index, 'length']
+        lines_df.at[index,'x'] = 2*3.14159*50*0.001*0.3 / (lines_df.at[index,'s_nom']/925) * lines_df.at[index, 'length']
+        lines_df.at[index,'capital_cost'] = 500000 / lines_df.at[index,'s_nom']*lines_df.at[index, 'length']/(lines_df.at[index, 'cables']/3)
+
+    if (lines_df.at[index,'carrier'] == 'DC') and (lines_df.at[index, 'cable/line'] == 'cable'):
+        lines_df.at[index,'r'] = 0.0175 / (lines_df.at[index,'s_nom']/925) * lines_df.at[index, 'length']
+        lines_df.at[index,'x'] = 2*3.14159*50*0.001*0.3 / (lines_df.at[index,'s_nom']/925) * lines_df.at[index, 'length']
+        lines_df.at[index,'capital_cost'] = 3250000 / lines_df.at[index,'s_nom']*lines_df.at[index, 'length']/(lines_df.at[index, 'cables']/3)
+
+                
 # Save the updated file
 lines_df.to_csv('./egon_etrago_line_pdf_test.csv', index=False)
 print("Operation successful")
