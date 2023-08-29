@@ -12,26 +12,25 @@ engine = create_engine(
     f"5432/etrago",
     echo=False)
 
+
+existing_lines_df = pd.read_sql(
+    """
+    SELECT * FROM grid.egon_etrago_line  
+    """
+    , engine)
+
+
 # Read the Destination file from CSV
 lines_df = pd.read_csv("./egon_etrago_line_pdf_test.csv")
 
-for index, row in lines_df.iterrows():
+#columns for merge
+selected_columns = ['scn_name',	'line_id',	'bus0',	'bus1',	'type',	'carrier',	'x', 'r',	'g',	'b',	's_nom',	's_nom_extendable',	's_nom_min',	's_nom_max',	's_max_pu',	'build_year',	'lifetime',	'capital_cost',	'length',	'cables',	'terrain_factor',	'num_parallel',	'v_ang_min',	'v_ang_max',	'v_nom',	'geom',	'topo']
 
-    # convert coordinates into geom/topo-column
-    if pd.notna(lines_df.at[index, 'Coordinate0']) and pd.notna(lines_df.at[index, 'Coordinate1']):
-        coordinates_1 = str(lines_df.at[index, 'Coordinate0'])
-        coordinates_2 = str(lines_df.at[index, 'Coordinate1'])
-        lon_1, lat_1 = map(float, coordinates_1.split(" "))
-        lon_2, lat_2 = map(float, coordinates_2.split(" "))
-        point_1 = Point(lon_1, lat_1)
-        point_2 = Point(lon_2, lat_2)
-        geom = LineString([(lon_1, lat_1), (lon_2, lat_2)])
-        wkb_hex = geom.wkb_hex
-        lines_df.at[index, 'geom'] = wkb_hex
-        lines_df.at[index, 'topo'] = wkb_hex
+all_lines_df = pd.concat([existing_lines_df[selected_columns], lines_df[selected_columns]], ignore_index=True)
 
-        
-lines_df.to_csv('./egon_etrago_line_pdf_test.csv', index=False)
-print("Operation successful")
-    
+all_lines_df.to_csv('./egon_etrago_all_lines.csv', index=False)
+
+all_lines_df.to_sql('egon_etrago_line_NEP2035', engine, schema='grid', if_exists='replace', index=False)
+
+print("operation successful")
 

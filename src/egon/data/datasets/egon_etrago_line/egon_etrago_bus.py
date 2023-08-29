@@ -3,6 +3,9 @@ import geopandas as gpd
 from sqlalchemy import create_engine
 from geopy.distance import geodesic
 import difflib
+from shapely.geometry import Point
+from shapely.geometry import LineString
+
 
 # Create connection with pgAdmin4 - Offline
 engine = create_engine(
@@ -122,7 +125,19 @@ for index, row in lines_df.iterrows():
         lines_df.at[index,'x'] = 2*3.14159*50*0.001*0.3 / (lines_df.at[index,'s_nom']/925) * lines_df.at[index, 'length']
         lines_df.at[index,'capital_cost'] = 3250000 / lines_df.at[index,'s_nom']*lines_df.at[index, 'length']/(lines_df.at[index, 'cables']/3)
 
-                
+     # Converting Coordinates into wbk_hex-format
+    if pd.notna(lines_df.at[index, 'Coordinate0']) and pd.notna(lines_df.at[index, 'Coordinate1']):
+        coordinates_1 = str(lines_df.at[index, 'Coordinate0'])
+        coordinates_2 = str(lines_df.at[index, 'Coordinate1'])
+        lon_1, lat_1 = map(float, coordinates_1.split(" "))
+        lon_2, lat_2 = map(float, coordinates_2.split(" "))
+        point_1 = Point(lon_1, lat_1)
+        point_2 = Point(lon_2, lat_2)
+        geom = LineString([(lon_1, lat_1), (lon_2, lat_2)])
+        wkb_hex = geom.wkb_hex
+        lines_df.at[index, 'geom'] = wkb_hex
+        lines_df.at[index, 'topo'] = wkb_hex
+                    
 # Save the updated file
 lines_df.to_csv('./egon_etrago_line_pdf_test.csv', index=False)
 print("Operation successful")
