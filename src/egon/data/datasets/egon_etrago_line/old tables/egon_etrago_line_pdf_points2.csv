@@ -1,0 +1,12 @@
+scn_name,bus_id,v_nom,type,carrier,v_mag_pu_set,v_mag_pu_min,v_mag_pu_max,x,y,geom,country,Endpunkt,near_bus_id,distance different (km)
+50HzT-P221,,,,DC,,,0,16.27763403,61.35776075,,Sweden,Punkt Bridge (HPB),43774,1000
+TTG-P25,,380,,AC,,,0,8.910507,54.903755,,DE-DK,Punkt Bundesgrenze DK,,
+TTG-P67,,380,,AC,,,0,13.060147,48.272481,,DE-Austria,Bundesgrenze AT,,
+P74,,380,,AC,,,0,10.656506,47.559332,,DE-Austria,Punkt Bundesgrenze (AT),10362,131
+P112,,380,,AC,,,0,8.651358527,54.30547484,,DE,St.Peter,29392,852
+P170,,380,,AC,,,0,6.666833,49.2703,,DE-FR,Punkt Oranna (Bundesgrenze (FR)),43767,434
+P176,,380,,AC,,,0,7.555059,47.906769,,FR,Um Muhlbach (Bundesgrenze [FR]),43767,411
+P204,,380,,AC,,,0,8.23211,47.561637,,Switzerland,Bundesgrenze (CH),43763,103
+P328,,380,,DC,,,0,0.705413,51.537907,,EN,Punkt Großbritannien,43769,190miles
+P367,,380,,AC,,,0,6.820347,53.451461,,NL,Punkt Eemshaven (Grenze DE / NL),43771,171
+P505,,380,,AC,,,0,6.17668,49.9538,,Luxemburg,Deutsch - luxemburgischen (border),43952,31
