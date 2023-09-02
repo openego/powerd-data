@@ -36,7 +36,7 @@ existing_lines_df = pd.read_sql(
 
 
 # Read the Destination file from CSV
-lines_df = pd.read_csv("./egon_etrago_line_pdf_V2.csv")
+lines_df = pd.read_csv("./egon_etrago_line_pdf_test.csv")
 
 unique_line_id = existing_lines_df['line_id'].max()
 formatted_point_0 = None

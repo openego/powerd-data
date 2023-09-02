@@ -98,7 +98,7 @@ for index, row in lines_df.iterrows():
         lines_df.at[index, 'num_parallel'] = 1
     lines_df.at[index, 's_nom_min'] = lines_df.at[index, 's_nom']
     lines_df.at[index, 's_nom_max'] = 'Infinity'
-    lines_df.at[index, 's_nom_extendable'] = 't'
+    lines_df.at[index, 's_nom_extendable'] = 'true'
     lines_df.at[index, 'v_ang_max'] = 'Infinity'
     lines_df.at[index, 'v_ang_min'] = '-Infinity'
     lines_df.at[index, 'terrain_factor'] = 1
