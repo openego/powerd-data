@@ -39,7 +39,7 @@ existing_lines_df = pd.read_sql(
 
 
 # Read the Destination file from CSV
-lines_df = pd.read_csv("./egon_etrago_line_pdf_test.csv")
+lines_df = pd.read_csv("./egon_etrago_line_pdf.csv")
 
 formatted_point_0 = None
 formatted_point_1 = None
@@ -139,5 +139,5 @@ for index, row in lines_df.iterrows():
         lines_df.at[index, 'topo'] = wkb_hex
                     
 # Save the updated file
-lines_df.to_csv('./egon_etrago_line_pdf_test.csv', index=False)
+lines_df.to_csv('./egon_etrago_line_pdf.csv', index=False)
 print("Operation successful")

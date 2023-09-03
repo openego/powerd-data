@@ -33,7 +33,7 @@ existing_lines_df = pd.read_sql(
     , engine)
 
 # Read the Destination file from CSV
-lines_df = pd.read_csv("./egon_etrago_line_pdf_test.csv")
+lines_df = pd.read_csv("./egon_etrago_line_pdf.csv")
 
 unique_line_id = existing_lines_df['line_id'].max()
 formatted_point_0 = None
@@ -96,5 +96,5 @@ for index, row in lines_df.iterrows():
                 lines_df.at[index, 'length'] = round(distance*1.14890133371257,1)
                 lines_df.at[index, 'length1'] = f'MV {round(distance*1.14890133371257,1)}'   
 # Save the updated file
-lines_df.to_csv('./egon_etrago_line_pdf_test.csv', index=False)
+lines_df.to_csv('./egon_etrago_line_pdf.csv', index=False)
 print("Operation successful")
