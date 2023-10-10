@@ -391,6 +391,15 @@ class EgonPfHvBusmap(Base):
     version = Column(Text, primary_key=True, nullable=False)
 
 
+class EgonPfHvCrossborderFlows(Base):
+    __tablename__ = "egon_etrago_crossborder_flows"
+    __table_args__ = {"schema": "grid"}
+
+    scn_name = Column(String, primary_key=True, nullable=False)
+    country = Column(Text, server_default=text("'DE'::text"))
+    p = Column(ARRAY(Float(precision=53)))
+
+
 def create_tables():
     """Create tables for eTraGo input data.
     Returns
@@ -495,6 +504,7 @@ def create_tables():
     EgonPfHvTransformer.__table__.drop(bind=engine, checkfirst=True)
     EgonPfHvTransformerTimeseries.__table__.drop(bind=engine, checkfirst=True)
     EgonPfHvBusmap.__table__.drop(bind=engine, checkfirst=True)
+    EgonPfHvCrossborderFlows.__table__.drop(bind=engine, checkfirst=True)
     # Create new tables
     EgonPfHvBus.__table__.create(bind=engine, checkfirst=True)
     EgonPfHvBusTimeseries.__table__.create(bind=engine, checkfirst=True)
@@ -517,6 +527,7 @@ def create_tables():
         bind=engine, checkfirst=True
     )
     EgonPfHvBusmap.__table__.create(bind=engine, checkfirst=True)
+    EgonPfHvCrossborderFlows.__table__.create(bind=engine, checkfirst=True)
 
 
 def temp_resolution():
