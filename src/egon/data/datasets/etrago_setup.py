@@ -396,7 +396,7 @@ class EgonPfHvCrossborderFlows(Base):
     __table_args__ = {"schema": "grid"}
 
     scn_name = Column(String, primary_key=True, nullable=False)
-    country = Column(Text, server_default=text("'DE'::text"))
+    country = Column(Text, primary_key=True, nullable=False)
     p = Column(ARRAY(Float(precision=53)))
 
 
