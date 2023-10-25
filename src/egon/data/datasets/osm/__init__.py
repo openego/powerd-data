@@ -144,13 +144,16 @@ def add_metadata():
         osm_url = osm_config["original_data"]["source"]["url_testmode"]
         input_filename = osm_config["original_data"]["target"]["file_testmode"]
 
-    # Extract spatial extend and date
-    (spatial_extend, osm_data_date) = re.compile(
-        "^([\\w-]*).*-(\\d+)$"
-    ).findall(Path(input_filename).name.split(".")[0])[0]
-    osm_data_date = datetime.datetime.strptime(
-        osm_data_date, "%y%m%d"
-    ).strftime("%y-%m-%d")
+    for scenario in egon.data.config.settings()["egon-data"]["--scenarios"]:
+        osm_date = str(int(scenario.split("status20")[1]) + 1) + "0101"
+        input_filename = input_filename.replace("DATE", osm_date)
+        # Extract spatial extend and date
+        (spatial_extend, osm_data_date) = re.compile(
+            "^([\\w-]*).*-(\\d+)$"
+        ).findall(Path(input_filename).name.split(".")[0])[0]
+        osm_data_date = datetime.datetime.strptime(
+            osm_data_date, "%y%m%d"
+        ).strftime("%y-%m-%d")
 
     # Insert metadata for each table
     licenses = [license_odbl(attribution="© OpenStreetMap contributors")]
@@ -256,7 +259,6 @@ def modify_tables():
         f"{data_config['original_data']['target']['table_prefix']}_" + suffix
         for suffix in ["line", "point", "polygon", "roads"]
     ]:
-
         # Drop indices
         sql_statements = [f"DROP INDEX IF EXISTS {table}_index;"]
 
