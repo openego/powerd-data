@@ -43,17 +43,21 @@ def download():
     if not os.path.exists(download_directory):
         os.mkdir(download_directory)
 
-    if settings()["egon-data"]["--dataset-boundary"] == "Everything":
-        source_url = osm_config["source"]["url"]
-        target_filename = osm_config["target"]["file"]
-    else:
-        source_url = osm_config["source"]["url_testmode"]
-        target_filename = osm_config["target"]["file_testmode"]
+    for scenario in egon.data.config.settings()["egon-data"]["--scenarios"]:
+        if settings()["egon-data"]["--dataset-boundary"] == "Everything":
+            source_url = osm_config["source"]["url"]
+            target_filename = osm_config["target"]["file"]
+        else:
+            source_url = osm_config["source"]["url_testmode"]
+            target_filename = osm_config["target"]["file_testmode"]
 
-    target_file = download_directory / target_filename
+        osm_date = str(int(scenario.split("status20")[1]) + 1) + "0101"
+        source_url = source_url.replace("DATE", osm_date)
+        target_filename = target_filename.replace("DATE", osm_date)
+        target_file = download_directory / target_filename
 
-    if not os.path.isfile(target_file):
-        urlretrieve(source_url, target_file)
+        if not os.path.isfile(target_file):
+            urlretrieve(source_url, target_file)
 
 
 def to_postgres(cache_size=4096):
