@@ -79,51 +79,57 @@ def to_postgres(cache_size=4096):
     data_config = egon.data.config.datasets()
     osm_config = data_config["openstreetmap"]["original_data"]
 
-    if settings()["egon-data"]["--dataset-boundary"] == "Everything":
-        input_filename = osm_config["target"]["file"]
-    else:
-        input_filename = osm_config["target"]["file_testmode"]
+    # TODO: This currently overwrite the data for every scenario
+    # needs to be changed
+    for scenario in egon.data.config.settings()["egon-data"]["--scenarios"]:
+        if settings()["egon-data"]["--dataset-boundary"] == "Everything":
+            input_filename = osm_config["target"]["file"]
+        else:
+            input_filename = osm_config["target"]["file_testmode"]
 
-    input_file = Path(".") / "openstreetmap" / input_filename
-    style_file = (
-        Path(".") / "openstreetmap" / osm_config["source"]["stylefile"]
-    )
-    with resources.path(
-        "egon.data.datasets.osm", osm_config["source"]["stylefile"]
-    ) as p:
-        shutil.copy(p, style_file)
+        osm_date = str(int(scenario.split("status20")[1]) + 1) + "0101"
+        input_filename = input_filename.replace("DATE", osm_date)
 
-    # Prepare osm2pgsql command
-    cmd = [
-        "osm2pgsql",
-        "--create",
-        "--slim",
-        "--hstore-all",
-        "--number-processes",
-        f"{num_processes}",
-        "--cache",
-        f"{cache_size}",
-        "-H",
-        f"{docker_db_config['HOST']}",
-        "-P",
-        f"{docker_db_config['PORT']}",
-        "-d",
-        f"{docker_db_config['POSTGRES_DB']}",
-        "-U",
-        f"{docker_db_config['POSTGRES_USER']}",
-        "-p",
-        f"{osm_config['target']['table_prefix']}",
-        "-S",
-        f"{style_file.absolute()}",
-        f"{input_file.absolute()}",
-    ]
+        input_file = Path(".") / "openstreetmap" / input_filename
+        style_file = (
+            Path(".") / "openstreetmap" / osm_config["source"]["stylefile"]
+        )
+        with resources.path(
+            "egon.data.datasets.osm", osm_config["source"]["stylefile"]
+        ) as p:
+            shutil.copy(p, style_file)
 
-    # Execute osm2pgsql for import OSM data
-    subprocess.run(
-        cmd,
-        env={"PGPASSWORD": docker_db_config["POSTGRES_PASSWORD"]},
-        cwd=Path(__file__).parent,
-    )
+        # Prepare osm2pgsql command
+        cmd = [
+            "osm2pgsql",
+            "--create",
+            "--slim",
+            "--hstore-all",
+            "--number-processes",
+            f"{num_processes}",
+            "--cache",
+            f"{cache_size}",
+            "-H",
+            f"{docker_db_config['HOST']}",
+            "-P",
+            f"{docker_db_config['PORT']}",
+            "-d",
+            f"{docker_db_config['POSTGRES_DB']}",
+            "-U",
+            f"{docker_db_config['POSTGRES_USER']}",
+            "-p",
+            f"{osm_config['target']['table_prefix']}",
+            "-S",
+            f"{style_file.absolute()}",
+            f"{input_file.absolute()}",
+        ]
+
+        # Execute osm2pgsql for import OSM data
+        subprocess.run(
+            cmd,
+            env={"PGPASSWORD": docker_db_config["POSTGRES_PASSWORD"]},
+            cwd=Path(__file__).parent,
+        )
 
 
 def add_metadata():
