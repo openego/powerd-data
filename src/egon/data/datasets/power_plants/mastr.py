@@ -316,9 +316,16 @@ def import_mastr() -> None:
         # drop units installed after reference date from cfg
         # (eGon2021 scenario)
         len_old = len(units)
-        ts = pd.Timestamp(
-            egon.data.config.datasets()["mastr_new"]["status2019_date_max"]
-        )
+        # TODO: This currently overwrite the data for every scenario
+        # needs to be changed
+        for scenario in egon.data.config.settings()["egon-data"][
+            "--scenarios"
+        ]:
+            if scenario.startswith("status"):
+                date_max = "YEAR-12-31 23:59:00".replace(
+                    "YEAR", str(int(scenario.split("status")[1]))
+                )
+            ts = pd.Timestamp(date_max)
         units = units.loc[pd.to_datetime(units.Inbetriebnahmedatum) <= ts]
         print(
             f"    {len_old - len(units)} units installed after {ts} dropped..."
