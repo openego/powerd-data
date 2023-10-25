@@ -352,11 +352,11 @@ def electricity(scenario):
             / read_costs(costs, "oil", "efficiency"),
             "other_non_renewable": global_settings(scenario)["fuel_costs"][
                 "gas"
-            ] / read_costs(costs, "OCGT", "efficiency")
+            ]
+            / read_costs(costs, "OCGT", "efficiency")
             + global_settings(scenario)["co2_costs"]
-            * global_settings(scenario)["co2_emissions"][
-                "other_non_renewable"
-            ] / read_costs(costs, "OCGT", "efficiency"),
+            * global_settings(scenario)["co2_emissions"]["other_non_renewable"]
+            / read_costs(costs, "OCGT", "efficiency"),
             "lignite": global_settings(scenario)["fuel_costs"]["lignite"]
             / read_costs(costs, "lignite", "efficiency")
             + read_costs(costs, "lignite", "VOM")
@@ -863,11 +863,11 @@ def electricity(scenario):
             / read_costs(costs, "oil", "efficiency"),
             "other_non_renewable": global_settings(scenario)["fuel_costs"][
                 "gas"
-            ] / read_costs(costs, "OCGT", "efficiency")
+            ]
+            / read_costs(costs, "OCGT", "efficiency")
             + global_settings(scenario)["co2_costs"]
-            * global_settings(scenario)["co2_emissions"][
-                "other_non_renewable"
-            ] / read_costs(costs, "OCGT", "efficiency"),
+            * global_settings(scenario)["co2_emissions"]["other_non_renewable"]
+            / read_costs(costs, "OCGT", "efficiency"),
             "lignite": global_settings(scenario)["fuel_costs"]["lignite"]
             / read_costs(costs, "lignite", "efficiency")
             + read_costs(costs, "lignite", "VOM")
