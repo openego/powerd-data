@@ -333,12 +333,12 @@ def import_mastr() -> None:
 
         # drop not operating units
         len_old = len(units)
-        units = units.loc[units.EinheitBetriebsstatus.isin(
-            ["InBetrieb", "VoruebergehendStillgelegt"]
-        )]
-        print(
-            f"    {len_old - len(units)} not operating units dropped..."
-        )
+        units = units.loc[
+            units.EinheitBetriebsstatus.isin(
+                ["InBetrieb", "VoruebergehendStillgelegt"]
+            )
+        ]
+        print(f"    {len_old - len(units)} not operating units dropped...")
 
         # filter for SH units if in testmode
         if not TESTMODE_OFF:
