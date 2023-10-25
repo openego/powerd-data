@@ -1744,5 +1744,5 @@ class ElectricalNeighbours(Dataset):
             name="ElectricalNeighbours",
             version="0.0.10",
             dependencies=dependencies,
-            tasks=tasks,
+            tasks=(grid),
         )
