@@ -1725,6 +1725,84 @@ def insert_loads_sq(scn_name="status2019"):
         session.commit()
 
 
+def insert_crossborder_powerflow_sq(
+    start_time="20190101", end_time="20200101", scn_name="status2019"
+):
+    """
+    Parameters
+    ----------
+    start_time : str, optional
+        define the starting timestep in format YYYYMMDD.
+        The default is "20190101".
+    end_time : str, optional
+        define the starting timestep in format YYYYMMDD.
+        The default is "20200101".
+    scn_name : str, optional
+        scenario name. The default is "status2019".
+
+    Returns
+    -------
+    None.
+
+    """
+    # Connect to database
+    engine = db.engine()
+    session = sessionmaker(bind=engine)()
+
+    # Delete old entrances for the same scenario
+    engine.execute(
+        f"""DELETE FROM grid.egon_etrago_crossborder_flows
+    WHERE scn_name = '{scn_name}'"""
+    )
+
+    entsoe_token = open(
+        path.join(path.expanduser("~"), ".entsoe-token"), "r"
+    ).read(36)
+    client = entsoe.EntsoePandasClient(api_key=entsoe_token)
+
+    start = pd.Timestamp(start_time, tz="Europe/Brussels")
+    end = pd.Timestamp(end_time, tz="Europe/Brussels")
+
+    foreign = [
+        "LU",
+        "AT",
+        "FR",
+        "NL",
+        "DK",
+        "PL",
+        "CH",
+        "SE",
+        "CZ",
+    ]
+
+    pf = pd.DataFrame()
+
+    for country in foreign:
+        pf[country] = client.query_crossborder_flows(
+            country_code_from=country,
+            country_code_to="DE",
+            start=start,
+            end=end,
+        ) - client.query_crossborder_flows(
+            country_code_from="DE",
+            country_code_to=country,
+            start=start,
+            end=end,
+        )
+
+    pf.index = pf.index.tz_convert("Europe/Brussels")
+
+    for foreign in pf.columns:
+        entry = etrago.EgonPfHvCrossborderFlows(
+            scn_name=scn_name, country=foreign, p=pf[foreign].to_list()
+        )
+
+        session.add(entry)
+        session.commit()
+
+    return pf
+
+
 tasks = (grid,)
 
 insert_per_scenario = set()
@@ -1733,7 +1811,13 @@ if "eGon2035" in config.settings()["egon-data"]["--scenarios"]:
     insert_per_scenario.update([tyndp_generation, tyndp_demand])
 
 if "status2019" in config.settings()["egon-data"]["--scenarios"]:
-    insert_per_scenario.update([insert_generators_sq, insert_loads_sq])
+    insert_per_scenario.update(
+        [
+            insert_generators_sq,
+            insert_loads_sq,
+            insert_crossborder_powerflow_sq,
+        ]
+    )
 
 tasks = tasks + (insert_per_scenario,)
 
@@ -1742,7 +1826,7 @@ class ElectricalNeighbours(Dataset):
     def __init__(self, dependencies):
         super().__init__(
             name="ElectricalNeighbours",
-            version="0.0.10",
+            version="0.0.11",
             dependencies=dependencies,
             tasks=tasks,
         )
