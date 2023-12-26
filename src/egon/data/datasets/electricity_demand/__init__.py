@@ -44,16 +44,6 @@ class CtsElectricityDemand(Dataset):
         )
 
 
-class ScaleCtsAndHhDemand(Dataset):
-    def __init__(self, dependencies):
-        super().__init__(
-            name="ScaleElectricityDemand",
-            version="0.0.0",
-            dependencies=dependencies,
-            tasks=(scale_cts_HH_elec_demands, update_cts_HH_elec_demands),
-        )
-
-
 class EgonDemandRegioZensusElectricity(Base):
     __tablename__ = "egon_demandregio_zensus_electricity"
     __table_args__ = {"schema": "demand", "extend_existing": True}
@@ -81,63 +71,6 @@ def create_tables():
         bind=engine, checkfirst=True
     )
 
-def scale_cts_HH_elec_demands():
-    """scale hour by hour CTS and HH loads to match measured data. 
-
-    Parameters
-    ----------
-    scenario : str
-        Scenario name.
-
-    Returns
-    -------
-    pandas.DataFrame
-        Aggregated electrical demand timeseries per bus
-    """
-
-    # Read information from configuration file
-    sources = egon.data.config.datasets()["etrago_electricity"]["sources"]
-    scenarios = egon.data.config.settings()["egon-data"]["--scenarios"]
-    import numpy as np
-    def sum_lists(l1, l2):
-        if l1 == np.nan:
-            return l2
-        if l2 == np.nan:
-            return l1
-        try:
-            return [a+b for a, b in zip(l1, l2)]
-        except:
-            breakpoint()
-    
-    for scn in scenarios:
-        # Select data on CTS electricity demands per bus
-        cts_curves = db.select_dataframe(
-            f"""SELECT bus_id, p_set FROM
-                    {sources['cts_curves']['schema']}.
-                    {sources['cts_curves']['table']}
-                    WHERE scn_name = '{scn}'""",
-            index_col="bus_id",
-        )
-        
-        # Rename index
-        cts_curves.index.rename("bus", inplace=True)
-        
-        # Select data on household electricity demands per bus
-    
-        hh_curves = db.select_dataframe(
-            f"""SELECT bus_id, p_set FROM
-                    {sources['household_curves']['schema']}.
-                    {sources['household_curves']['table']}
-                    WHERE scn_name = '{scn}'""",
-            index_col="bus_id",
-        )
-        hh_curves.index.rename("bus", inplace=True)
-        
-        cts_plus_hh = pd.concat([cts_curves, hh_curves])
-        
-        cts_plus_hh = cts_curves.join(hh_curves, lsuffix="cts", rsuffix="hh")
-        cts_plus_hh["sum"] = cts_plus_hh.apply(lambda x: sum_lists(x.p_setcts, x.p_sethh), axis=1)
-        
 
 def get_annual_household_el_demand_cells():
     """
