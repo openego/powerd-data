@@ -127,7 +127,6 @@ import os
 import random
 
 from airflow.operators.python_operator import PythonOperator
-from disaggregator import temporal
 from sqlalchemy import ARRAY, Column, Float, Integer, String
 from sqlalchemy.dialects.postgresql import CHAR, INTEGER, REAL
 from sqlalchemy.ext.declarative import declarative_base
@@ -138,6 +137,11 @@ from egon.data import db
 from egon.data.datasets import Dataset
 from egon.data.datasets.zensus_mv_grid_districts import MapZensusGridDistricts
 import egon.data.config
+
+try:
+    from disaggregator import temporal
+except:
+    pass
 
 Base = declarative_base()
 engine = db.engine()
