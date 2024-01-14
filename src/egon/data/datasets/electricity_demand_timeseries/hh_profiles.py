@@ -127,6 +127,7 @@ import os
 import random
 
 from airflow.operators.python_operator import PythonOperator
+from disaggregator import temporal
 from sqlalchemy import ARRAY, Column, Float, Integer, String
 from sqlalchemy.dialects.postgresql import CHAR, INTEGER, REAL
 from sqlalchemy.ext.declarative import declarative_base
@@ -154,6 +155,15 @@ class IeeHouseholdLoadProfiles(Base):
     type = Column(CHAR(8), index=True)
     load_in_wh = Column(ARRAY(REAL))
 
+
+class DemandRegioLoadProfiles(Base):
+    __tablename__ = "demandregio_household_load_profiles"
+    __table_args__ = {"schema": "demand"}
+
+    id = Column(INTEGER, primary_key=True)
+    year = Column(INTEGER)
+    nuts3 = Column(String)
+    load_in_mwh = Column(ARRAY(REAL))
 
 class HouseholdElectricityProfilesInCensusCells(Base):
     __tablename__ = "egon_household_electricity_profile_in_census_cell"
@@ -310,6 +320,57 @@ def write_hh_profiles_to_db(hh_profiles):
             "id": IeeHouseholdLoadProfiles.id.type,
         },
     )
+
+def write_demandregio_hh_profiles_to_db(hh_profiles):
+    """Write HH demand profiles from demand regio into db. One row per
+    year and nuts3. The annual load profile timeseries is an array.
+
+    schema: demand
+    tablename: demandregio_household_load_profiles
+
+
+
+    Parameters
+    ----------
+    hh_profiles: pd.DataFrame
+
+    Returns
+    -------
+    """
+    years = hh_profiles.index.year.unique().values
+    df_to_db = pd.DataFrame(columns=["id", "year", "nuts3", "load_in_mwh"]).set_index("id")
+    dataset = egon.data.config.settings()["egon-data"]["--dataset-boundary"]
+
+    if dataset == "Schleswig-Holstein":
+        hh_profiles = hh_profiles.loc[
+            :, hh_profiles.columns.str.contains("DEF0")]
+
+    id = 0
+    for year in years:
+        df = hh_profiles[hh_profiles.index.year == year]
+        for nuts3 in hh_profiles.columns:
+            id+=1
+            df_to_db.at[id, "year"] = year
+            df_to_db.at[id, "nuts3"] = nuts3
+            df_to_db.at[id, "load_in_mwh"] = df[nuts3].to_list()
+
+    df_to_db["year"] = df_to_db["year"].apply(int)
+    df_to_db["nuts3"] = df_to_db["nuts3"].astype(str)
+    df_to_db["load_in_mwh"] = df_to_db["load_in_mwh"].apply(list)
+    df_to_db = df_to_db.reset_index()
+
+    DemandRegioLoadProfiles.__table__.drop(bind=engine, checkfirst=True)
+    DemandRegioLoadProfiles.__table__.create(bind=engine)
+
+    df_to_db.to_sql(
+        name=DemandRegioLoadProfiles.__table__.name,
+        schema=DemandRegioLoadProfiles.__table__.schema,
+        con=engine,
+        if_exists="append",
+        index=-False,
+    )
+
+    return
 
 
 def get_iee_hh_demand_profiles_raw():
@@ -1319,7 +1380,7 @@ def assign_hh_demand_profiles_to_cells(df_zensus_cells, df_iee_profiles):
 
 # can be parallelized with grouping df_zensus_cells by grid_id/nuts3/nuts1
 def adjust_to_demand_regio_nuts3_annual(
-    df_hh_profiles_in_census_cells, df_iee_profiles, df_demand_regio
+    df_hh_profiles_in_census_cells, df_load_profiles, df_demand_regio
 ):
     """
     Computes the profile scaling factor for alignment to demand regio data
@@ -1332,7 +1393,7 @@ def adjust_to_demand_regio_nuts3_annual(
     ----------
     df_hh_profiles_in_census_cells: pd.DataFrame
         Result of :func:`assign_hh_demand_profiles_to_cells`.
-    df_iee_profiles: pd.DataFrame
+    df_load_profiles: pd.DataFrame
         Household load profile data
 
         * Index: Times steps as serial integers
@@ -1348,58 +1409,80 @@ def adjust_to_demand_regio_nuts3_annual(
         Returns the same data as :func:`assign_hh_demand_profiles_to_cells`,
         but with filled columns `factor_2035` and `factor_2050`.
     """
+    # TODO: make selectable the load profiles: IEE vs Demand Regio
+    ###########################################################################
+    # for nuts3_id, df_nuts3 in df_hh_profiles_in_census_cells.groupby(
+    #     by="nuts3"
+    # ):
+    #     nuts3_cell_ids = df_nuts3.index
+    #     nuts3_profile_ids = df_nuts3.loc[:, "cell_profile_ids"].sum()
+
+    #     # take all profiles of one nuts3, aggregate and sum
+    #     # profiles in Wh
+    #     nuts3_profiles_sum_annual = (
+    #         df_iee_profiles.loc[:, nuts3_profile_ids].sum().sum()
+    #     )
+
+    #     # Scaling Factor
+    #     # ##############
+    #     # demand regio in MWh
+    #     # profiles in Wh
+
+    #     if (
+    #         "status2019"
+    #         in egon.data.config.settings()["egon-data"]["--scenarios"]
+    #     ):
+    #         df_hh_profiles_in_census_cells.loc[
+    #             nuts3_cell_ids, "factor_2019"
+    #         ] = (
+    #             df_demand_regio.loc[(2019, nuts3_id), "demand_mwha"]
+    #             * 1e3
+    #             / (nuts3_profiles_sum_annual / 1e3)
+    #         )
+
+    #     if (
+    #         "eGon2035"
+    #         in egon.data.config.settings()["egon-data"]["--scenarios"]
+    #     ):
+    #         df_hh_profiles_in_census_cells.loc[
+    #             nuts3_cell_ids, "factor_2035"
+    #         ] = (
+    #             df_demand_regio.loc[(2035, nuts3_id), "demand_mwha"]
+    #             * 1e3
+    #             / (nuts3_profiles_sum_annual / 1e3)
+    #         )
+
+    #     if (
+    #         "eGon100RE"
+    #         in egon.data.config.settings()["egon-data"]["--scenarios"]
+    #     ):
+    #         df_hh_profiles_in_census_cells.loc[
+    #             nuts3_cell_ids, "factor_2050"
+    #         ] = (
+    #             df_demand_regio.loc[(2050, nuts3_id), "demand_mwha"]
+    #             * 1e3
+    #             / (nuts3_profiles_sum_annual / 1e3)
+    #         )
+    ###########################################################################
+
+    df_hh_profiles_in_census_cells = df_hh_profiles_in_census_cells[
+        df_hh_profiles_in_census_cells.nuts3.isin(df_load_profiles.columns)]
+
+    df_hh_profiles_in_census_cells["factor_2019"] = 0
+
     for nuts3_id, df_nuts3 in df_hh_profiles_in_census_cells.groupby(
         by="nuts3"
     ):
-        nuts3_cell_ids = df_nuts3.index
-        nuts3_profile_ids = df_nuts3.loc[:, "cell_profile_ids"].sum()
+        total_pop = df_nuts3.population.sum()
+        load_curve = df_load_profiles[nuts3_id]
+        total_demand = df_demand_regio.loc[(2019, nuts3_id), "demand_mwha"]
 
-        # take all profiles of one nuts3, aggregate and sum
-        # profiles in Wh
-        nuts3_profiles_sum_annual = (
-            df_iee_profiles.loc[:, nuts3_profile_ids].sum().sum()
+        df_hh_profiles_in_census_cells.loc[df_nuts3.index, "factor_2019"] = (
+            df_nuts3["population"]
+            * total_demand
+            / load_curve.sum()
+            / total_pop
         )
-
-        # Scaling Factor
-        # ##############
-        # demand regio in MWh
-        # profiles in Wh
-
-        if (
-            "status2019"
-            in egon.data.config.settings()["egon-data"]["--scenarios"]
-        ):
-            df_hh_profiles_in_census_cells.loc[
-                nuts3_cell_ids, "factor_2019"
-            ] = (
-                df_demand_regio.loc[(2019, nuts3_id), "demand_mwha"]
-                * 1e3
-                / (nuts3_profiles_sum_annual / 1e3)
-            )
-
-        if (
-            "eGon2035"
-            in egon.data.config.settings()["egon-data"]["--scenarios"]
-        ):
-            df_hh_profiles_in_census_cells.loc[
-                nuts3_cell_ids, "factor_2035"
-            ] = (
-                df_demand_regio.loc[(2035, nuts3_id), "demand_mwha"]
-                * 1e3
-                / (nuts3_profiles_sum_annual / 1e3)
-            )
-
-        if (
-            "eGon100RE"
-            in egon.data.config.settings()["egon-data"]["--scenarios"]
-        ):
-            df_hh_profiles_in_census_cells.loc[
-                nuts3_cell_ids, "factor_2050"
-            ] = (
-                df_demand_regio.loc[(2050, nuts3_id), "demand_mwha"]
-                * 1e3
-                / (nuts3_profiles_sum_annual / 1e3)
-            )
 
     return df_hh_profiles_in_census_cells
 
@@ -1503,6 +1586,20 @@ def write_refinded_households_to_db(df_census_households_grid_refined):
             df_census_households_grid_refined.to_dict(orient="records"),
         )
 
+def adapt_to_nuts3_level(demand_df):
+
+    demand_df.drop(columns=['characteristics_code', 'hh_5types', 'gen',
+                            'hh_type', 'hh_10types'], inplace = True)
+
+    demand_df = demand_df.groupby("cell_id").agg({'grid_id': "first",
+                                           'population': "sum",
+                                           'nuts3': "first",
+                                           'nuts1': "first"})
+
+    demand_df["cell_profile_ids"] = demand_df["nuts3"]
+
+    return demand_df
+
 
 def houseprofiles_in_census_cells():
     """
@@ -1525,14 +1622,28 @@ def houseprofiles_in_census_cells():
     random.seed(RANDOM_SEED)
     np.random.seed(RANDOM_SEED)
 
-    # Read demand profiles from egon-data-bundle
-    df_iee_profiles = get_iee_hh_demand_profiles_raw()
+    # TODO: make selectable the load profiles: IEE vs Demand Regio
+    ###########################################################################
+    # # Read demand profiles from egon-data-bundle
+    # df_iee_profiles = get_iee_hh_demand_profiles_raw()
 
-    # Write raw profiles into db
-    write_hh_profiles_to_db(df_iee_profiles)
+    # # Write raw profiles into db
+    # write_hh_profiles_to_db(df_iee_profiles)
 
-    # Process profiles for further use
-    df_iee_profiles = set_multiindex_to_profiles(df_iee_profiles)
+    # # Process profiles for further use
+    # df_iee_profiles = set_multiindex_to_profiles(df_iee_profiles)
+    df_load_profiles = (
+        temporal.disagg_temporal_power_housholds_slp(
+            use_nuts3code=True,
+            by="households",
+            weight_by_income=False,
+            year=2019,
+        )
+        .resample("h")
+        .sum()
+    )
+    write_demandregio_hh_profiles_to_db(df_load_profiles)
+    ###########################################################################
 
     # Download zensus household NUTS-1 data with family type and age categories
     df_census_households_nuts1_raw = get_census_households_nuts1_raw()
@@ -1568,12 +1679,17 @@ def houseprofiles_in_census_cells():
         df_census_households_grid, df_census_households_nuts1
     )
 
-    write_refinded_households_to_db(df_census_households_grid_refined)
+    #write_refinded_households_to_db(df_census_households_grid_refined)
 
+    # TODO: make selectable the load profiles: IEE vs Demand Regio
+    ###########################################################################
     # Allocate profile ids to each cell by census data
-    df_hh_profiles_in_census_cells = assign_hh_demand_profiles_to_cells(
-        df_census_households_grid_refined, df_iee_profiles
-    )
+    # df_hh_profiles_in_census_cells = assign_hh_demand_profiles_to_cells(
+    #     df_census_households_grid_refined, df_iee_profiles
+    # )
+    df_hh_profiles_in_census_cells = adapt_to_nuts3_level(
+        df_census_households_grid_refined)
+    ###########################################################################
 
     # Annual household electricity demand on NUTS-3 level (demand regio)
     df_demand_regio = db.select_dataframe(
@@ -1585,11 +1701,14 @@ def houseprofiles_in_census_cells():
         index_col=["year", "nuts3"],
     )
 
+    # TODO: make selectable the load profiles: IEE vs Demand Regio
+    ###########################################################################
     # Scale profiles to meet demand regio annual demand projections
     df_hh_profiles_in_census_cells = adjust_to_demand_regio_nuts3_annual(
-        df_hh_profiles_in_census_cells, df_iee_profiles, df_demand_regio
+        df_hh_profiles_in_census_cells, df_load_profiles, df_demand_regio
     )
 
+    ###########################################################################
     df_hh_profiles_in_census_cells = (
         df_hh_profiles_in_census_cells.reset_index(drop=False)
     )
@@ -1597,12 +1716,22 @@ def houseprofiles_in_census_cells():
         "cell_id"
     ].astype(int)
 
-    # Cast profile ids back to initial str format
-    df_hh_profiles_in_census_cells[
-        "cell_profile_ids"
-    ] = df_hh_profiles_in_census_cells["cell_profile_ids"].apply(
-        lambda x: list(map(gen_profile_names, x))
-    )
+    # TODO: execute only with IEE profiles
+    ###########################################################################
+    # # Cast profile ids back to initial str format
+    # df_hh_profiles_in_census_cells[
+    #     "cell_profile_ids"
+    # ] = df_hh_profiles_in_census_cells["cell_profile_ids"].apply(
+    #     lambda x: list(map(gen_profile_names, x))
+    # )
+    ###########################################################################
+
+    dataset = egon.data.config.settings()["egon-data"]["--dataset-boundary"]
+
+    if dataset == "Schleswig-Holstein":
+        df_hh_profiles_in_census_cells = df_hh_profiles_in_census_cells[
+            df_hh_profiles_in_census_cells.nuts3.str.contains("DEF0")
+        ]
 
     # Write allocation table into database
     HouseholdElectricityProfilesInCensusCells.__table__.drop(
@@ -1759,6 +1888,30 @@ def get_hh_profiles_from_db(profile_ids):
 
     return df_profile_loads
 
+def get_demand_regio_hh_profiles_from_db(year):
+    """
+    Retrieve demand regio household electricity demand profiles in nuts3 level
+
+    Parameters
+    ----------
+    year: int
+        To which year belong the required demand profile
+
+    Returns
+    -------
+    pd.DataFrame
+         Selection of household demand profiles
+    """
+
+    query = """Select * from demand.demandregio_household_load_profiles
+    Where year = year"""
+
+    df_profile_loads = pd.read_sql(
+        query, db.engine(), index_col="id"
+    )
+
+    return df_profile_loads
+
 
 def mv_grid_district_HH_electricity_load(
     scenario_name, scenario_year, drop_table=False
@@ -1807,33 +1960,46 @@ def mv_grid_district_HH_electricity_load(
         cells_query.statement, cells_query.session.bind, index_col="cell_id"
     )
 
-    # convert profile ids to tuple (type, id) format
-    cells["cell_profile_ids"] = cells["cell_profile_ids"].apply(
-        lambda x: list(map(tuple_format, x))
-    )
-
-    # Read demand profiles from egon-data-bundle
-    df_iee_profiles = get_iee_hh_demand_profiles_raw()
-
-    # Process profiles for further use
-    df_iee_profiles = set_multiindex_to_profiles(df_iee_profiles)
-
-    # Create aggregated load profile for each MV grid district
-    mvgd_profiles_dict = {}
-    for grid_district, data in cells.groupby("bus_id"):
-        mvgd_profile = get_load_timeseries(
-            df_iee_profiles=df_iee_profiles,
-            df_hh_profiles_in_census_cells=data,
-            cell_ids=data.index,
-            year=scenario_year,
-            peak_load_only=False,
+    method = "demand_regio"
+    if method == "demand_regio":
+        mvgd_profiles = pd.DataFrame(columns=["scn_name", "p_set", "q_set"], index= cells.bus_id.unique())
+        mvgd_profiles.index.name = "bus_id"
+        #mvgd_profiles.astype(dtype={"scn_name": "str", "p_set": 'object', "q_set": 'object',})
+        df_demand_regio_profiles = get_demand_regio_hh_profiles_from_db(scenario_year).set_index("nuts3")
+        factor_column = f"""factor_{scenario_year}"""
+        #cells = cells[cells.nuts3.str.contains("DEF0")]
+        for grid_district, data in cells.groupby("bus_id"):
+            total_factor = data[factor_column].sum()
+            load = [x * total_factor for x in df_demand_regio_profiles.at[data["nuts3"].values[0], "load_in_mwh"]]
+            mvgd_profiles.at[grid_district, "p_set"] = load
+        mvgd_profiles.reset_index(inplace= True)
+    else:
+        # convert profile ids to tuple (type, id) format
+        cells["cell_profile_ids"] = cells["cell_profile_ids"].apply(
+            lambda x: list(map(tuple_format, x))
         )
-        mvgd_profiles_dict[grid_district] = [mvgd_profile.round(3).to_list()]
-    mvgd_profiles = pd.DataFrame.from_dict(mvgd_profiles_dict, orient="index")
+        # Read demand profiles from egon-data-bundle
+        df_iee_profiles = get_iee_hh_demand_profiles_raw()
 
-    # Reshape data: put MV grid ids in columns to a single index column
-    mvgd_profiles = mvgd_profiles.reset_index()
-    mvgd_profiles.columns = ["bus_id", "p_set"]
+        # Process profiles for further use
+        df_iee_profiles = set_multiindex_to_profiles(df_iee_profiles)
+
+        # Create aggregated load profile for each MV grid district
+        mvgd_profiles_dict = {}
+        for grid_district, data in cells.groupby("bus_id"):
+            mvgd_profile = get_load_timeseries(
+                df_iee_profiles=df_iee_profiles,
+                df_hh_profiles_in_census_cells=data,
+                cell_ids=data.index,
+                year=scenario_year,
+                peak_load_only=False,
+            )
+            mvgd_profiles_dict[grid_district] = [mvgd_profile.round(3).to_list()]
+        mvgd_profiles = pd.DataFrame.from_dict(mvgd_profiles_dict, orient="index")
+
+        # Reshape data: put MV grid ids in columns to a single index column
+        mvgd_profiles = mvgd_profiles.reset_index()
+        mvgd_profiles.columns = ["bus_id", "p_set"]
 
     # Add remaining columns
     mvgd_profiles["scn_name"] = scenario_name
