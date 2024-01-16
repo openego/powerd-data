@@ -358,7 +358,8 @@ def generate_synthetic_buildings(missing_buildings, edge_length):
         right_index=True,
         how="right",
     )
-
+    
+    missing_buildings_geom.index.name = "id"
     missing_buildings_geom = missing_buildings_geom.reset_index(drop=False)
     missing_buildings_geom = missing_buildings_geom.rename(
         columns={
