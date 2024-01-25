@@ -61,7 +61,7 @@ class DemandRegio(Dataset):
                 {
                     insert_household_demand,
                     insert_society_data,
-                    # insert_cts_ind_demands,
+                    insert_cts_ind_demands,
                 },
                 backup_tables_to_db,  # adhoc workaround #180
                 scale_sq19_cts_status2023,
@@ -622,7 +622,7 @@ def insert_hh_demand(scenario, year, engine):
     except:
         logger.info("HH demand timeseries could not be imported. Using BK")
         hh_load_timeseries = pd.read_pickle(
-            "df_load_profiles.pkl"
+            "demandregio_dbdump/df_load_profiles.pkl"
         )
 
     write_demandregio_hh_profiles_to_db(hh_load_timeseries)
@@ -750,36 +750,36 @@ def insert_cts_ind_demands():
 
     scenarios.append("eGon2021")
 
-    for scn in scenarios:
-        year = scenario_parameters.global_settings(scn)["population_year"]
+    # for scn in scenarios:
+    #     year = scenario_parameters.global_settings(scn)["population_year"]
 
-        if year > 2035:
-            year = 2035
+    #     if year > 2035:
+    #         year = 2035
 
-        # target values per scenario in MWh
-        target_values = {
-            # according to NEP 2021
-            # new consumers will be added seperatly
-            "eGon2035": {
-                "CTS": 135300 * 1e3,
-                "industry": 225400 * 1e3
-            },
-            # CTS: reduce overall demand from demandregio (without traffic)
-            # by share of heat according to JRC IDEES, data from 2011
-            # industry: no specific heat demand, use data from demandregio
-            "eGon100RE": {
-                "CTS": ((1 - (5.96 + 6.13) / 154.64) * 125183.403) * 1e3
-            },
-            # no adjustments for status quo
-            "eGon2021": {},
-            "status2019": {},
-            # "status2023": {
-            # "CTS": 121160 * 1e3,
-            # "industry": 200380 * 1e3
-            # }, # TODO status2023
-        }
+    #     # target values per scenario in MWh
+    #     target_values = {
+    #         # according to NEP 2021
+    #         # new consumers will be added seperatly
+    #         "eGon2035": {
+    #             "CTS": 135300 * 1e3,
+    #             "industry": 225400 * 1e3
+    #         },
+    #         # CTS: reduce overall demand from demandregio (without traffic)
+    #         # by share of heat according to JRC IDEES, data from 2011
+    #         # industry: no specific heat demand, use data from demandregio
+    #         "eGon100RE": {
+    #             "CTS": ((1 - (5.96 + 6.13) / 154.64) * 125183.403) * 1e3
+    #         },
+    #         # no adjustments for status quo
+    #         "eGon2021": {},
+    #         "status2019": {},
+    #         # "status2023": {
+    #         # "CTS": 121160 * 1e3,
+    #         # "industry": 200380 * 1e3
+    #         # }, # TODO status2023
+    #     }
 
-        insert_cts_ind(scn, year, engine, target_values)
+    #     insert_cts_ind(scn, year, engine, target_values)
 
     # Insert load curves per wz
     timeseries_per_wz()
