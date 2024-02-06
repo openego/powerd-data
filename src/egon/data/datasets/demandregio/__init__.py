@@ -2,6 +2,7 @@
 adjusting data from demandRegio
 
 """
+
 from pathlib import Path
 import subprocess
 import os
@@ -666,10 +667,7 @@ def insert_cts_ind_demands():
         target_values = {
             # according to NEP 2021
             # new consumers will be added seperatly
-            "eGon2035": {
-                "CTS": 135300 * 1e3,
-                "industry": 225400 * 1e3
-            },
+            "eGon2035": {"CTS": 135300 * 1e3, "industry": 225400 * 1e3},
             # CTS: reduce overall demand from demandregio (without traffic)
             # by share of heat according to JRC IDEES, data from 2011
             # industry: no specific heat demand, use data from demandregio
@@ -679,10 +677,7 @@ def insert_cts_ind_demands():
             # no adjustments for status quo
             "eGon2021": {},
             "status2019": {},
-            "status2023": {
-                "CTS": 121160 * 1e3,
-                "industry": 200380 * 1e3
-            },
+            "status2023": {"CTS": 121160 * 1e3, "industry": 200380 * 1e3},
         }
 
         insert_cts_ind(scn, year, engine, target_values)
@@ -708,11 +703,18 @@ def insert_society_data():
             f"DELETE FROM {targets[t]['schema']}.{targets[t]['table']};"
         )
 
-    target_years = np.append(
-        get_sector_parameters("global").population_year.values, 2018
-    )
+    target_years = [
+        get_sector_parameters("global", scn)["population_year"]
+        for scn in egon.data.config.settings()["egon-data"]["--scenarios"]
+    ]
+
+    target_years = np.append(np.array(target_years), 2018)
+
+    logger.error(f"{target_years}")
 
     for year in target_years:
+        logger.error(f"{year}")
+
         df_pop = pd.DataFrame(data.population(year=year))
         df_pop["year"] = year
         df_pop = df_pop.rename({"value": "population"}, axis="columns")
@@ -845,7 +847,9 @@ def get_cached_tables():
     data_config = egon.data.config.datasets()
     for s in ["cache", "dbdump"]:
         url = data_config["demandregio_workaround"]["source"][s]["url"]
-        target_path = data_config["demandregio_workaround"]["targets"][s]["path"]
+        target_path = data_config["demandregio_workaround"]["targets"][s][
+            "path"
+        ]
         filename = os.path.basename(url)
         file_path = Path(".", target_path, filename).resolve()
         os.makedirs(file_path.parent, exist_ok=True)
@@ -853,4 +857,3 @@ def get_cached_tables():
         download_and_check(url, file_path, max_iteration=5)
         with zipfile.ZipFile(file_path, "r") as zip_ref:
             zip_ref.extractall(file_path.parent)
-
