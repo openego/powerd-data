@@ -708,13 +708,9 @@ def insert_society_data():
         for scn in egon.data.config.settings()["egon-data"]["--scenarios"]
     ]
 
-    target_years = np.append(np.array(target_years), 2018)
-
-    logger.error(f"{target_years}")
+    target_years = np.unique(np.append(np.array(target_years), 2018))
 
     for year in target_years:
-        logger.error(f"{year}")
-
         df_pop = pd.DataFrame(data.population(year=year))
         df_pop["year"] = year
         df_pop = df_pop.rename({"value": "population"}, axis="columns")
