@@ -42,7 +42,7 @@ class DemandRegio(Dataset):
             version="0.0.7",
             dependencies=dependencies,
             tasks=(
-                clone_and_install,
+                # clone_and_install,
                 get_cached_tables,  # adhoc workaround #180
                 create_tables,
                 {
