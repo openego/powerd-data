@@ -1500,7 +1500,7 @@ def insert_generators_sq(scn_name="status2019"):
                         Backup data is used instead"""
         )
         gen_sq = pd.read_csv(
-            "data_bundle_powerd_data/entsoe/gen_entsoe.csv", index_col="Index"
+            "data_bundle_egon_data/entsoe/gen_entsoe.csv", index_col="Index"
         )
 
     targets = config.datasets()["electrical_neighbours"]["targets"]
@@ -1658,7 +1658,7 @@ def insert_loads_sq(scn_name="status2019"):
                         Backup data is used instead"""
         )
         load_sq = pd.read_csv(
-            "data_bundle_powerd_data/entsoe/load_entsoe.csv", index_col="Index"
+            "data_bundle_egon_data/entsoe/load_entsoe.csv", index_col="Index"
         )
 
     # Delete existing data
@@ -1744,5 +1744,5 @@ class ElectricalNeighbours(Dataset):
             name="ElectricalNeighbours",
             version="0.0.10",
             dependencies=dependencies,
-            tasks=(grid),
+            tasks=tasks,
         )
