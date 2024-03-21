@@ -33,6 +33,12 @@ import egon.data.config
 import egon.data.subprocess as subprocess
 
 
+def update_osm_filename_from_scenario_year(fn, scenario):
+    """filename containing hardcoded DATE string. replace with scenario year from param"""
+    osm_date = str(int(scenario.split("status20")[1]) + 1) + "0101"
+    return fn.replace("DATE", osm_date)
+
+
 def download():
     """Download OpenStreetMap `.pbf` file."""
     data_config = egon.data.config.datasets()
@@ -51,9 +57,12 @@ def download():
             source_url = osm_config["source"]["url_testmode"]
             target_filename = osm_config["target"]["file_testmode"]
 
-        osm_date = str(int(scenario.split("status20")[1]) + 1) + "0101"
-        source_url = source_url.replace("DATE", osm_date)
-        target_filename = target_filename.replace("DATE", osm_date)
+        # todo: remove if update_osm_filename_from_scenario_year works fine
+        # osm_date = str(int(scenario.split("status20")[1]) + 1) + "0101"
+        # source_url = source_url.replace("DATE", osm_date)
+        # target_filename = target_filename.replace("DATE", osm_date)
+        source_url = update_osm_filename_from_scenario_year(source_url, scenario)
+        target_filename = update_osm_filename_from_scenario_year(target_filename, scenario)
         target_file = download_directory / target_filename
 
         if not os.path.isfile(target_file):
@@ -87,8 +96,10 @@ def to_postgres(cache_size=4096):
         else:
             input_filename = osm_config["target"]["file_testmode"]
 
-        osm_date = str(int(scenario.split("status20")[1]) + 1) + "0101"
-        input_filename = input_filename.replace("DATE", osm_date)
+        # todo: remove if update_osm_filename_from_scenario_year works fine
+        # osm_date = str(int(scenario.split("status20")[1]) + 1) + "0101"
+        # input_filename = input_filename.replace("DATE", osm_date)
+        input_filename = update_osm_filename_from_scenario_year(input_filename, scenario)
 
         input_file = Path(".") / "openstreetmap" / input_filename
         style_file = (
@@ -145,8 +156,10 @@ def add_metadata():
         input_filename = osm_config["original_data"]["target"]["file_testmode"]
 
     for scenario in egon.data.config.settings()["egon-data"]["--scenarios"]:
-        osm_date = str(int(scenario.split("status20")[1]) + 1) + "0101"
-        input_filename = input_filename.replace("DATE", osm_date)
+        # todo: remove if update_osm_filename_from_scenario_year works fine
+        # osm_date = str(int(scenario.split("status20")[1]) + 1) + "0101"
+        # input_filename = input_filename.replace("DATE", osm_date)
+        input_filename = update_osm_filename_from_scenario_year(input_filename, scenario)
         # Extract spatial extend and date
         (spatial_extend, osm_data_date) = re.compile(
             "^([\\w-]*).*-(\\d+)$"
@@ -259,6 +272,7 @@ def modify_tables():
         f"{data_config['original_data']['target']['table_prefix']}_" + suffix
         for suffix in ["line", "point", "polygon", "roads"]
     ]:
+
         # Drop indices
         sql_statements = [f"DROP INDEX IF EXISTS {table}_index;"]
 
@@ -311,7 +325,7 @@ class OpenStreetMap(Dataset):
     def __init__(self, dependencies):
         super().__init__(
             name="OpenStreetMap",
-            version="0.0.5",
+            version="0.0.4",
             dependencies=dependencies,
             tasks=(download, to_postgres, modify_tables, add_metadata),
         )
