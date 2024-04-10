@@ -1016,8 +1016,7 @@ class GasNodesAndPipes(Dataset):
       * :py:class:`ElectricalNeighbours <egon.data.datasets.electrical_neighbours.ElectricalNeighbours>`
       * :py:class:`Osmtgmod <egon.data.datasets.osmtgmod.Osmtgmod>`
       * :py:class:`ScenarioParameters <egon.data.datasets.scenario_parameters.ScenarioParameters>`
-      * :py:class:`EtragoSetup <egon.data.datasets.etrago_setup.EtragoSetup>`
-          (more specifically the :func:`create_tables <egon.data.datasets.etrago_setup.create_tables>` task)
+      * :py:class:`EtragoSetup <egon.data.datasets.etrago_setup.EtragoSetup>` (more specifically the :func:`create_tables <egon.data.datasets.etrago_setup.create_tables>` task)
 
     *Resulting tables*
       * :py:class:`grid.egon_etrago_bus <egon.data.datasets.etrago_setup.EgonPfHvBus>` is extended
