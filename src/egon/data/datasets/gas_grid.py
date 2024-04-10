@@ -158,7 +158,7 @@ def ch4_nodes_number_G(gas_nodes_list):
     return N_ch4_nodes_G
 
 
-def insert_CH4_nodes_list(gas_nodes_list):
+def insert_CH4_nodes_list(gas_nodes_list, scn_name=None):
     """
     Insert list of German CH4 nodes into the database for eGon2035
 
@@ -180,6 +180,7 @@ def insert_CH4_nodes_list(gas_nodes_list):
     None
 
     """
+    assert scn_name, f"insert_CH4_nodes_list needs scn_name to be set but got scn_name={scn_name}"
     # Connect to local database
     engine = db.engine()
 
@@ -219,10 +220,12 @@ def insert_CH4_nodes_list(gas_nodes_list):
             gas_nodes_list["NUTS1"].isin([map_states[boundary], np.nan])
         ]
 
-        # A completer avec nodes related to pipelines which have an end in the selected area et evt deplacer ds define_gas_nodes_list
+        # A completer avec nodes related to pipelines which have an end
+        # in the selected area et evt deplacer ds define_gas_nodes_list
 
     # Add missing columns
-    c = {"scn_name": "eGon2035", "carrier": "CH4"}
+    scn_name = ["status2019", "eGon2035"][0]  # todo robert: fetch from config?
+    c = {"scn_name": scn_name, "carrier": "CH4"}
     gas_nodes_list = gas_nodes_list.assign(**c)
 
     gas_nodes_list = geopandas.GeoDataFrame(
@@ -260,7 +263,7 @@ def insert_CH4_nodes_list(gas_nodes_list):
     )
 
 
-def insert_gas_buses_abroad(scn_name="eGon2035"):
+def insert_gas_buses_abroad(scn_name=None):
     """
     Insert CH4 buses in neighbouring countries to database for eGon2035
 
@@ -288,6 +291,7 @@ def insert_gas_buses_abroad(scn_name="eGon2035"):
         and one in the center of Germany in test mode
 
     """
+    assert scn_name, f"insert_gas_buses_abroad needs scn_name to be set but got scn_name={scn_name}"
     # Select sources and targets from dataset configuration
     sources = config.datasets()["electrical_neighbours"]["sources"]
 
@@ -320,7 +324,7 @@ def insert_gas_buses_abroad(scn_name="eGon2035"):
             "geom",
         ]
     )
-    gdf_abroad_buses["scn_name"] = "eGon2035"
+    gdf_abroad_buses["scn_name"] = scn_name
     gdf_abroad_buses["carrier"] = main_gas_carrier
     gdf_abroad_buses["bus_id"] = range(new_id, new_id + len(gdf_abroad_buses))
 
@@ -388,7 +392,7 @@ def insert_gas_buses_abroad(scn_name="eGon2035"):
 
 
 def insert_gas_pipeline_list(
-    gas_nodes_list, abroad_gas_nodes_list, scn_name="eGon2035"
+    gas_nodes_list, abroad_gas_nodes_list, scn_name=None
 ):
     """
     Insert list of gas pipelines into the database
@@ -425,6 +429,7 @@ def insert_gas_pipeline_list(
     None
 
     """
+    assert scn_name, f"insert_gas_pipeline_list needs scn_name to be set but got scn_name={scn_name}"
     abroad_gas_nodes_list = abroad_gas_nodes_list.set_index("country")
 
     main_gas_carrier = get_sector_parameters("gas", scenario=scn_name)[
@@ -800,34 +805,35 @@ def insert_gas_pipeline_list(
     )
 
 
-def remove_isolated_gas_buses():
+def remove_isolated_gas_buses(scn_name=None):
     """
     Delete CH4 buses which are disconnected of the CH4 grid for the eGon2035 scenario
 
     This function deletes directly in the database and has no return.
 
     """
+    assert scn_name, f"remove_isolated_gas_buses needs scn_name to be set but got scn_name={scn_name}"
     targets = config.datasets()["gas_grid"]["targets"]
 
     db.execute_sql(
         f"""
         DELETE FROM {targets['buses']['schema']}.{targets['buses']['table']}
         WHERE "carrier" = 'CH4'
-        AND scn_name = 'eGon2035'
+        AND scn_name = {scn_name}
         AND country = 'DE'
         AND "bus_id" NOT IN
             (SELECT bus0 FROM {targets['links']['schema']}.{targets['links']['table']}
-            WHERE scn_name = 'eGon2035'
+            WHERE scn_name = {scn_name}
             AND carrier = 'CH4')
         AND "bus_id" NOT IN
             (SELECT bus1 FROM {targets['links']['schema']}.{targets['links']['table']}
-            WHERE scn_name = 'eGon2035'
+            WHERE scn_name = {scn_name}
             AND carrier = 'CH4');
     """
     )
 
 
-def insert_gas_data():
+def insert_gas_data_eGon2035(scn_name="eGon2035"):
     """
     Overall function for importing methane data for eGon2035
 
@@ -847,15 +853,17 @@ def insert_gas_data():
     This function inserts data into the database and has no return.
 
     """
+    assert scn_name, f"insert_gas_data needs scn_name to be set but got scn_name={scn_name}"
+
     download_SciGRID_gas_data()
 
     gas_nodes_list = define_gas_nodes_list()
 
-    insert_CH4_nodes_list(gas_nodes_list)
-    abroad_gas_nodes_list = insert_gas_buses_abroad()
+    insert_CH4_nodes_list(gas_nodes_list, scn_name=scn_name)
+    abroad_gas_nodes_list = insert_gas_buses_abroad(scn_name=scn_name)
 
-    insert_gas_pipeline_list(gas_nodes_list, abroad_gas_nodes_list)
-    remove_isolated_gas_buses()
+    insert_gas_pipeline_list(gas_nodes_list, abroad_gas_nodes_list, scn_name=scn_name)
+    remove_isolated_gas_buses(scn_name=scn_name)
 
 
 def insert_gas_data_eGon100RE():
@@ -879,6 +887,7 @@ def insert_gas_data_eGon100RE():
 
     # get CH4 pipelines and modify their nominal capacity with the
     # retrofitting factor
+    # todo: why here scn_name = 'eGon2035' but fct called insert_gas_data_eGon100RE() doesn't looks consistent to me
     gdf = db.select_geodataframe(
         f"""
         SELECT * FROM grid.egon_etrago_link
@@ -936,7 +945,7 @@ def insert_gas_data_eGon100RE():
     )
 
 
-def insert_gas_data_status2019():
+def insert_gas_data_status2019(scn_name: str = "status2019"):
     """
     Function to deal with the gas network for the status2019 scenario.
     For this scenario just one CH4 bus is consider in the center of Germany.
@@ -951,7 +960,6 @@ def insert_gas_data_status2019():
     None.
 
     """
-    scn_name = "status2019"
 
     # delete old entries
     db.execute_sql(
@@ -1008,7 +1016,8 @@ class GasNodesAndPipes(Dataset):
       * :py:class:`ElectricalNeighbours <egon.data.datasets.electrical_neighbours.ElectricalNeighbours>`
       * :py:class:`Osmtgmod <egon.data.datasets.osmtgmod.Osmtgmod>`
       * :py:class:`ScenarioParameters <egon.data.datasets.scenario_parameters.ScenarioParameters>`
-      * :py:class:`EtragoSetup <egon.data.datasets.etrago_setup.EtragoSetup>` (more specifically the :func:`create_tables <egon.data.datasets.etrago_setup.create_tables>` task)
+      * :py:class:`EtragoSetup <egon.data.datasets.etrago_setup.EtragoSetup>`
+          (more specifically the :func:`create_tables <egon.data.datasets.etrago_setup.create_tables>` task)
 
     *Resulting tables*
       * :py:class:`grid.egon_etrago_bus <egon.data.datasets.etrago_setup.EgonPfHvBus>` is extended
@@ -1023,8 +1032,9 @@ class GasNodesAndPipes(Dataset):
 
     tasks = (insert_gas_data_status2019,)
 
+    # todo: is eGon2035 | eGon100RE built on 2019, thus adding to taks ir right?
     if "eGon2035" in config.settings()["egon-data"]["--scenarios"]:
-        tasks = tasks + (insert_gas_data,)
+        tasks = tasks + (insert_gas_data_eGon2035,)
 
     if "eGon100RE" in config.settings()["egon-data"]["--scenarios"]:
         tasks = tasks + (insert_gas_data_eGon100RE,)
