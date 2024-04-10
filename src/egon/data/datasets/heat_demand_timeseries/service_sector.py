@@ -17,7 +17,7 @@ except ImportError as e:
 Base = declarative_base()
 
 
-def cts_demand_per_aggregation_level(aggregation_level, scenario):
+def cts_demand_per_aggregation_level(aggregation_level, scenario, year=None):
     """
 
     Description: Create dataframe assigining the CTS demand curve to individual zensus cell
@@ -51,20 +51,19 @@ def cts_demand_per_aggregation_level(aggregation_level, scenario):
             zensu population id
 
     """
-
+    assert year, f"year needs to be set for cts_demand_per_aggregation_level but given year={year}"
     demand_nuts = db.select_dataframe(
         f"""
         SELECT demand, a.zensus_population_id, b.vg250_nuts3
-        FROM demand.egon_peta_heat a 
-        JOIN boundaries.egon_map_zensus_vg250 b 
+        FROM demand.egon_peta_heat a
+        JOIN boundaries.egon_map_zensus_vg250 b
         ON a.zensus_population_id = b.zensus_population_id
-        
+
         WHERE a.sector = 'service'
         AND a.scenario = '{scenario}'
         ORDER BY a.zensus_population_id
         """
     )
-
     if os.path.isfile("CTS_heat_demand_profile_nuts3.csv"):
         df_CTS_gas_2011 = pd.read_csv(
             "CTS_heat_demand_profile_nuts3.csv", index_col=0
@@ -74,7 +73,7 @@ def cts_demand_per_aggregation_level(aggregation_level, scenario):
         df_CTS_gas_2011 = df_CTS_gas_2011.asfreq("H")
     else:
         df_CTS_gas_2011 = temporal.disagg_temporal_gas_CTS(
-            use_nuts3code=True, year=2019
+            use_nuts3code=True, year=year
         )
         df_CTS_gas_2011.to_csv("CTS_heat_demand_profile_nuts3.csv")
 
@@ -140,7 +139,7 @@ def cts_demand_per_aggregation_level(aggregation_level, scenario):
             FROM boundaries.egon_map_zensus_grid_districts a
 
 				JOIN demand.egon_peta_heat c
-				ON a.zensus_population_id = c.zensus_population_id 
+				ON a.zensus_population_id = c.zensus_population_id
 
 				WHERE c.scenario = '{scenario}'
 				AND c.sector = 'service'
@@ -222,11 +221,12 @@ def CTS_demand_scale(aggregation_level):
     CTS_zensus = pd.DataFrame()
 
     for scenario in scenarios:
+        year = 2019  # todo how to set for different scenarios?
         (
             CTS_per_district,
             CTS_per_grid,
             CTS_per_zensus,
-        ) = cts_demand_per_aggregation_level(aggregation_level, scenario)
+        ) = cts_demand_per_aggregation_level(aggregation_level, scenario, year=year)
         CTS_per_district = CTS_per_district.transpose()
         CTS_per_grid = CTS_per_grid.transpose()
         CTS_per_zensus = CTS_per_zensus.transpose()
@@ -234,7 +234,7 @@ def CTS_demand_scale(aggregation_level):
         demand = db.select_dataframe(
             f"""
                 SELECT demand, zensus_population_id
-                FROM demand.egon_peta_heat                
+                FROM demand.egon_peta_heat
                 WHERE sector = 'service'
                 AND scenario = '{scenario}'
                 ORDER BY zensus_population_id
@@ -293,7 +293,7 @@ def CTS_demand_scale(aggregation_level):
                 FROM boundaries.egon_map_zensus_grid_districts a
 
 				JOIN demand.egon_peta_heat c
-				ON a.zensus_population_id = c.zensus_population_id 
+				ON a.zensus_population_id = c.zensus_population_id
 
 				WHERE c.scenario = '{scenario}'
 				AND c.sector = 'service'
