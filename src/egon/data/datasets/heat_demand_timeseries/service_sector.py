@@ -138,11 +138,11 @@ def cts_demand_per_aggregation_level(aggregation_level, scenario, year=None):
             SELECT bus_id, a.zensus_population_id
             FROM boundaries.egon_map_zensus_grid_districts a
 
-				JOIN demand.egon_peta_heat c
-				ON a.zensus_population_id = c.zensus_population_id
+            JOIN demand.egon_peta_heat c
+            ON a.zensus_population_id = c.zensus_population_id
 
-				WHERE c.scenario = '{scenario}'
-				AND c.sector = 'service'
+            WHERE c.scenario = '{scenario}'
+            AND c.sector = 'service'
             """
         )
 
@@ -233,12 +233,12 @@ def CTS_demand_scale(aggregation_level):
 
         demand = db.select_dataframe(
             f"""
-                SELECT demand, zensus_population_id
-                FROM demand.egon_peta_heat
-                WHERE sector = 'service'
-                AND scenario = '{scenario}'
-                ORDER BY zensus_population_id
-                """
+            SELECT demand, zensus_population_id
+            FROM demand.egon_peta_heat
+            WHERE sector = 'service'
+            AND scenario = '{scenario}'
+            ORDER BY zensus_population_id
+            """
         )
 
         if aggregation_level == "district":
@@ -292,11 +292,11 @@ def CTS_demand_scale(aggregation_level):
                 SELECT bus_id, a.zensus_population_id
                 FROM boundaries.egon_map_zensus_grid_districts a
 
-				JOIN demand.egon_peta_heat c
-				ON a.zensus_population_id = c.zensus_population_id
+                JOIN demand.egon_peta_heat c
+                ON a.zensus_population_id = c.zensus_population_id
 
-				WHERE c.scenario = '{scenario}'
-				AND c.sector = 'service'
+                WHERE c.scenario = '{scenario}'
+                AND c.sector = 'service'
                 """
             )
 
@@ -336,10 +336,10 @@ def CTS_demand_scale(aggregation_level):
             CTS_grid = pd.concat([CTS_grid, CTS_per_grid])
             CTS_grid = CTS_grid.sort_index()
 
-            CTS_per_zensus = 0
+            CTS_per_zensus = 0  # todo: unused?
 
         else:
-            CTS_per_district = 0
+            CTS_per_district = 0  # todo: unused?
             CTS_per_grid = 0
 
             CTS_per_zensus = pd.merge(
