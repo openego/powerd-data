@@ -158,7 +158,7 @@ def ch4_nodes_number_G(gas_nodes_list):
     return N_ch4_nodes_G
 
 
-def insert_CH4_nodes_list(gas_nodes_list):
+def insert_CH4_nodes_list(gas_nodes_list, scenario):
     """
     Insert list of German CH4 nodes into the database for eGon2035
 
@@ -222,7 +222,7 @@ def insert_CH4_nodes_list(gas_nodes_list):
         # A completer avec nodes related to pipelines which have an end in the selected area et evt deplacer ds define_gas_nodes_list
 
     # Add missing columns
-    c = {"scn_name": "eGon2035", "carrier": "CH4"}
+    c = {"scn_name": scenario, "carrier": "CH4"}
     gas_nodes_list = gas_nodes_list.assign(**c)
 
     gas_nodes_list = geopandas.GeoDataFrame(
@@ -305,7 +305,7 @@ def insert_gas_buses_abroad(scn_name="eGon2035"):
     )
 
     # Select the foreign buses
-    gdf_abroad_buses = central_buses_egon100(sources)
+    gdf_abroad_buses = central_buses_pypsaeur(sources, scn_name)
     gdf_abroad_buses = gdf_abroad_buses.drop_duplicates(subset=["country"])
 
     # Select next id value
@@ -320,7 +320,7 @@ def insert_gas_buses_abroad(scn_name="eGon2035"):
             "geom",
         ]
     )
-    gdf_abroad_buses["scn_name"] = "eGon2035"
+    gdf_abroad_buses["scn_name"] = scn_name
     gdf_abroad_buses["carrier"] = main_gas_carrier
     gdf_abroad_buses["bus_id"] = range(new_id, new_id + len(gdf_abroad_buses))
 
@@ -827,7 +827,7 @@ def remove_isolated_gas_buses():
     )
 
 
-def insert_gas_data():
+def insert_gas_data(scenario):
     """
     Overall function for importing methane data for eGon2035
 
@@ -850,11 +850,10 @@ def insert_gas_data():
     download_SciGRID_gas_data()
 
     gas_nodes_list = define_gas_nodes_list()
+    insert_CH4_nodes_list(gas_nodes_list, scenario)
+    abroad_gas_nodes_list = insert_gas_buses_abroad(scenario)
 
-    insert_CH4_nodes_list(gas_nodes_list)
-    abroad_gas_nodes_list = insert_gas_buses_abroad()
-
-    insert_gas_pipeline_list(gas_nodes_list, abroad_gas_nodes_list)
+    insert_gas_pipeline_list(gas_nodes_list, abroad_gas_nodes_list, scenario)
     remove_isolated_gas_buses()
 
 
@@ -1019,15 +1018,17 @@ class GasNodesAndPipes(Dataset):
     #:
     name: str = "GasNodesAndPipes"
     #:
-    version: str = "0.0.10"
+    version: str = "0.0.11"
 
-    tasks = (insert_gas_data_status2019,)
-
+    tasks = ()
+    if "status2019" in config.settings()["egon-data"]["--scenarios"]:
+        tasks = tasks + (insert_gas_data_status2019,)
+    
     if "eGon2035" in config.settings()["egon-data"]["--scenarios"]:
-        tasks = tasks + (insert_gas_data,)
+        tasks = tasks + (insert_gas_data("eGon2035"),)
 
     if "eGon100RE" in config.settings()["egon-data"]["--scenarios"]:
-        tasks = tasks + (insert_gas_data_eGon100RE,)
+        tasks = tasks + (insert_gas_data("eGon100RE"), insert_gas_data_eGon100RE,)
 
     def __init__(self, dependencies):
         super().__init__(
