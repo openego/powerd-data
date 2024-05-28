@@ -92,7 +92,7 @@ def drop_bus(x, y, v_nom, scn_name):
         )
 
 
-def add_line(x0, y0, x1, y1, v_nom, scn_name, cables):
+def add_line(x0, y0, x1, y1, v_nom, scn_name, cables, geom_length=None, layingtype='overhead' ):
     parameters = get_sector_parameters("electricity", scenario=scn_name)
     bus0 = select_bus_id(
         x0, y0, v_nom, scn_name, carrier="AC", find_closest=True
@@ -114,24 +114,45 @@ def add_line(x0, y0, x1, y1, v_nom, scn_name, cables):
     )
 
     gdf = link_geom_from_buses(df, scn_name)
+    
+    if geom_length is not None:
+        gdf["length"] = geom_length
+    else:
+        gdf["length"] = gdf.to_crs(3035).topo.length.mul(1e-3)
+        
+    if layingtype=='overhead':
 
-    gdf["length"] = gdf.to_crs(3035).topo.length.mul(1e-3)
+        # all the values used for x, r and b are taken from the electrical values
+        # reference table from oemtgmod: github.com/wupperinst/osmTGmod
+        if v_nom == 110:
+            s_nom = 260
+            x_per_km = 0.0012 * 2 * np.pi * 50
+            r_per_km = 0.05475
+            b_per_km = 9.5 * 2 * np.pi * 50 * 1e-9
+            cost_per_km = parameters["capital_cost"]["ac_hv_overhead_line"]
+        
+        if v_nom == 220:
+            s_nom = 520
+            x_per_km = 0.001 * 2 * np.pi * 50
+            r_per_km = 0.05475
+            b_per_km = 11 * 2 * np.pi * 50 * 1e-9
+            cost_per_km = parameters["capital_cost"]["ac_ehv_overhead_line"]
+    
+        elif v_nom == 380:
+            s_nom = 1790
+            x_per_km = 0.0008 * 2 * np.pi * 50
+            r_per_km = 0.027375
+            b_per_km = 14 * 2 * np.pi * 50 * 1e-9
+            cost_per_km = parameters["capital_cost"]["ac_ehv_overhead_line"]
+            
+    elif layingtype=='underground':
 
-    # all the values used for x, r and b are taken from the electrical values
-    # reference table from oemtgmod: github.com/wupperinst/osmTGmod
-    if v_nom == 220:
-        s_nom = 520
-        x_per_km = 0.001 * 2 * np.pi * 50
-        r_per_km = 0.05475
-        b_per_km = 11 * 2 * np.pi * 50 * 1e-9
-        cost_per_km = parameters["capital_cost"]["ac_ehv_overhead_line"]
-
-    elif v_nom == 380:
-        s_nom = 1790
-        x_per_km = 0.0008 * 2 * np.pi * 50
-        r_per_km = 0.027375
-        b_per_km = 14 * 2 * np.pi * 50 * 1e-9
-        cost_per_km = parameters["capital_cost"]["ac_ehv_overhead_line"]
+        if v_nom == 110:
+            s_nom = 280
+            x_per_km = 0.0003 * 2 * np.pi * 50
+            r_per_km = 0.0177
+            b_per_km = 250 * 2 * np.pi * 50 * 1e-9
+            cost_per_km = parameters["capital_cost"]["ac_hv_cable"]
 
     gdf["s_nom"] = s_nom * gdf["cables"] / 3
     gdf["s_nom_extendable"] = True
@@ -148,10 +169,9 @@ def add_line(x0, y0, x1, y1, v_nom, scn_name, cables):
         "egon_etrago_line", schema="grid", con=db.engine(), if_exists="append"
     )
 
-
 def drop_line(x0, y0, x1, y1, v_nom, scn_name):
-    bus0 = select_bus_id(x0, y0, v_nom, scn_name, carrier="AC")
-    bus1 = select_bus_id(x1, y1, v_nom, scn_name, carrier="AC")
+    bus0 = select_bus_id(x0, y0, v_nom, scn_name, carrier="AC", find_closest=True)
+    bus1 = select_bus_id(x1, y1, v_nom, scn_name, carrier="AC", find_closest=True)
 
     if (bus0 is not None) and (bus1 is not None):
         db.execute_sql(
