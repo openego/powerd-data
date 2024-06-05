@@ -224,8 +224,8 @@ def add_trafo(x, y, v_nom0, v_nom1, scn_name, n=1):
 
 
 def drop_trafo(x, y, v_nom0, v_nom1, scn_name):
-    bus0 = select_bus_id(x, y, v_nom0, scn_name, carrier="AC")
-    bus1 = select_bus_id(x, y, v_nom1, scn_name, carrier="AC")
+    bus0 = select_bus_id(x, y, v_nom0, scn_name, carrier="AC", find_closest=True)
+    bus1 = select_bus_id(x, y, v_nom1, scn_name, carrier="AC", find_closest=True)
 
     if (bus0 is not None) and (bus1 is not None):
         db.execute_sql(
@@ -237,6 +237,26 @@ def drop_trafo(x, y, v_nom0, v_nom1, scn_name):
             AND bus1 = {bus1}
             """
         )
+        
+def change_trafo(x, y, v_nom0, v_nom1, scn_name, s_nom, reactance_pu):
+    bus0 = select_bus_id(x, y, v_nom0, scn_name, carrier="AC", find_closest=True)
+    bus1 = select_bus_id(x, y, v_nom1, scn_name, carrier="AC", find_closest=True)
+
+    if (bus0 is not None) and (bus1 is not None):
+        db.execute_sql(
+            f"""
+            UPDATE grid.egon_etrago_transformer
+            SET 
+            s_nom = {s_nom},
+            s_nom_min = {s_nom},
+            x = {reactance_pu}
+            WHERE
+            scn_name = '{scn_name}'
+            AND bus0 = {bus0}
+            AND bus1 = {bus1}
+            """
+        )
+
 
 
 def fix_subnetworks(scn_name):
