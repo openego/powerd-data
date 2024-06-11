@@ -62,15 +62,19 @@ def _get_year_from_scenario_name(scenario):
         year = int(scenario.split("status")[-1])
         years_dct["weather_year"] = year
         years_dct["population_year"] = year
+        years_dct["costs_year"] = year + 1
     elif scenario == "eGon2035":
         years_dct["weather_year"] = 2011
         years_dct["population_year"] = 2035
+        years_dct["costs_year"] = 2035
     elif scenario == "eGon100RE":
         years_dct["weather_year"] = 2011
         years_dct["population_year"] = 2050
+        years_dct["costs_year"] = 2050
     elif scenario == "eGon2021":
         years_dct["weather_year"] = 2011
         years_dct["population_year"] = 2021
+        years_dct["costs_year"] = 2021
     assert years_dct, f"Couldn't fetch year from scenario {scenario}. years_dct = {years_dct}"
     return years_dct
 
@@ -152,7 +156,7 @@ def global_settings(scenario):
                 "coal": 3.79 * 3.6,  # [EUR/MWh]
                 "lignite": 1.1 * 3.6,  # [EUR/MWh]
                 "nuclear": 0.47 * 3.6,  # [EUR/MWh]
-                "biomass": read_costs(read_csv(years_dct["population_year"]), "biomass", "fuel"),
+                "biomass": read_costs(read_csv(years_dct["costs_year"]), "biomass", "fuel"),
             },
             "co2_costs": 23.0,  # [EUR/t_CO2],
             "co2_emissions": co2_emissions_dct,
@@ -167,7 +171,7 @@ def global_settings(scenario):
                 "coal": 3.4 * 3.6,  # [EUR/MWh]
                 "lignite": 1.1 * 3.6,  # [EUR/MWh]
                 "nuclear": 0.47 * 3.6,  # [EUR/MWh]
-                "biomass": read_costs(read_csv(years_dct["population_year"]), "biomass", "fuel"),
+                "biomass": read_costs(read_csv(years_dct["costs_year"]), "biomass", "fuel"),
             },
             "co2_costs": 21.7,  # [EUR/t_CO2],
             "co2_emissions": co2_emissions_dct,
@@ -182,7 +186,7 @@ def global_settings(scenario):
                 "coal": 3.12 * 3.6,  # [EUR/MWh]
                 "lignite": 1.1 * 3.6,  # [EUR/MWh]
                 "nuclear": 0.47 * 3.6,  # [EUR/MWh]
-                "biomass": read_costs(read_csv(years_dct["population_year"]), "biomass", "fuel"),
+                "biomass": read_costs(read_csv(years_dct["costs_year"]), "biomass", "fuel"),
             },
             "co2_costs": 20.4,  # [EUR/t_CO2],
             "co2_emissions": co2_emissions_dct,
@@ -197,7 +201,7 @@ def global_settings(scenario):
                 "coal": 3.0 * 3.6,  # [EUR/MWh]
                 "lignite": 1.1 * 3.6,  # [EUR/MWh]
                 "nuclear": 0.47 * 3.6,  # [EUR/MWh]
-                "biomass": read_costs(read_csv(years_dct["population_year"]), "biomass", "fuel"),
+                "biomass": read_costs(read_csv(years_dct["costs_year"]), "biomass", "fuel"),
             },
             "co2_costs": 19.7,  # [EUR/t_CO2],
             "co2_emissions": co2_emissions_dct,
@@ -212,7 +216,7 @@ def global_settings(scenario):
                 "coal": 3.0 * 3.6,  # [EUR/MWh]
                 "lignite": 1.1 * 3.6,  # [EUR/MWh]
                 "nuclear": 0.47 * 3.6,  # [EUR/MWh]
-                "biomass": read_costs(read_csv(read_csv(years_dct["population_year"]), "biomass", "fuel"),
+                "biomass": read_costs(read_csv(read_csv(years_dct["costs_year"]), "biomass", "fuel"),
             },
             "co2_costs": 19.7,  # [EUR/t_CO2], source:
             "co2_emissions": co2_emissions_dct,
