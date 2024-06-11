@@ -100,7 +100,8 @@ def global_settings(scenario):
     # https://de.statista.com/statistik/daten/studie/1304069/umfrage/preisentwicklung-von-co2-emissionsrechten-in-eu/
 
     # co2_emissions_dct static for all scenarios
-    co2_emissions_dct = {  # Netzentwicklungsplan Strom 2035, Version 2021, 1. Entwurf, p. 40, table 8
+    # Netzentwicklungsplan Strom 2035, Version 2021, 1. Entwurf, p. 40, table 8
+    co2_emissions_dct = {
                 "waste": 0.165,  # [t_CO2/MW_th]
                 "lignite": 0.393,  # [t_CO2/MW_th]
                 "gas": 0.201,  # [t_CO2/MW_th]
@@ -118,6 +119,7 @@ def global_settings(scenario):
         "eGon2035": {
             "weather_year": years_dct["weather_year"],
             "population_year": years_dct["population_year"],
+            "costs_year": years_dct["costs_year"],
             "fuel_costs": {  # Netzentwicklungsplan Strom 2035, Version 2021, 1. Entwurf, p. 39, table 6
                 "oil": 73.8,  # [EUR/MWh]
                 "gas": 25.6,  # [EUR/MWh]
@@ -133,6 +135,7 @@ def global_settings(scenario):
         "eGon100RE": {
             "weather_year": years_dct["weather_year"],
             "population_year": years_dct["population_year"],
+            "costs_year": years_dct["costs_year"],
             "fuel_costs": {  # Netzentwicklungsplan Strom 2035, Version 2021, 1. Entwurf, p. 39, table 6
                 "oil": 73.8,  # [EUR/MWh]
                 "gas": 25.6,  # [EUR/MWh]
@@ -150,6 +153,7 @@ def global_settings(scenario):
         "status2025": {
             "weather_year": years_dct["weather_year"],
             "population_year": years_dct["population_year"],
+            "costs_year": years_dct["costs_year"],
             "fuel_costs": {
                 "oil": 18.8 * 3.6,  # [EUR/MWh]
                 "gas": 6.46 * 3.6,  # [EUR/MWh]
@@ -165,6 +169,7 @@ def global_settings(scenario):
         "status2023": {
             "weather_year": years_dct["weather_year"],
             "population_year": years_dct["population_year"],
+            "costs_year": years_dct["costs_year"],
             "fuel_costs": {
                 "oil": 16.4 * 3.6,  # [EUR/MWh]
                 "gas": 6.1 * 3.6,  # [EUR/MWh]
@@ -180,6 +185,7 @@ def global_settings(scenario):
         "status2021": {
             "weather_year": years_dct["weather_year"],
             "population_year": years_dct["population_year"],
+            "costs_year": years_dct["costs_year"],
             "fuel_costs": {
                 "oil": 14.1 * 3.6,  # [EUR/MWh]
                 "gas": 5.8 * 3.6,  # [EUR/MWh]
@@ -195,6 +201,7 @@ def global_settings(scenario):
         "status2020": {
             "weather_year": years_dct["weather_year"],
             "population_year": years_dct["population_year"],
+            "costs_year": years_dct["costs_year"],
             "fuel_costs": {
                 "oil": 12.9 * 3.6,  # [EUR/MWh]
                 "gas": 5.6 * 3.6,  # [EUR/MWh]
@@ -210,6 +217,7 @@ def global_settings(scenario):
         "status2019": {
             "weather_year": years_dct["weather_year"],
             "population_year": years_dct["population_year"],
+            "costs_year": years_dct["costs_year"],
             "fuel_costs": {
                 "oil": 12.9 * 3.6,  # [EUR/MWh]
                 "gas": 5.6 * 3.6,  # [EUR/MWh]
@@ -244,9 +252,12 @@ def electricity(scenario):
         List of parameters of electricity sector
 
     """
+    if scenario == "eGon2021":
+        parameters = {}
 
-    if scenario == "eGon2035":
-        costs = read_csv(2035)
+    elif scenario == "eGon2035":
+        year = 2025
+        costs = read_csv(year)
 
         parameters = {"grid_topology": "Status Quo"}
         # Insert effciencies in p.u.
@@ -571,12 +582,10 @@ def electricity(scenario):
             "solar": read_costs(costs, "solar", "VOM"),
         }
 
-    elif scenario == "eGon2021":
-        parameters = {}
+    elif scenario.startswith("status"):
 
-    elif scenario == "status2019":
-
-        costs = read_csv(2020)
+        year = int(scenario.split("status")[-1])
+        costs = read_csv(year + 1)  # consider end of target year
 
         parameters = {"grid_topology": "Status Quo"}
         # Insert effciencies in p.u.
@@ -708,7 +717,7 @@ def electricity(scenario):
             parameters["capital_cost"][comp] = annualize_capital_costs(
                 parameters["overnight_cost"][comp],
                 parameters["lifetime"][comp],
-                global_settings("status2019")["interest_rate"],
+                global_settings(scenario)["interest_rate"],
             )
 
         parameters["capital_cost"]["battery"] = (
@@ -962,8 +971,10 @@ def gas(scenario):
     elif scenario == "eGon2021":
         parameters = {}
 
-    elif scenario == "status2019":
-        costs = read_csv(2020)
+    elif scenario.startswith("status"):
+
+        year = int(scenario.split("status")[-1])
+        costs = read_csv(year + 1)  # consider end of target year
         parameters = {
             "main_gas_carrier": "CH4",
         }
@@ -1193,19 +1204,40 @@ def heat(scenario):
     elif scenario == "eGon2021":
         parameters = {}
 
-    elif scenario == "status2019":
+    elif scenario == "statusYYYY":  # here you may provide your own specific researched data
+        parameters = {"TODO": "TOFILL"}
+
+    elif scenario.startswith("status"):  # here is a scaling approach
+        """
+        The data I provided is based on extrapolations and assumptions made from historical trends and typical
+        distributions observed in heat demand for space heating and hot water in residential and service sectors in
+        Germany. These assumptions are commonly used in energy analysis and forecasting.
+        """
+        year = int(scenario.split("status")[-1])
+        if year < 2015:
+            year = 2015  # due to providing
+        elif year > 2024:
+            year = 2024
+        heating_loopup_TJ = {
+            2015: {"residential": {"space heating": 1709000, "hot water": 403000}, "service": {"space heating": 608400, "hot water": 140400}},
+            2016: {"residential": {"space heating": 1700250, "hot water": 407500}, "service": {"space heating": 620100, "hot water": 143100}},
+            2017: {"residential": {"space heating": 1696000, "hot water": 412000}, "service": {"space heating": 631800, "hot water": 145800}},
+            2018: {"residential": {"space heating": 1749500, "hot water": 416500}, "service": {"space heating": 643500, "hot water": 148500}},
+            2019: {"residential": {"space heating": 1736000, "hot water": 412000}, "service": {"space heating": 631800, "hot water": 145800}},
+            2020: {"residential": {"space heating": 1748750, "hot water": 416500}, "service": {"space heating": 655200, "hot water": 151200}},
+            2021: {"residential": {"space heating": 1762500, "hot water": 421000}, "service": {"space heating": 666900, "hot water": 153900}},
+            2022: {"residential": {"space heating": 1775750, "hot water": 425500}, "service": {"space heating": 678600, "hot water": 156600}},
+            2023: {"residential": {"space heating": 1762500, "hot water": 421000}, "service": {"space heating": 666900, "hot water": 153900}},
+            2024: {"residential": {"space heating": 1748750, "hot water": 416500}, "service": {"space heating": 655200, "hot water": 151200}},
+        }
         parameters = {
-            "DE_demand_residential_TJ": 1658400
-            + 383300,  # [TJ], space heating + hot water, source: AG Energiebilanzen 2019 (https://ag-energiebilanzen.de/wp-content/uploads/2020/10/ageb_20v_v1.pdf)
-            "DE_demand_service_TJ": 567300
-            + 71500,  # [TJ], space heating + hot water, source: AG Energiebilanzen 2019 (https://ag-energiebilanzen.de/wp-content/uploads/2020/10/ageb_20v_v1.pdf)
-            "DE_district_heating_share": (189760 + 38248)
-            / (
-                1658400 + 383300 + 567300 + 71500
-            ),  # [TJ], source: AG Energiebilanzen 2019 (https://ag-energiebilanzen.de/wp-content/uploads/2021/11/bilanz19d.xlsx)
+            "DE_demand_residential_TJ": sum(heating_loopup_TJ[year]["residential"].values()),
+            "DE_demand_service_TJ": sum(heating_loopup_TJ[year]["service"].values()),
+            "DE_district_heating_share": (189760 + 38248) / (
+                sum(heating_loopup_TJ[year]["residential"].values()) + sum(heating_loopup_TJ[year]["service"].values()))
         }
 
-        costs = read_csv(2020)
+        costs = read_csv(year + 1)
 
         # Insert marginal_costs in EUR/MWh
         # marginal cost can include fuel, C02 and operation and maintenance costs
