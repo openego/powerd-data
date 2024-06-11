@@ -1215,25 +1215,39 @@ def heat(scenario):
         """
         year = int(scenario.split("status")[-1])
         if year < 2015:
-            year = 2015  # due to providing
+            ydelta = min(int(2015 - year), 1)
+            growth_rate = 1.01
+            factor = growth_rate ** ydelta
+            _add_to_lookup = True
         elif year > 2024:
-            year = 2024
+            ydelta = min(int(year - 2024), 1)
+            growth_rate = 0.99
+            factor = growth_rate ** ydelta
+            _add_to_lookup = True
+        else:
+            factor = 1.01
+            _add_to_lookup = False
+        # [TJ], space heating + hot water, source: AG Energiebilanzen 2019 (https://ag-energiebilanzen.de/wp-content/uploads/2020/10/ageb_20v_v1.pdf)
+        # [TJ], space heating + hot water, source: AG Energiebilanzen 2023 (https://ag-energiebilanzen.de/wp-content/uploads/2023/01/AGEB_22p2_rev-1.pdf)
         heating_loopup_TJ = {
-            2015: {"residential": {"space heating": 1709000, "hot water": 403000}, "service": {"space heating": 608400, "hot water": 140400}},
-            2016: {"residential": {"space heating": 1700250, "hot water": 407500}, "service": {"space heating": 620100, "hot water": 143100}},
-            2017: {"residential": {"space heating": 1696000, "hot water": 412000}, "service": {"space heating": 631800, "hot water": 145800}},
-            2018: {"residential": {"space heating": 1749500, "hot water": 416500}, "service": {"space heating": 643500, "hot water": 148500}},
-            2019: {"residential": {"space heating": 1736000, "hot water": 412000}, "service": {"space heating": 631800, "hot water": 145800}},
-            2020: {"residential": {"space heating": 1748750, "hot water": 416500}, "service": {"space heating": 655200, "hot water": 151200}},
-            2021: {"residential": {"space heating": 1762500, "hot water": 421000}, "service": {"space heating": 666900, "hot water": 153900}},
-            2022: {"residential": {"space heating": 1775750, "hot water": 425500}, "service": {"space heating": 678600, "hot water": 156600}},
-            2023: {"residential": {"space heating": 1762500, "hot water": 421000}, "service": {"space heating": 666900, "hot water": 153900}},
-            2024: {"residential": {"space heating": 1748750, "hot water": 416500}, "service": {"space heating": 655200, "hot water": 151200}},
+            2019: {"residential": {"space heating": 1658400, "hot water": 383300}, "service": {"space heating": 567300, "hot water": 71500}},
+            2020: {"residential": {"space heating": 1645900, "hot water": 372700}, "service": {"space heating": 513700, "hot water": 74500}},
+            2021: {"residential": {"space heating": 1754200, "hot water": 407500}, "service": {"space heating": 668400, "hot water": 44300}},
+            2022: {"residential": {"space heating": 1637800, "hot water": 381000}, "service": {"space heating": 578900, "hot water": 39700}}
         }
+        if _add_to_lookup:
+            # using 2019 as base to extrapolate
+            heating_loopup_TJ[year] = {
+                "residential": {
+                    "space heating": heating_loopup_TJ[2019]["residential"]["space heating"] * factor,
+                    "hot water": heating_loopup_TJ[2019]["hot water"] * factor},
+                "service": {
+                    "space heating": heating_loopup_TJ[2019]["residential"]["space heating"] * factor,
+                    "hot water": heating_loopup_TJ[2019]["hot water"] * factor}}
         parameters = {
             "DE_demand_residential_TJ": sum(heating_loopup_TJ[year]["residential"].values()),
             "DE_demand_service_TJ": sum(heating_loopup_TJ[year]["service"].values()),
-            "DE_district_heating_share": (189760 + 38248) / (
+            "DE_district_heating_share": (189760 + 38248) * factor / (
                 sum(heating_loopup_TJ[year]["residential"].values()) + sum(heating_loopup_TJ[year]["service"].values()))
         }
 
@@ -1263,6 +1277,8 @@ def heat(scenario):
         }
 
     else:
-        print(f"Scenario name {scenario} is not valid.")
+        msg = f"Scenario name {scenario} is not valid.\n"
+        msg += "Do we want to assert a valid scenario w. valid parameters?"
+        assert False, msg
 
     return parameters
