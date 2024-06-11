@@ -10,8 +10,9 @@ def read_csv(year):
     source = egon.data.config.datasets()["pypsa-technology-data"]["targets"][
         "data_dir"
     ]
-
-    return pd.read_csv(f"{source}costs_{year}.csv")
+    p = f"{source}costs_{year}.csv"
+    print(f"read csv {p}\nDoes year has to be year or year++?")
+    return pd.read_csv(p)
 
 
 def read_costs(df, technology, parameter, value_only=True):
@@ -55,6 +56,25 @@ def annualize_capital_costs(overnight_costs, lifetime, p):
     return overnight_costs / PVA
 
 
+def _get_year_from_scenario_name(scenario):
+    years_dct = None
+    if scenario.startswith("status"):
+        year = int(scenario.split("status")[-1])
+        years_dct["weather_year"] = year
+        years_dct["population_year"] = year
+    elif scenario == "eGon2035":
+        years_dct["weather_year"] = 2011
+        years_dct["population_year"] = 2035
+    elif scenario == "eGon100RE":
+        years_dct["weather_year"] = 2011
+        years_dct["population_year"] = 2050
+    elif scenario == "eGon2021":
+        years_dct["weather_year"] = 2011
+        years_dct["population_year"] = 2021
+    assert years_dct, f"Couldn't fetch year from scenario {scenario}. years_dct = {years_dct}"
+    return years_dct
+
+
 def global_settings(scenario):
     """Returns global paramaters for the selected scenario.
 
@@ -69,11 +89,31 @@ def global_settings(scenario):
         List of global parameters
 
     """
+    # src.
+    # "fuel_costs":
+    # TYNDP 2020, data for 2020 (https://2020.entsos-tyndp-scenarios.eu/fuel-commodities-and-carbon-prices/)
+    # "CO2 costs":
+    # https://de.statista.com/statistik/daten/studie/1304069/umfrage/preisentwicklung-von-co2-emissionsrechten-in-eu/
 
-    if scenario == "eGon2035":
-        parameters = {
-            "weather_year": 2011,
-            "population_year": 2035,
+    # co2_emissions_dct static for all scenarios
+    co2_emissions_dct = {  # Netzentwicklungsplan Strom 2035, Version 2021, 1. Entwurf, p. 40, table 8
+                "waste": 0.165,  # [t_CO2/MW_th]
+                "lignite": 0.393,  # [t_CO2/MW_th]
+                "gas": 0.201,  # [t_CO2/MW_th]
+                "nuclear": 0.0,  # [t_CO2/MW_th]
+                "oil": 0.288,  # [t_CO2/MW_th]
+                "coal": 0.335,  # [t_CO2/MW_th]
+                "other_non_renewable": 0.268,  # [t_CO2/MW_th]
+            }
+
+    # get weather_year & population_year
+    years_dct = _get_year_from_scenario_name(scenario)
+
+    # setting global parameters
+    scenario_parameter_dct = {
+        "eGon2035": {
+            "weather_year": years_dct["weather_year"],
+            "population_year": years_dct["population_year"],
             "fuel_costs": {  # Netzentwicklungsplan Strom 2035, Version 2021, 1. Entwurf, p. 39, table 6
                 "oil": 73.8,  # [EUR/MWh]
                 "gas": 25.6,  # [EUR/MWh]
@@ -83,22 +123,12 @@ def global_settings(scenario):
                 "biomass": 40,  # Dummyvalue, ToDo: Find a suitable source
             },
             "co2_costs": 76.5,  # [EUR/t_CO2]
-            "co2_emissions": {  # Netzentwicklungsplan Strom 2035, Version 2021, 1. Entwurf, p. 40, table 8
-                "waste": 0.165,  # [t_CO2/MW_th]
-                "lignite": 0.393,  # [t_CO2/MW_th]
-                "gas": 0.201,  # [t_CO2/MW_th]
-                "nuclear": 0.0,  # [t_CO2/MW_th]
-                "oil": 0.288,  # [t_CO2/MW_th]
-                "coal": 0.335,  # [t_CO2/MW_th]
-                "other_non_renewable": 0.268,  # [t_CO2/MW_th]
-            },
+            "co2_emissions": co2_emissions_dct,
             "interest_rate": 0.05,  # [p.u.]
-        }
-
-    elif scenario == "eGon100RE":
-        parameters = {
-            "weather_year": 2011,
-            "population_year": 2050,
+        },
+        "eGon100RE": {
+            "weather_year": years_dct["weather_year"],
+            "population_year": years_dct["population_year"],
             "fuel_costs": {  # Netzentwicklungsplan Strom 2035, Version 2021, 1. Entwurf, p. 39, table 6
                 "oil": 73.8,  # [EUR/MWh]
                 "gas": 25.6,  # [EUR/MWh]
@@ -107,83 +137,93 @@ def global_settings(scenario):
                 "nuclear": 1.7,  # [EUR/MWh]
             },
             "co2_costs": 76.5,  # [EUR/t_CO2]
-            "co2_emissions": {  # Netzentwicklungsplan Strom 2035, Version 2021, 1. Entwurf, p. 40, table 8
-                "waste": 0.165,  # [t_CO2/MW_th]
-                "lignite": 0.393,  # [t_CO2/MW_th]
-                "gas": 0.201,  # [t_CO2/MW_th]
-                "nuclear": 0.0,  # [t_CO2/MW_th]
-                "oil": 0.288,  # [t_CO2/MW_th]
-                "coal": 0.335,  # [t_CO2/MW_th]
-                "other_non_renewable": 0.268,  # [t_CO2/MW_th]
-            },
-        }
-
-    elif scenario == "eGon2021":
-        parameters = {
+            "co2_emissions": co2_emissions_dct,
+        },
+        "eGon2021": {
             "weather_year": 2011,
             "population_year": 2021,
-        }
-
-    elif scenario.startswith("status"):
-        year = int(scenario.split("status")[1])
-
-        # TODO: Update costs for specific year
-        # currently data for 2020
-        parameters = {
-            "weather_year": year,
-            "population_year": year,
-            "fuel_costs": {  # TYNDP 2020, data for 2020 (https://2020.entsos-tyndp-scenarios.eu/fuel-commodities-and-carbon-prices/)
+        },
+        "status2025": {
+            "weather_year": years_dct["weather_year"],
+            "population_year": years_dct["population_year"],
+            "fuel_costs": {
+                "oil": 18.8 * 3.6,  # [EUR/MWh]
+                "gas": 6.46 * 3.6,  # [EUR/MWh]
+                "coal": 3.79 * 3.6,  # [EUR/MWh]
+                "lignite": 1.1 * 3.6,  # [EUR/MWh]
+                "nuclear": 0.47 * 3.6,  # [EUR/MWh]
+                "biomass": read_costs(read_csv(years_dct["population_year"]), "biomass", "fuel"),
+            },
+            "co2_costs": 23.0,  # [EUR/t_CO2],
+            "co2_emissions": co2_emissions_dct,
+            "interest_rate": 0.05,  # [p.u.]
+        },
+        "status2023": {
+            "weather_year": years_dct["weather_year"],
+            "population_year": years_dct["population_year"],
+            "fuel_costs": {
+                "oil": 16.4 * 3.6,  # [EUR/MWh]
+                "gas": 6.1 * 3.6,  # [EUR/MWh]
+                "coal": 3.4 * 3.6,  # [EUR/MWh]
+                "lignite": 1.1 * 3.6,  # [EUR/MWh]
+                "nuclear": 0.47 * 3.6,  # [EUR/MWh]
+                "biomass": read_costs(read_csv(years_dct["population_year"]), "biomass", "fuel"),
+            },
+            "co2_costs": 21.7,  # [EUR/t_CO2],
+            "co2_emissions": co2_emissions_dct,
+            "interest_rate": 0.05,  # [p.u.]
+        },
+        "status2021": {
+            "weather_year": years_dct["weather_year"],
+            "population_year": years_dct["population_year"],
+            "fuel_costs": {
+                "oil": 14.1 * 3.6,  # [EUR/MWh]
+                "gas": 5.8 * 3.6,  # [EUR/MWh]
+                "coal": 3.12 * 3.6,  # [EUR/MWh]
+                "lignite": 1.1 * 3.6,  # [EUR/MWh]
+                "nuclear": 0.47 * 3.6,  # [EUR/MWh]
+                "biomass": read_costs(read_csv(years_dct["population_year"]), "biomass", "fuel"),
+            },
+            "co2_costs": 20.4,  # [EUR/t_CO2],
+            "co2_emissions": co2_emissions_dct,
+            "interest_rate": 0.05,  # [p.u.]
+        },
+        "status2020": {
+            "weather_year": years_dct["weather_year"],
+            "population_year": years_dct["population_year"],
+            "fuel_costs": {
                 "oil": 12.9 * 3.6,  # [EUR/MWh]
                 "gas": 5.6 * 3.6,  # [EUR/MWh]
                 "coal": 3.0 * 3.6,  # [EUR/MWh]
                 "lignite": 1.1 * 3.6,  # [EUR/MWh]
                 "nuclear": 0.47 * 3.6,  # [EUR/MWh]
-                "biomass": read_costs(read_csv(2020), "biomass", "fuel"),
+                "biomass": read_costs(read_csv(years_dct["population_year"]), "biomass", "fuel"),
             },
-            "co2_costs": 24.7,  # [EUR/t_CO2], source:
-            # https://de.statista.com/statistik/daten/studie/1304069/umfrage/preisentwicklung-von-co2-emissionsrechten-in-eu/
-            "co2_emissions": {  # Netzentwicklungsplan Strom 2035, Version 2021, 1. Entwurf, p. 40, table 8
-                "waste": 0.165,  # [t_CO2/MW_th]
-                "lignite": 0.393,  # [t_CO2/MW_th]
-                "gas": 0.201,  # [t_CO2/MW_th]
-                "nuclear": 0.0,  # [t_CO2/MW_th]
-                "oil": 0.288,  # [t_CO2/MW_th]
-                "coal": 0.335,  # [t_CO2/MW_th]
-                "other_non_renewable": 0.268,  # [t_CO2/MW_th]
+            "co2_costs": 19.7,  # [EUR/t_CO2],
+            "co2_emissions": co2_emissions_dct,
+            "interest_rate": 0.05,  # [p.u.]
+        },
+        "status2019": {
+            "weather_year": years_dct["weather_year"],
+            "population_year": years_dct["population_year"],
+            "fuel_costs": {
+                "oil": 12.9 * 3.6,  # [EUR/MWh]
+                "gas": 5.6 * 3.6,  # [EUR/MWh]
+                "coal": 3.0 * 3.6,  # [EUR/MWh]
+                "lignite": 1.1 * 3.6,  # [EUR/MWh]
+                "nuclear": 0.47 * 3.6,  # [EUR/MWh]
+                "biomass": read_costs(read_csv(read_csv(years_dct["population_year"]), "biomass", "fuel"),
             },
+            "co2_costs": 19.7,  # [EUR/t_CO2], source:
+            "co2_emissions": co2_emissions_dct,
             "interest_rate": 0.05,  # [p.u.]
         }
-
-    elif scenario == "status2019":
-        parameters = {
-            "weather_year": 2019,
-            "population_year": 2019,
-            "fuel_costs": {  # TYNDP 2020, data for 2020 (https://2020.entsos-tyndp-scenarios.eu/fuel-commodities-and-carbon-prices/)
-                "oil": 12.9*3.6,  # [EUR/MWh]
-                "gas": 5.6*3.6,  # [EUR/MWh]
-                "coal": 3.0*3.6,  # [EUR/MWh]
-                "lignite": 1.1*3.6,  # [EUR/MWh]
-                "nuclear": 0.47*3.6,  # [EUR/MWh]
-                "biomass": read_costs(read_csv(2020), "biomass", "fuel"),
-            },
-            "co2_costs": 24.7,  # [EUR/t_CO2], source: 
-                #https://de.statista.com/statistik/daten/studie/1304069/umfrage/preisentwicklung-von-co2-emissionsrechten-in-eu/
-            "co2_emissions": {  # Netzentwicklungsplan Strom 2035, Version 2021, 1. Entwurf, p. 40, table 8
-                "waste": 0.165,  # [t_CO2/MW_th]
-                "lignite": 0.393,  # [t_CO2/MW_th]
-                "gas": 0.201,  # [t_CO2/MW_th]
-                "nuclear": 0.0,  # [t_CO2/MW_th]
-                "oil": 0.288,  # [t_CO2/MW_th]
-                "coal": 0.335,  # [t_CO2/MW_th]
-                "other_non_renewable": 0.268,  # [t_CO2/MW_th]
-            },
-            "interest_rate": 0.05,  # [p.u.]
-        }
-
-    else:
-        print(f"Scenario name {scenario} is not valid.")
-
-    return parameters
+    }
+    if scenario not in scenario_parameter_dct.keys():
+        name = "status2019"
+        print(f"Scenario {scenario} does not exist in scenario parameters dictionary. Using scenario {name} instead.")
+        return scenario_parameter_dct[name]
+    return scenario_parameter_dct[scenario]
 
 
 def electricity(scenario):
