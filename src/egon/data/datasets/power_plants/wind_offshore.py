@@ -12,10 +12,10 @@ import egon.data.config
 def map_id_bus(scenario):
     # Import manually generated list of wind offshore farms with their
     # connection points (OSM_id)
-    if scenario == "eGon2035":
+    if scenario in ["eGon2035", "eGon100RE"]:
         id_bus = {
             "Büttel": "136034396",
-            "Heide/West": "603661085",
+            "Heide/West": "289836713",
             "Suchraum Gemeinden Ibbenbüren/Mettingen/Westerkappeln": "114319248",
             "Suchraum Zensenbusch": "76185022",
             "Rommerskirchen": "24839976",
@@ -24,13 +24,13 @@ def map_id_bus(scenario):
             "Diele": "177829920",
             "Dörpen/West": "142487746",
             "Emden/Borßum": "34835258",
-            "Emden/Ost": "34835258",
+            "Emden/Ost": "177829920",
             "Hagermarsch": "79316833",
             "Hanekenfähr": "61918154",
             "Inhausen": "29420322",
             "Unterweser": "32076853",
             "Wehrendorf": "33411203",
-            "Wilhelmshaven 2": "23744346",
+            "Wilhelmshaven 2": "23837631",
             "Rastede": "23837631",
             "Bentwisch": "32063539",
             "Lubmin": "460134233",
@@ -186,6 +186,7 @@ def insert():
                 ],
             )
             offshore.dropna(subset=["Netzverknuepfungspunkt"], inplace=True)
+            offshore.rename(columns={"B 2040 ": "el_capacity"}, inplace=True)
 
         elif scenario == "status2019":
             offshore_path = (
@@ -276,7 +277,7 @@ def insert():
                     WHERE scenario_name = 'eGon100RE' AND
                     carrier = 'wind_offshore'
                     """
-            )
+            ).iloc[0, 0]
 
             # Scale capacities to match  target
             scale_factor = cap_100RE / offshore.el_capacity.sum()
@@ -311,15 +312,17 @@ def insert():
         offshore = gpd.GeoDataFrame(offshore, geometry="geom", crs=4326)
 
         # Look for the maximum id in the table egon_power_plants
-        next_id = (
-            db.select_dataframe(
-                "SELECT MAX(id) FROM "
-                + cfg["target"]["schema"]
-                + "."
-                + cfg["target"]["table"]
-            ).iloc[0, 0]
-            + 1
-        )
+        next_id = db.select_dataframe(
+            "SELECT MAX(id) FROM "
+            + cfg["target"]["schema"]
+            + "."
+            + cfg["target"]["table"]
+        ).iloc[0, 0]
+
+        if next_id:
+            next_id += 1
+        else:
+            next_id = 1
 
         # Reset index
         offshore.index = pd.RangeIndex(
