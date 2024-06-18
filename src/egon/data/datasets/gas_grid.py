@@ -314,35 +314,48 @@ def insert_gas_buses_abroad(scn_name="eGon2035"):
                                          keep="first",
                                          inplace=True)
 
-    else:
-        db.execute_sql(
-            f"""
-        DELETE FROM grid.egon_etrago_bus WHERE "carrier" = '{main_gas_carrier}' AND
-        scn_name = '{scn_name}' AND country != 'DE';
-        """
-        )
-    
-        # Select the foreign buses
-        gdf_abroad_buses = central_buses_pypsaeur(sources, scenario=scn_name)
-        gdf_abroad_buses = gdf_abroad_buses.drop_duplicates(subset=["country"])
-    
-        # Select next id value
-        new_id = db.next_etrago_id("bus")
-    
-        gdf_abroad_buses = gdf_abroad_buses.drop(
-            columns=[
-                "v_nom",
-                "v_mag_pu_set",
-                "v_mag_pu_min",
-                "v_mag_pu_max",
-                "geom",
-            ]
-        )
-        gdf_abroad_buses["scn_name"] = scn_name
-        gdf_abroad_buses["carrier"] = main_gas_carrier
-        gdf_abroad_buses["bus_id"] = range(new_id, new_id + len(gdf_abroad_buses))
-    
-        # Add central bus in Russia
+    # Select the foreign buses
+    gdf_abroad_buses = central_buses_pypsaeur(sources, scenario=scn_name)
+    gdf_abroad_buses = gdf_abroad_buses.drop_duplicates(subset=["country"])
+
+    # Select next id value
+    new_id = db.next_etrago_id("bus")
+
+    gdf_abroad_buses = gdf_abroad_buses.drop(
+        columns=[
+            "v_nom",
+            "v_mag_pu_set",
+            "v_mag_pu_min",
+            "v_mag_pu_max",
+            "geom",
+        ]
+    )
+    gdf_abroad_buses["scn_name"] = "eGon2035"
+    gdf_abroad_buses["carrier"] = main_gas_carrier
+    gdf_abroad_buses["bus_id"] = range(new_id, new_id + len(gdf_abroad_buses))
+
+    # Add central bus in Russia
+    gdf_abroad_buses = pd.concat(
+        [
+            gdf_abroad_buses,
+            pd.DataFrame(
+                index=[gdf_abroad_buses.index.max() + 1],
+                data={
+                    "scn_name": scn_name,
+                    "bus_id": (new_id + len(gdf_abroad_buses) + 1),
+                    "x": 41,
+                    "y": 55,
+                    "country": "RU",
+                    "carrier": main_gas_carrier,
+                },
+            ),
+        ],
+        ignore_index=True,
+    )
+    # if in test mode, add bus in center of Germany
+    boundary = settings()["egon-data"]["--dataset-boundary"]
+
+    if boundary != "Everything":
         gdf_abroad_buses = pd.concat(
             [
                 gdf_abroad_buses,
@@ -871,23 +884,23 @@ def insert_gas_data():
 
     """
     s = config.settings()["egon-data"]["--scenarios"]
-    scenarios = []
+    scenarios = []     
+
     if "eGon2035" in s:
         scenarios.append("eGon2035")
     if "eGon100RE" in s:
         scenarios.append("eGon100RE")
-
+    
     for scn_name in scenarios:
         download_SciGRID_gas_data()
-
+    
         gas_nodes_list = define_gas_nodes_list()
-
+    
         insert_CH4_nodes_list(gas_nodes_list, scn_name=scn_name)
         abroad_gas_nodes_list = insert_gas_buses_abroad(scn_name=scn_name)
+    
+        insert_gas_pipeline_list(gas_nodes_list, abroad_gas_nodes_list, scn_name=scn_name)
 
-        insert_gas_pipeline_list(
-            gas_nodes_list, abroad_gas_nodes_list, scn_name=scn_name
-        )
         remove_isolated_gas_buses(scn_name=scn_name)
 
 
@@ -986,7 +999,6 @@ def insert_gas_data_status2019():
     """
     scn_name = "status2019"
     if "status2019" in config.settings()["egon-data"]["--scenarios"]:
-
         # delete old entries
         db.execute_sql(
             f"""
@@ -1003,7 +1015,7 @@ def insert_gas_data_status2019():
 
         # Select next id value
         new_id = db.next_etrago_id("bus")
-
+    
         df = pd.DataFrame(
             index=[new_id],
             data={
@@ -1021,14 +1033,11 @@ def insert_gas_data_status2019():
         gdf = geopandas.GeoDataFrame(
             df, geometry=geopandas.points_from_xy(df.x, df.y, crs=4326)
         ).rename_geometry("geom")
-
+    
         gdf.index.name = "bus_id"
-
+    
         gdf.reset_index().to_postgis(
-            "egon_etrago_bus",
-            schema="grid",
-            con=db.engine(),
-            if_exists="append",
+            "egon_etrago_bus", schema="grid", con=db.engine(), if_exists="append"
         )
     return
 
