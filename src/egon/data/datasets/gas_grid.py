@@ -884,22 +884,24 @@ def insert_gas_data():
 
     """
     s = config.settings()["egon-data"]["--scenarios"]
-    scenarios = []     
+    scenarios = []
 
     if "eGon2035" in s:
         scenarios.append("eGon2035")
     if "eGon100RE" in s:
         scenarios.append("eGon100RE")
-    
+
     for scn_name in scenarios:
         download_SciGRID_gas_data()
-    
+
         gas_nodes_list = define_gas_nodes_list()
-    
+
         insert_CH4_nodes_list(gas_nodes_list, scn_name=scn_name)
         abroad_gas_nodes_list = insert_gas_buses_abroad(scn_name=scn_name)
-    
-        insert_gas_pipeline_list(gas_nodes_list, abroad_gas_nodes_list, scn_name=scn_name)
+
+        insert_gas_pipeline_list(
+            gas_nodes_list, abroad_gas_nodes_list, scn_name=scn_name
+        )
 
         remove_isolated_gas_buses(scn_name=scn_name)
 
@@ -999,6 +1001,7 @@ def insert_gas_data_status2019():
     """
     scn_name = "status2019"
     if "status2019" in config.settings()["egon-data"]["--scenarios"]:
+
         # delete old entries
         db.execute_sql(
             f"""
@@ -1015,7 +1018,7 @@ def insert_gas_data_status2019():
 
         # Select next id value
         new_id = db.next_etrago_id("bus")
-    
+
         df = pd.DataFrame(
             index=[new_id],
             data={
@@ -1033,11 +1036,14 @@ def insert_gas_data_status2019():
         gdf = geopandas.GeoDataFrame(
             df, geometry=geopandas.points_from_xy(df.x, df.y, crs=4326)
         ).rename_geometry("geom")
-    
+
         gdf.index.name = "bus_id"
-    
+
         gdf.reset_index().to_postgis(
-            "egon_etrago_bus", schema="grid", con=db.engine(), if_exists="append"
+            "egon_etrago_bus",
+            schema="grid",
+            con=db.engine(),
+            if_exists="append",
         )
     return
 
