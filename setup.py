@@ -112,7 +112,7 @@ setup(
         "rtree",
         "saio",
         "seaborn",
-        "setuptools<70.0",
+        "setuptools>60.0",
         "shapely",
         "snakemake<7",
         "sqlalchemy",
