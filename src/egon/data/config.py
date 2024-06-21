@@ -105,6 +105,7 @@ def datasets(config_file=None):
 
     return yaml.load(open(config_file), Loader=yaml.SafeLoader)
 
+
 def set_numexpr_threads():
     """Sets maximum threads used by NumExpr
 
