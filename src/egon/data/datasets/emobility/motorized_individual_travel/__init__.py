@@ -163,6 +163,12 @@ def create_tables():
     result_dir.mkdir(exist_ok=True, parents=True)
 
 
+def update_kba_filename_from_scenario_year(fn, scenario):
+    """filename containing hardcoded DATE string. replace with scenario year from param"""
+    year = str(int(scenario.split("status20")[1]) + 1)
+    return fn.replace("YEAR", year)
+
+
 def download_and_preprocess():
     """Downloads and preprocesses data from KBA and BMVI
 
@@ -180,39 +186,57 @@ def download_and_preprocess():
     if not os.path.exists(WORKING_DIR):
         os.mkdir(WORKING_DIR)
 
-    ################################
-    # Download and import KBA data #
-    ################################
-    url = mit_sources["KBA"]["url"]
-    file = WORKING_DIR / mit_sources["KBA"]["file"]
-    if not os.path.isfile(file):
-        urlretrieve(url, file)
+    scenarios = config.settings()["egon-data"]["--scenarios"]
+    for scn in scenarios:
+        ################################
+        # Download and import KBA data #
+        ################################
+        url = mit_sources["KBA"]["url"]
+        file = WORKING_DIR / mit_sources["KBA"]["file"]
 
-    kba_data = pd.read_excel(
-        file,
-        sheet_name=mit_sources["KBA"]["sheet"],
-        usecols=mit_sources["KBA"]["columns"],
-        skiprows=mit_sources["KBA"]["skiprows"],
-    )
-    kba_data.columns = COLUMNS_KBA
-    kba_data.replace(
-        " ",
-        np.nan,
-        inplace=True,
-    )
-    kba_data = kba_data.dropna()
-    kba_data[
-        ["ags_reg_district", "reg_district"]
-    ] = kba_data.reg_district.str.split(
-        pat=" ",
-        n=1,
-        expand=True,
-    )
-    kba_data.ags_reg_district = kba_data.ags_reg_district.astype("int")
+        url = update_kba_filename_from_scenario_year(url, scn)
+        file = update_kba_filename_from_scenario_year(file, scn)
+        file_processed = mit_sources["KBA"]["file_processed"]
+        mit_sources["KBA"]["file_processed"] = (
+            update_kba_filename_from_scenario_year(file_processed, scn))
 
-    kba_data.to_csv(
-        WORKING_DIR / mit_sources["KBA"]["file_processed"], index=None
-    )
+        try:
+            if not os.path.isfile(file):
+                urlretrieve(url, file)
+        except Exception:  # 404
+            print(f'Could not fetch KBA file for scenario {scn} from url {url} '
+                  f'Using fallback file {mit_sources["KBA"]["file_fallback"]}')
+            url = mit_sources["KBA"]["url_fallback"]
+            file = WORKING_DIR / mit_sources["KBA"]["file_fallback"]
+            mit_sources["KBA"]["file_processed"] = mit_sources["KBA"]["file_processed_fallback"]
+            if not os.path.isfile(file):
+                urlretrieve(url, file)
+
+        kba_data = pd.read_excel(
+            file,
+            sheet_name=mit_sources["KBA"]["sheet"],
+            usecols=mit_sources["KBA"]["columns"],
+            skiprows=mit_sources["KBA"]["skiprows"],
+        )
+        kba_data.columns = COLUMNS_KBA
+        kba_data.replace(
+            " ",
+            np.nan,
+            inplace=True,
+        )
+        kba_data = kba_data.dropna()
+        kba_data[
+            ["ags_reg_district", "reg_district"]
+        ] = kba_data.reg_district.str.split(
+            pat=" ",
+            n=1,
+            expand=True,
+        )
+        kba_data.ags_reg_district = kba_data.ags_reg_district.astype("int")
+
+        kba_data.to_csv(
+            WORKING_DIR / mit_sources["KBA"]["file_processed"], index=None
+        )
 
     #######################################
     # Download and import RegioStaR7 data #
