@@ -18,7 +18,7 @@ def read_csv(year):
 def read_costs(df, technology, parameter, value_only=True):
     result = df.loc[
         (df.technology == technology) & (df.parameter == parameter)
-    ].squeeze()
+        ].squeeze()
 
     # Rescale costs to EUR/MW
     if "EUR/kW" in result.unit:
@@ -57,7 +57,7 @@ def annualize_capital_costs(overnight_costs, lifetime, p):
 
 
 def _get_year_from_scenario_name(scenario):
-    years_dct = None
+    years_dct = {}
     if scenario.startswith("status"):
         year = int(scenario.split("status")[-1])
         years_dct["weather_year"] = year
@@ -79,7 +79,7 @@ def _get_year_from_scenario_name(scenario):
     return years_dct
 
 
-def global_settings(scenario):
+def global_settings(scenario, years_dct=None):
     """Returns global paramaters for the selected scenario.
 
     Parameters
@@ -98,21 +98,20 @@ def global_settings(scenario):
     # TYNDP 2020, data for 2020 (https://2020.entsos-tyndp-scenarios.eu/fuel-commodities-and-carbon-prices/)
     # "CO2 costs":
     # https://de.statista.com/statistik/daten/studie/1304069/umfrage/preisentwicklung-von-co2-emissionsrechten-in-eu/
-
     # co2_emissions_dct static for all scenarios
     # Netzentwicklungsplan Strom 2035, Version 2021, 1. Entwurf, p. 40, table 8
     co2_emissions_dct = {
-                "waste": 0.165,  # [t_CO2/MW_th]
-                "lignite": 0.393,  # [t_CO2/MW_th]
-                "gas": 0.201,  # [t_CO2/MW_th]
-                "nuclear": 0.0,  # [t_CO2/MW_th]
-                "oil": 0.288,  # [t_CO2/MW_th]
-                "coal": 0.335,  # [t_CO2/MW_th]
-                "other_non_renewable": 0.268,  # [t_CO2/MW_th]
-            }
-
-    # get weather_year & population_year
-    years_dct = _get_year_from_scenario_name(scenario)
+        "waste": 0.165,  # [t_CO2/MW_th]
+        "lignite": 0.393,  # [t_CO2/MW_th]
+        "gas": 0.201,  # [t_CO2/MW_th]
+        "nuclear": 0.0,  # [t_CO2/MW_th]
+        "oil": 0.288,  # [t_CO2/MW_th]
+        "coal": 0.335,  # [t_CO2/MW_th]
+        "other_non_renewable": 0.268,  # [t_CO2/MW_th]
+    }
+    # get weather_year & population_year & costs_year
+    if not years_dct:
+        years_dct = _get_year_from_scenario_name(scenario)
 
     # setting global parameters
     scenario_parameter_dct = {
@@ -224,7 +223,7 @@ def global_settings(scenario):
                 "coal": 3.0 * 3.6,  # [EUR/MWh]
                 "lignite": 1.1 * 3.6,  # [EUR/MWh]
                 "nuclear": 0.47 * 3.6,  # [EUR/MWh]
-                "biomass": read_costs(read_csv(read_csv(years_dct["costs_year"]), "biomass", "fuel"),
+                "biomass": read_costs(read_csv(years_dct["costs_year"]), "biomass", "fuel"),
             },
             "co2_costs": 19.7,  # [EUR/t_CO2], source:
             "co2_emissions": co2_emissions_dct,
@@ -256,18 +255,14 @@ def electricity(scenario):
         parameters = {}
 
     elif scenario == "eGon2035":
-        year = 2025
+        year = 2035
         costs = read_csv(year)
 
-        parameters = {"grid_topology": "Status Quo"}
-        # Insert effciencies in p.u.
-        parameters["efficiency"] = {
+        parameters = {"grid_topology": "Status Quo", "efficiency": {
             "oil": read_costs(costs, "oil", "efficiency"),
             "battery": {
-                "store": read_costs(costs, "battery inverter", "efficiency")
-                ** 0.5,
-                "dispatch": read_costs(costs, "battery inverter", "efficiency")
-                ** 0.5,
+                "store": read_costs(costs, "battery inverter", "efficiency") ** 0.5,
+                "dispatch": read_costs(costs, "battery inverter", "efficiency") ** 0.5,
                 "standing_loss": 0,
                 "max_hours": 6,
                 "cyclic_state_of_charge": True,
@@ -279,9 +274,7 @@ def electricity(scenario):
                 "max_hours": 6,
                 "cyclic_state_of_charge": True,
             },
-        }
-        # Warning: Electrical parameters are set in osmTGmod, editing these values will not change the data!
-        parameters["electrical_parameters"] = {
+        }, "electrical_parameters": {
             "ac_line_110kV": {
                 "s_nom": 260,  # [MVA]
                 "R": 0.109,  # [Ohm/km]
@@ -312,32 +305,34 @@ def electricity(scenario):
                 "R": 0.0175,  # [Ohm/km]
                 "L": 0.3,  # [mH/km]
             },
-        }
+        }}
+        # Insert effciencies in p.u.
+        # Warning: Electrical parameters are set in osmTGmod, editing these values will not change the data!
 
         # Insert overnight investment costs
         # Source for eHV grid costs: Netzentwicklungsplan Strom 2035, Version 2021, 2. Entwurf
         # Source for HV lines and cables: Dena Verteilnetzstudie 2021, p. 146
         parameters["overnight_cost"] = {
             "ac_ehv_overhead_line": 2.5e6
-            / (
-                2
-                * parameters["electrical_parameters"]["ac_line_380kV"]["s_nom"]
-            ),  # [EUR/km/MW]
+                                    / (
+                                        2
+                                        * parameters["electrical_parameters"]["ac_line_380kV"]["s_nom"]
+                                    ),  # [EUR/km/MW]
             "ac_ehv_cable": 11.5e6
-            / (
-                2
-                * parameters["electrical_parameters"]["ac_cable_380kV"][
-                    "s_nom"
-                ]
-            ),  # [EUR/km/MW]
+                            / (
+                                2
+                                * parameters["electrical_parameters"]["ac_cable_380kV"][
+                                    "s_nom"
+                                ]
+                            ),  # [EUR/km/MW]
             "ac_hv_overhead_line": 0.06e6
-            / parameters["electrical_parameters"]["ac_line_110kV"][
-                "s_nom"
-            ],  # [EUR/km/MW]
+                                   / parameters["electrical_parameters"]["ac_line_110kV"][
+                                       "s_nom"
+                                   ],  # [EUR/km/MW]
             "ac_hv_cable": 0.8e6
-            / parameters["electrical_parameters"]["ac_cable_110kV"][
-                "s_nom"
-            ],  # [EUR/km/MW]
+                           / parameters["electrical_parameters"]["ac_cable_110kV"][
+                               "s_nom"
+                           ],  # [EUR/km/MW]
             "dc_overhead_line": 0.5e3,  # [EUR/km/MW]
             "dc_cable": 3.25e3,  # [EUR/km/MW]
             "dc_inverter": 0.3e6,  # [EUR/MW]
@@ -402,53 +397,49 @@ def electricity(scenario):
         # marginal cost can include fuel, C02 and operation and maintenance costs
         parameters["marginal_cost"] = {
             "oil": global_settings(scenario)["fuel_costs"]["oil"]
-            / read_costs(costs, "oil", "efficiency")
-            + read_costs(costs, "oil", "VOM")
-            + global_settings(scenario)["co2_costs"]
-            * global_settings(scenario)["co2_emissions"]["oil"]
-            / read_costs(costs, "oil", "efficiency"),
+                   / read_costs(costs, "oil", "efficiency")
+                   + read_costs(costs, "oil", "VOM")
+                   + global_settings(scenario)["co2_costs"]
+                   * global_settings(scenario)["co2_emissions"]["oil"]
+                   / read_costs(costs, "oil", "efficiency"),
             "other_non_renewable": global_settings(scenario)["fuel_costs"][
-                "gas"
-            ] / read_costs(costs, "OCGT", "efficiency")
-            + global_settings(scenario)["co2_costs"]
-            * global_settings(scenario)["co2_emissions"][
-                "other_non_renewable"
-            ] / read_costs(costs, "OCGT", "efficiency"),
+                                       "gas"
+                                   ] / read_costs(costs, "OCGT", "efficiency")
+                                   + global_settings(scenario)["co2_costs"]
+                                   * global_settings(scenario)["co2_emissions"][
+                                       "other_non_renewable"
+                                   ] / read_costs(costs, "OCGT", "efficiency"),
             "lignite": global_settings(scenario)["fuel_costs"]["lignite"]
-            / read_costs(costs, "lignite", "efficiency")
-            + read_costs(costs, "lignite", "VOM")
-            + global_settings(scenario)["co2_costs"]
-            * global_settings(scenario)["co2_emissions"]["lignite"]
-            / read_costs(costs, "lignite", "efficiency"),
+                       / read_costs(costs, "lignite", "efficiency")
+                       + read_costs(costs, "lignite", "VOM")
+                       + global_settings(scenario)["co2_costs"]
+                       * global_settings(scenario)["co2_emissions"]["lignite"]
+                       / read_costs(costs, "lignite", "efficiency"),
             "coal": global_settings(scenario)["fuel_costs"]["coal"]
-            / read_costs(costs, "coal", "efficiency")
-            + read_costs(costs, "coal", "VOM")
-            + global_settings(scenario)["co2_costs"]
-            * global_settings(scenario)["co2_emissions"]["coal"]
-            / read_costs(costs, "coal", "efficiency"),
+                    / read_costs(costs, "coal", "efficiency")
+                    + read_costs(costs, "coal", "VOM")
+                    + global_settings(scenario)["co2_costs"]
+                    * global_settings(scenario)["co2_emissions"]["coal"]
+                    / read_costs(costs, "coal", "efficiency"),
             "nuclear": global_settings(scenario)["fuel_costs"]["nuclear"]
-            / read_costs(costs, "nuclear", "efficiency")
-            + read_costs(costs, "nuclear", "VOM"),
+                       / read_costs(costs, "nuclear", "efficiency")
+                       + read_costs(costs, "nuclear", "VOM"),
             "biomass": global_settings(scenario)["fuel_costs"]["biomass"]
-            / read_costs(costs, "biomass", "efficiency")
-            + read_costs(costs, "biomass CHP", "VOM"),
+                       / read_costs(costs, "biomass", "efficiency")
+                       + read_costs(costs, "biomass CHP", "VOM"),
             "wind_offshore": read_costs(costs, "offwind", "VOM"),
             "wind_onshore": read_costs(costs, "onwind", "VOM"),
             "solar": read_costs(costs, "solar", "VOM"),
         }
 
     elif scenario == "eGon100RE":
-        costs = read_csv(2050)
+        year = 2050
+        costs = read_csv(year)
 
-        parameters = {"grid_topology": "Status Quo"}
-
-        # Insert effciencies in p.u.
-        parameters["efficiency"] = {
+        parameters = {"grid_topology": "Status Quo", "efficiency": {
             "battery": {
-                "store": read_costs(costs, "battery inverter", "efficiency")
-                ** 0.5,
-                "dispatch": read_costs(costs, "battery inverter", "efficiency")
-                ** 0.5,
+                "store": read_costs(costs, "battery inverter", "efficiency") ** 0.5,
+                "dispatch": read_costs(costs, "battery inverter", "efficiency") ** 0.5,
                 "standing_loss": 0,
                 "max_hours": 6,
                 "cyclic_state_of_charge": True,
@@ -460,9 +451,7 @@ def electricity(scenario):
                 "max_hours": 6,
                 "cyclic_state_of_charge": True,
             },
-        }
-        # Warning: Electrical parameters are set in osmTGmod, editing these values will not change the data!
-        parameters["electrical_parameters"] = {
+        }, "electrical_parameters": {
             "ac_line_110kV": {
                 "s_nom": 260,  # [MVA]
                 "R": 0.109,  # [Ohm/km]
@@ -493,7 +482,10 @@ def electricity(scenario):
                 "R": 0.0175,  # [Ohm/km]
                 "L": 0.3,  # [mH/km]
             },
-        }
+        }}
+
+        # Insert effciencies in p.u.
+        # Warning: Electrical parameters are set in osmTGmod, editing these values will not change the data!
 
         # Insert overnight investment costs
         # Source for transformer costs: Netzentwicklungsplan Strom 2035, Version 2021, 2. Entwurf
@@ -503,13 +495,13 @@ def electricity(scenario):
                 costs, "HVAC overhead", "investment"
             ),  # [EUR/km/MW]
             "ac_hv_overhead_line": 0.06e6
-            / parameters["electrical_parameters"]["ac_line_110kV"][
-                "s_nom"
-            ],  # [EUR/km/MW]
+                                   / parameters["electrical_parameters"]["ac_line_110kV"][
+                                       "s_nom"
+                                   ],  # [EUR/km/MW]
             "ac_hv_cable": 0.8e6
-            / parameters["electrical_parameters"]["ac_cable_110kV"][
-                "s_nom"
-            ],  # [EUR/km/MW]
+                           / parameters["electrical_parameters"]["ac_cable_110kV"][
+                               "s_nom"
+                           ],  # [EUR/km/MW]
             "dc_overhead_line": read_costs(
                 costs, "HVDC overhead", "investment"
             ),
@@ -592,10 +584,8 @@ def electricity(scenario):
         parameters["efficiency"] = {
             "oil": read_costs(costs, "oil", "efficiency"),
             "battery": {
-                "store": read_costs(costs, "battery inverter", "efficiency")
-                ** 0.5,
-                "dispatch": read_costs(costs, "battery inverter", "efficiency")
-                ** 0.5,
+                "store": read_costs(costs, "battery inverter", "efficiency") ** 0.5,
+                "dispatch": read_costs(costs, "battery inverter", "efficiency") ** 0.5,
                 "standing_loss": 0,
                 "max_hours": 6,
                 "cyclic_state_of_charge": True,
@@ -647,25 +637,25 @@ def electricity(scenario):
         # Source for HV lines and cables: Dena Verteilnetzstudie 2021, p. 146
         parameters["overnight_cost"] = {
             "ac_ehv_overhead_line": 2.5e6
-            / (
-                2
-                * parameters["electrical_parameters"]["ac_line_380kV"]["s_nom"]
-            ),  # [EUR/km/MW]
+                                    / (
+                                        2
+                                        * parameters["electrical_parameters"]["ac_line_380kV"]["s_nom"]
+                                    ),  # [EUR/km/MW]
             "ac_ehv_cable": 11.5e6
-            / (
-                2
-                * parameters["electrical_parameters"]["ac_cable_380kV"][
-                    "s_nom"
-                ]
-            ),  # [EUR/km/MW]
+                            / (
+                                2
+                                * parameters["electrical_parameters"]["ac_cable_380kV"][
+                                    "s_nom"
+                                ]
+                            ),  # [EUR/km/MW]
             "ac_hv_overhead_line": 0.06e6
-            / parameters["electrical_parameters"]["ac_line_110kV"][
-                "s_nom"
-            ],  # [EUR/km/MW]
+                                   / parameters["electrical_parameters"]["ac_line_110kV"][
+                                       "s_nom"
+                                   ],  # [EUR/km/MW]
             "ac_hv_cable": 0.8e6
-            / parameters["electrical_parameters"]["ac_cable_110kV"][
-                "s_nom"
-            ],  # [EUR/km/MW]
+                           / parameters["electrical_parameters"]["ac_cable_110kV"][
+                               "s_nom"
+                           ],  # [EUR/km/MW]
             "dc_overhead_line": 0.5e3,  # [EUR/km/MW]
             "dc_cable": 3.25e3,  # [EUR/km/MW]
             "dc_inverter": 0.3e6,  # [EUR/MW]
@@ -728,42 +718,42 @@ def electricity(scenario):
 
         parameters["marginal_cost"] = {
             "oil": global_settings(scenario)["fuel_costs"]["oil"]
-            / read_costs(costs, "oil", "efficiency")
-            + read_costs(costs, "oil", "VOM")
-            + global_settings(scenario)["co2_costs"]
-            * global_settings(scenario)["co2_emissions"]["oil"]
-            / read_costs(costs, "oil", "efficiency"),
+                   / read_costs(costs, "oil", "efficiency")
+                   + read_costs(costs, "oil", "VOM")
+                   + global_settings(scenario)["co2_costs"]
+                   * global_settings(scenario)["co2_emissions"]["oil"]
+                   / read_costs(costs, "oil", "efficiency"),
             "other_non_renewable": global_settings(scenario)["fuel_costs"][
-                "gas"
-            ] / read_costs(costs, "OCGT", "efficiency")
-            + global_settings(scenario)["co2_costs"]
-            * global_settings(scenario)["co2_emissions"][
-                "other_non_renewable"
-            ] / read_costs(costs, "OCGT", "efficiency"),
+                                       "gas"
+                                   ] / read_costs(costs, "OCGT", "efficiency")
+                                   + global_settings(scenario)["co2_costs"]
+                                   * global_settings(scenario)["co2_emissions"][
+                                       "other_non_renewable"
+                                   ] / read_costs(costs, "OCGT", "efficiency"),
             "lignite": global_settings(scenario)["fuel_costs"]["lignite"]
-            / read_costs(costs, "lignite", "efficiency")
-            + read_costs(costs, "lignite", "VOM")
-            + global_settings(scenario)["co2_costs"]
-            * global_settings(scenario)["co2_emissions"]["lignite"]
-            / read_costs(costs, "lignite", "efficiency"),
+                       / read_costs(costs, "lignite", "efficiency")
+                       + read_costs(costs, "lignite", "VOM")
+                       + global_settings(scenario)["co2_costs"]
+                       * global_settings(scenario)["co2_emissions"]["lignite"]
+                       / read_costs(costs, "lignite", "efficiency"),
             "coal": global_settings(scenario)["fuel_costs"]["coal"]
-            / read_costs(costs, "coal", "efficiency")
-            + read_costs(costs, "coal", "VOM")
-            + global_settings(scenario)["co2_costs"]
-            * global_settings(scenario)["co2_emissions"]["coal"]
-            / read_costs(costs, "coal", "efficiency"),
+                    / read_costs(costs, "coal", "efficiency")
+                    + read_costs(costs, "coal", "VOM")
+                    + global_settings(scenario)["co2_costs"]
+                    * global_settings(scenario)["co2_emissions"]["coal"]
+                    / read_costs(costs, "coal", "efficiency"),
             "OCGT": global_settings(scenario)["fuel_costs"]["gas"]
-            / read_costs(costs, "OCGT", "efficiency")
-            + read_costs(costs, "OCGT", "VOM")
-            + global_settings(scenario)["co2_costs"]
-            * global_settings(scenario)["co2_emissions"]["gas"]
-            / read_costs(costs, "OCGT", "efficiency"),
+                    / read_costs(costs, "OCGT", "efficiency")
+                    + read_costs(costs, "OCGT", "VOM")
+                    + global_settings(scenario)["co2_costs"]
+                    * global_settings(scenario)["co2_emissions"]["gas"]
+                    / read_costs(costs, "OCGT", "efficiency"),
             "nuclear": global_settings(scenario)["fuel_costs"]["nuclear"]
-            / read_costs(costs, "nuclear", "efficiency")
-            + read_costs(costs, "nuclear", "VOM"),
+                       / read_costs(costs, "nuclear", "efficiency")
+                       + read_costs(costs, "nuclear", "VOM"),
             "biomass": global_settings(scenario)["fuel_costs"]["biomass"]
-            / read_costs(costs, "biomass CHP", "efficiency")
-            + read_costs(costs, "biomass CHP", "VOM"),
+                       / read_costs(costs, "biomass CHP", "efficiency")
+                       + read_costs(costs, "biomass CHP", "VOM"),
             "wind_offshore": read_costs(costs, "offwind", "VOM"),
             "wind_onshore": read_costs(costs, "onwind", "VOM"),
             "solar": read_costs(costs, "solar", "VOM"),
@@ -852,8 +842,8 @@ def gas(scenario):
 
         parameters["marginal_cost"] = {
             "CH4": global_settings(scenario)["fuel_costs"]["gas"]
-            + global_settings(scenario)["co2_costs"]
-            * global_settings(scenario)["co2_emissions"]["gas"],
+                   + global_settings(scenario)["co2_costs"]
+                   * global_settings(scenario)["co2_emissions"]["gas"],
             "OCGT": read_costs(costs, "OCGT", "VOM"),
             "biogas": global_settings(scenario)["fuel_costs"]["gas"],
             "chp_gas": read_costs(costs, "central gas CHP", "VOM"),
@@ -948,19 +938,19 @@ def gas(scenario):
                 parameters["lifetime"][comp],
                 interest_rate,
             ) + parameters["overnight_cost"][comp] * (
-                parameters["FOM"][comp] / 100
-            )
+                                                   parameters["FOM"][comp] / 100
+                                               )
 
         for comp in ["H2_to_power", "H2_to_CH4"]:
             parameters["capital_cost"][comp] = (
-                annualize_capital_costs(
-                    parameters["overnight_cost"][comp],
-                    parameters["lifetime"][comp],
-                    interest_rate,
-                )
-                + parameters["overnight_cost"][comp]
-                * (parameters["FOM"][comp] / 100)
-            ) * parameters["efficiency"][comp]
+                                                   annualize_capital_costs(
+                                                       parameters["overnight_cost"][comp],
+                                                       parameters["lifetime"][comp],
+                                                       interest_rate,
+                                                   )
+                                                   + parameters["overnight_cost"][comp]
+                                                   * (parameters["FOM"][comp] / 100)
+                                               ) * parameters["efficiency"][comp]
 
         parameters["marginal_cost"] = {
             "OCGT": read_costs(costs, "OCGT", "VOM"),
@@ -981,8 +971,8 @@ def gas(scenario):
 
         parameters["marginal_cost"] = {
             "CH4": global_settings(scenario)["fuel_costs"]["gas"]
-            + global_settings(scenario)["co2_costs"]
-            * global_settings(scenario)["co2_emissions"]["gas"],
+                   + global_settings(scenario)["co2_costs"]
+                   * global_settings(scenario)["co2_emissions"]["gas"],
             "OCGT": read_costs(costs, "OCGT", "VOM"),
             "biogas": global_settings(scenario)["fuel_costs"]["gas"],
             "chp_gas": read_costs(costs, "central gas CHP", "VOM"),
@@ -1230,10 +1220,14 @@ def heat(scenario):
         # [TJ], space heating + hot water, source: AG Energiebilanzen 2019 (https://ag-energiebilanzen.de/wp-content/uploads/2020/10/ageb_20v_v1.pdf)
         # [TJ], space heating + hot water, source: AG Energiebilanzen 2023 (https://ag-energiebilanzen.de/wp-content/uploads/2023/01/AGEB_22p2_rev-1.pdf)
         heating_loopup_TJ = {
-            2019: {"residential": {"space heating": 1658400, "hot water": 383300}, "service": {"space heating": 567300, "hot water": 71500}},
-            2020: {"residential": {"space heating": 1645900, "hot water": 372700}, "service": {"space heating": 513700, "hot water": 74500}},
-            2021: {"residential": {"space heating": 1754200, "hot water": 407500}, "service": {"space heating": 668400, "hot water": 44300}},
-            2022: {"residential": {"space heating": 1637800, "hot water": 381000}, "service": {"space heating": 578900, "hot water": 39700}}
+            2019: {"residential": {"space heating": 1658400, "hot water": 383300},
+                   "service": {"space heating": 567300, "hot water": 71500}},
+            2020: {"residential": {"space heating": 1645900, "hot water": 372700},
+                   "service": {"space heating": 513700, "hot water": 74500}},
+            2021: {"residential": {"space heating": 1754200, "hot water": 407500},
+                   "service": {"space heating": 668400, "hot water": 44300}},
+            2022: {"residential": {"space heating": 1637800, "hot water": 381000},
+                   "service": {"space heating": 578900, "hot water": 39700}}
         }
         if _add_to_lookup:
             # using 2019 as base to extrapolate
