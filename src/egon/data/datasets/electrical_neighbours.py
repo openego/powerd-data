@@ -1909,8 +1909,6 @@ elif "status" in scn_list:
         insert_loads_sq,
     )
 
-tasks = tasks + (insert_per_scenario,)
-
 
 class ElectricalNeighbours(Dataset):
     def __init__(self, dependencies):
