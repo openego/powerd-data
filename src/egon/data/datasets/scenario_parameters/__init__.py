@@ -123,9 +123,9 @@ def insert_scenarios():
     eGon2021.mobility_parameters = parameters.mobility(eGon2021.name)
 
     session.add(eGon2021)
-    
-    session.commit()    
-    
+
+    session.commit()
+
     # Scenario status2019
     status2019 = EgonScenario(name="status2019")
 
@@ -202,7 +202,7 @@ def get_sector_parameters(sector, scenario=None):
                 ).val[0],
                 index=["eGon100RE"],
             ),
-        
+
             pd.DataFrame(
                 db.select_dataframe(
                     f"""
@@ -213,7 +213,6 @@ def get_sector_parameters(sector, scenario=None):
                 index=["eGon2021"],
             )
             ], ignore_index=True)
-        
 
     return values
 
