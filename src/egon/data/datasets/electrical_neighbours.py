@@ -1729,10 +1729,13 @@ tasks = (grid,)
 
 insert_per_scenario = set()
 
-if "eGon2035" in config.settings()["egon-data"]["--scenarios"]:
+
+scn_list = config.settings()["egon-data"]["--scenarios"]
+# for scn in scn_list:
+if "eGon2035" in scn_list:
     insert_per_scenario.update([tyndp_generation, tyndp_demand])
 
-if "status2019" in config.settings()["egon-data"]["--scenarios"]:
+elif "status" in scn_list:
     insert_per_scenario.update([insert_generators_sq, insert_loads_sq])
 
 tasks = tasks + (insert_per_scenario,)
