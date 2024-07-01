@@ -205,7 +205,7 @@ class HouseholdDemands(Dataset):
             mv_hh_electricity_load_2035 = PythonOperator(
                 task_id="MV-hh-electricity-load-2019",
                 python_callable=mv_grid_district_HH_electricity_load,
-                op_args=["status2019", 2019],
+                op_args=["status2019", 2019, False],
             )
 
             tasks = tasks + (mv_hh_electricity_load_2035,)
@@ -217,7 +217,7 @@ class HouseholdDemands(Dataset):
             mv_hh_electricity_load_2035 = PythonOperator(
                 task_id="MV-hh-electricity-load-2035",
                 python_callable=mv_grid_district_HH_electricity_load,
-                op_args=["eGon2035", 2035],
+                op_args=["eGon2035", 2035, False],
             )
 
             tasks = tasks + (mv_hh_electricity_load_2035,)
@@ -229,7 +229,7 @@ class HouseholdDemands(Dataset):
             mv_hh_electricity_load_2050 = PythonOperator(
                 task_id="MV-hh-electricity-load-2050",
                 python_callable=mv_grid_district_HH_electricity_load,
-                op_args=["eGon100RE", 2050],
+                op_args=["eGon100RE", 2050, False],
             )
 
             tasks = tasks + (mv_hh_electricity_load_2050,)
