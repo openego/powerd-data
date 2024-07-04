@@ -255,11 +255,11 @@ def generate_load_time_series(
         flex_time_series_array[start:end] += flex_cap * ev_count
         flex_time_series_array[last_ts] += flex_last_ts_cap * ev_count
 
-        simultaneous_plugged_in_charging_capacity[start: park_end + 1] += (
+        simultaneous_plugged_in_charging_capacity[start : park_end + 1] += (
             cap * ev_count
         )
         simultaneous_plugged_in_charging_capacity_flex[
-            start: park_end + 1
+            start : park_end + 1
         ] += (flex_cap * ev_count)
 
         # ====================================================
@@ -275,14 +275,14 @@ def generate_load_time_series(
             # soc_start * bat_cap * ev_count
 
             # Real band (decrease SoC while driving)
-            soc_min_absolute[drive_start: drive_end + 1] += (
+            soc_min_absolute[drive_start : drive_end + 1] += (
                 np.linspace(soc_start, soc_end, drive_end - drive_start + 2)[
                     1:
                 ]
                 * bat_cap
                 * ev_count
             )
-            soc_max_absolute[drive_start: drive_end + 1] += (
+            soc_max_absolute[drive_start : drive_end + 1] += (
                 np.linspace(soc_start, soc_end, drive_end - drive_start + 2)[
                     1:
                 ]
@@ -293,15 +293,15 @@ def generate_load_time_series(
             # Equal distribution of driving load
             if soc_start > soc_end:  # reqd. for PHEV
                 driving_load_time_series_array[
-                    drive_start: drive_end + 1
+                    drive_start : drive_end + 1
                 ] += (consumption * ev_count) / (drive_end - drive_start + 1)
 
         # (II) Fix SoC bounds while parking w/o charging
         elif soc_start == soc_end:
-            soc_min_absolute[start: park_end + 1] += (
+            soc_min_absolute[start : park_end + 1] += (
                 soc_start * bat_cap * ev_count
             )
-            soc_max_absolute[start: park_end + 1] += (
+            soc_max_absolute[start : park_end + 1] += (
                 soc_end * bat_cap * ev_count
             )
 
@@ -310,10 +310,10 @@ def generate_load_time_series(
         elif soc_start < soc_end:
             if flex_cap > 0:
                 # * "flex" (private charging only, band: SoC_min..SoC_max)
-                soc_min_absolute[start: park_end + 1] += (
+                soc_min_absolute[start : park_end + 1] += (
                     soc_start * bat_cap * ev_count
                 )
-                soc_max_absolute[start: park_end + 1] += (
+                soc_max_absolute[start : park_end + 1] += (
                     soc_end * bat_cap * ev_count
                 )
 
@@ -328,12 +328,12 @@ def generate_load_time_series(
             #   charging)
             # (SKIP THIS PART for "flex++" (private+public charging))
             elif flex_cap == 0:
-                soc_min_absolute[start: park_end + 1] += (
+                soc_min_absolute[start : park_end + 1] += (
                     np.linspace(soc_start, soc_end, park_end - start + 1)
                     * bat_cap
                     * ev_count
                 )
-                soc_max_absolute[start: park_end + 1] += (
+                soc_max_absolute[start : park_end + 1] += (
                     np.linspace(soc_start, soc_end, park_end - start + 1)
                     * bat_cap
                     * ev_count
@@ -736,7 +736,7 @@ def write_model_data_to_db(
         #   * lowflex: use dumb charging load
         #   * status2019: also dumb charging
 
-        if scenario_name == 'status2019':
+        if scenario_name=='status2019':
             write_load(
                 scenario_name=scenario_name,
                 connection_bus_id=etrago_bus.bus_id,

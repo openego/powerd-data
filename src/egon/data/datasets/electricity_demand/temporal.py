@@ -9,8 +9,8 @@ from egon.data import db
 
 from sqlalchemy import ARRAY, Column, Float, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
-from egon.data.datasets.scenario_parameters import get_sector_parameters
 
+from egon.data.datasets.scenario_parameters import get_sector_parameters
 
 Base = declarative_base()
 
@@ -44,6 +44,8 @@ def calc_load_curve(share_wz, scn, annual_demand=1):
     ----------
     share_wz : pandas.Series or pandas.DataFrame
         Share of annual demand per cts branch
+    scn : str
+        Scenario name
     annual_demand : float or pandas.Series, optional
         Annual demand in MWh. The default is 1.
 

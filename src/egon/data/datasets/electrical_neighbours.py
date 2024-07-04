@@ -1108,9 +1108,9 @@ def insert_storage(capacities):
 
     for x in parameters:
         store.loc[store["carrier"] == "battery", x] = parameters_battery[x]
-        store.loc[
-            store["carrier"] == "pumped_hydro", x
-        ] = parameters_pumped_hydro[x]
+        store.loc[store["carrier"] == "pumped_hydro", x] = (
+            parameters_pumped_hydro[x]
+        )
 
     # insert data
     session = sessionmaker(bind=db.engine())()
@@ -1231,9 +1231,9 @@ def tyndp_demand():
     ]
     # Assign etrago bus_id to TYNDP nodes
     buses = pd.DataFrame({"nodes": nodes})
-    buses.loc[
-        buses[buses.nodes.isin(map_buses.keys())].index, "nodes"
-    ] = buses[buses.nodes.isin(map_buses.keys())].nodes.map(map_buses)
+    buses.loc[buses[buses.nodes.isin(map_buses.keys())].index, "nodes"] = (
+        buses[buses.nodes.isin(map_buses.keys())].nodes.map(map_buses)
+    )
     buses.loc[:, "bus"] = (
         get_foreign_bus_id(scenario="eGon2035")
         .loc[buses.loc[:, "nodes"]]
@@ -1451,7 +1451,7 @@ def map_carriers_entsoe():
     }
 
 
-def entsoe_to_bus_etrago():
+def entsoe_to_bus_etrago(scenario="status2019"):
     map_entsoe = pd.Series(
         {
             "LU": "LU00",
@@ -1470,7 +1470,7 @@ def entsoe_to_bus_etrago():
         }
     )
 
-    for_bus = get_foreign_bus_id(scenario="status2019")
+    for_bus = get_foreign_bus_id(scenario=scenario)
 
     return map_entsoe.map(for_bus)
 
@@ -1892,21 +1892,12 @@ tasks = (grid,)
 
 insert_per_scenario = set()
 
-
-scn_list = config.settings()["egon-data"]["--scenarios"]
-# for scn in scn_list:
-if "eGon2035" in scn_list:
+if "eGon2035" in config.settings()["egon-data"]["--scenarios"]:
     insert_per_scenario.update([tyndp_generation, tyndp_demand])
-    tasks = tasks + (
-        tyndp_generation,
-        tyndp_demand,
-    )
 
-elif "status" in scn_list:
-    tasks = tasks + (
-        insert_generators_sq,
-        insert_storage_units_sq,
-        insert_loads_sq,
+if "status2019" in config.settings()["egon-data"]["--scenarios"]:
+    insert_per_scenario.update(
+        [insert_generators_sq, insert_storage_units_sq, insert_loads_sq]
     )
 
 tasks = tasks + (insert_per_scenario,)
