@@ -76,7 +76,7 @@ def add_bus(x, y, v_nom, scn_name):
     )
 
 
-def drop_bus(x, y, v_nom, scn_name):
+def drop_bus(x, y, v_nom, scn_name, attached_comp_to_nearest=False):
     bus = select_bus_id(x, y, v_nom, scn_name, carrier="AC")
 
     if bus is not None:
@@ -90,6 +90,49 @@ def drop_bus(x, y, v_nom, scn_name):
             AND carrier = 'AC'
             """
         )
+        
+        if attached_comp_to_nearest==True:
+            
+            new_bus = select_bus_id(x, y, v_nom, scn_name, carrier="AC", find_closest=True)
+    
+            one_port = ["load", "generator", "store", "storage"]
+            for i in one_port:
+                
+                
+                db.execute_sql(
+                f"""
+                UPDATE grid.egon_etrago_{i}
+                SET 
+                bus = {new_bus}
+                WHERE
+                scn_name = '{scn_name}' 
+                AND bus = {bus}
+                """
+                )
+                
+            two_port = ["line", "link", "transformer"]
+            for i in two_port:
+                               
+                db.execute_sql(
+                f"""
+                UPDATE grid.egon_etrago_{i}
+                SET 
+                bus0 = {new_bus}
+                WHERE
+                scn_name = '{scn_name}' 
+                AND bus0 = {bus}
+                """
+                ) 
+                db.execute_sql(
+                f"""
+                UPDATE grid.egon_etrago_{i}
+                SET 
+                bus1 = {new_bus}
+                WHERE
+                scn_name = '{scn_name}' 
+                AND bus1 = {bus}
+                """
+                ) 
 
 
 def add_line(x0, y0, x1, y1, v_nom, scn_name, cables, geom_length=None, layingtype='overhead' ):
