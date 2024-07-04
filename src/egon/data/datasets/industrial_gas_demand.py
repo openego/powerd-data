@@ -15,6 +15,7 @@ from geoalchemy2.types import Geometry
 from shapely import wkt
 import numpy as np
 import pandas as pd
+import geopandas as gpd
 import requests
 
 from egon.data import db
@@ -463,101 +464,154 @@ def insert_industrial_gas_demand_egon100RE():
     scn_name = "eGon100RE"
     delete_old_entries(scn_name)
 
-    # read demands
-    industrial_gas_demand_CH4 = read_and_process_demand(
-        scn_name=scn_name, carrier="CH4_for_industry", grid_carrier="CH4"
+    # Deal with egon_etrago_load
+    load_gas = pd.read_csv(
+        "data_bundle_powerd_data/egon_etrago_load_gas.csv",
     )
-    industrial_gas_demand_H2 = read_and_process_demand(
-        scn_name=scn_name, carrier="H2_for_industry", grid_carrier="H2_grid"
+    load_gas.rename(columns={"load_id": "load_id_orig"}, inplace=True)
+    load_gas = load_gas[load_gas["scn_name"] == scn_name]
+    load_gas.drop(columns=["bus"], inplace=True)
+    load_gas.set_index("load_id_orig", inplace=True)
+
+    load_gas["geom"] = gpd.GeoSeries.from_wkt(load_gas["geom"])
+    load_gas = gpd.GeoDataFrame(
+        load_gas,
+        geometry="geom",
+        crs=4326,
     )
+    loads_h2 = load_gas[load_gas["carrier"] == "H2_for_industry"]
+    loads_ch4 = load_gas[load_gas["carrier"] == "CH4_for_industry"]
+    loads_h2 = db.assign_gas_bus_id(loads_h2, "eGon100RE", "H2_grid")
+    loads_ch4 = db.assign_gas_bus_id(loads_ch4, "eGon100RE", "CH4")
 
-    # adjust H2 and CH4 total demands (values from PES)
-    # CH4 demand = 0 in 100RE, therefore scale H2 ts
-    # fallback values see https://github.com/openego/eGon-data/issues/626
-    n = read_network()
+    loads_to_db = pd.concat([loads_h2, loads_ch4], ignore_index=False)
 
-    try:
-        H2_total_PES = (
-            n.loads[n.loads["carrier"] == "H2 for industry"].loc[
-                "DE0 0 H2 for industry", "p_set"
-            ]
-            * 8760
-        )
-    except KeyError:
-        H2_total_PES = 42090000
-        print("Could not find data from PES-run, assigning fallback number.")
+    new_id = db.next_etrago_id("load")
+    loads_to_db["load_id"] = range(new_id, new_id + len(loads_to_db))
 
-    try:
-        CH4_total_PES = (
-            n.loads[n.loads["carrier"] == "gas for industry"].loc[
-                "DE0 0 gas for industry", "p_set"
-            ]
-            * 8760
-        )
-    except KeyError:
-        CH4_total_PES = 105490000
-        print("Could not find data from PES-run, assigning fallback number.")
-
-    boundary = settings()["egon-data"]["--dataset-boundary"]
-    if boundary != "Everything":
-        # modify values for test mode
-        # the values are obtained by evaluating the share of H2 demand in
-        # test region (NUTS1: DEF, Schleswig-Holstein) with respect to the H2
-        # demand in full Germany model (NUTS0: DE). The task has been outsourced
-        # to save processing cost
-        H2_total_PES *= 0.01855683050330346
-        CH4_total_PES *= 0.01855683050330346
-
-    H2_total = industrial_gas_demand_H2["p_set"].apply(sum).astype(float).sum()
-
-    industrial_gas_demand_CH4["p_set"] = industrial_gas_demand_H2[
-        "p_set"
-    ].apply(lambda x: [val / H2_total * CH4_total_PES for val in x])
-    industrial_gas_demand_H2["p_set"] = industrial_gas_demand_H2[
-        "p_set"
-    ].apply(lambda x: [val / H2_total * H2_total_PES for val in x])
-
-    # consistency check
-    total_CH4_distributed = sum(
-        [sum(x) for x in industrial_gas_demand_CH4["p_set"].to_list()]
+    # Deal with egon_etrago_load_timeseries
+    load_gas_t = pd.read_csv(
+        "data_bundle_powerd_data/egon_etrago_load_t_gas.csv",
     )
-    total_H2_distributed = sum(
-        [sum(x) for x in industrial_gas_demand_H2["p_set"].to_list()]
+    load_gas_t = load_gas_t[load_gas_t["scn_name"] == scn_name]
+    load_gas_t["load_id"] = load_gas_t["load_id"].map(loads_to_db["load_id"])
+
+    # Drop unnecessary columns
+    loads_to_db.drop(columns=["geom", "bus_id"], inplace=True, errors="ignore")
+
+    # Write results into db
+    engine = db.engine()
+    loads_to_db.to_sql(
+        "egon_etrago_load",
+        engine,
+        schema="grid",
+        index=False,
+        if_exists="append",
     )
 
-    print(
-        f"Total amount of industrial H2 demand distributed is "
-        f"{total_H2_distributed} MWh. Total amount of industrial CH4 demand "
-        f"distributed is {total_CH4_distributed} MWh."
-    )
-    msg = (
-        f"Total amount of industrial H2 demand from P-E-S is equal to "
-        f"{H2_total_PES}, which should be identical to the distributed amount "
-        f"of {total_H2_distributed}, but it is not."
-    )
-    assert round(H2_total_PES) == round(total_H2_distributed), msg
-
-    msg = (
-        f"Total amount of industrial CH4 demand from P-E-S is equal to "
-        f"{CH4_total_PES}, which should be identical to the distributed amount "
-        f"of {total_CH4_distributed}, but it is not."
-    )
-    assert round(CH4_total_PES) == round(total_CH4_distributed), msg
-
-    industrial_gas_demand = pd.concat(
-        [
-            industrial_gas_demand_CH4,
-            industrial_gas_demand_H2,
-        ]
-    )
-    industrial_gas_demand = (
-        industrial_gas_demand.groupby(["bus", "carrier"])["p_set"]
-        .apply(lambda x: [sum(y) for y in zip(*x)])
-        .reset_index(drop=False)
+    load_gas_t.to_sql(
+        "egon_etrago_load_timeseries",
+        engine,
+        schema="grid",
+        index=False,
+        if_exists="append",
     )
 
-    industrial_gas_demand = insert_new_entries(industrial_gas_demand, scn_name)
-    insert_industrial_gas_demand_time_series(industrial_gas_demand)
+    # # read demands
+    # industrial_gas_demand_CH4 = read_and_process_demand(
+    #     scn_name=scn_name, carrier="CH4_for_industry", grid_carrier="CH4"
+    # )
+    # industrial_gas_demand_H2 = read_and_process_demand(
+    #     scn_name=scn_name, carrier="H2_for_industry", grid_carrier="H2_grid"
+    # )
+
+    # # adjust H2 and CH4 total demands (values from PES)
+    # # CH4 demand = 0 in 100RE, therefore scale H2 ts
+    # # fallback values see https://github.com/openego/eGon-data/issues/626
+    # n = read_network()
+
+    # try:
+    #     H2_total_PES = (
+    #         n.loads[n.loads["carrier"] == "H2 for industry"].loc[
+    #             "DE0 0 H2 for industry", "p_set"
+    #         ]
+    #         * 8760
+    #     )
+    # except KeyError:
+    #     H2_total_PES = 42090000
+    #     print("Could not find data from PES-run, assigning fallback number.")
+
+    # try:
+    #     CH4_total_PES = (
+    #         n.loads[n.loads["carrier"] == "gas for industry"].loc[
+    #             "DE0 0 gas for industry", "p_set"
+    #         ]
+    #         * 8760
+    #     )
+    # except KeyError:
+    #     CH4_total_PES = 105490000
+    #     print("Could not find data from PES-run, assigning fallback number.")
+
+    # boundary = settings()["egon-data"]["--dataset-boundary"]
+    # if boundary != "Everything":
+    #     # modify values for test mode
+    #     # the values are obtained by evaluating the share of H2 demand in
+    #     # test region (NUTS1: DEF, Schleswig-Holstein) with respect to the H2
+    #     # demand in full Germany model (NUTS0: DE). The task has been outsourced
+    #     # to save processing cost
+    #     H2_total_PES *= 0.01855683050330346
+    #     CH4_total_PES *= 0.01855683050330346
+
+    # H2_total = industrial_gas_demand_H2["p_set"].apply(sum).astype(float).sum()
+
+    # industrial_gas_demand_CH4["p_set"] = industrial_gas_demand_H2[
+    #     "p_set"
+    # ].apply(lambda x: [val / H2_total * CH4_total_PES for val in x])
+    # industrial_gas_demand_H2["p_set"] = industrial_gas_demand_H2[
+    #     "p_set"
+    # ].apply(lambda x: [val / H2_total * H2_total_PES for val in x])
+
+    # # consistency check
+    # total_CH4_distributed = sum(
+    #     [sum(x) for x in industrial_gas_demand_CH4["p_set"].to_list()]
+    # )
+    # total_H2_distributed = sum(
+    #     [sum(x) for x in industrial_gas_demand_H2["p_set"].to_list()]
+    # )
+
+    # print(
+    #     f"Total amount of industrial H2 demand distributed is "
+    #     f"{total_H2_distributed} MWh. Total amount of industrial CH4 demand "
+    #     f"distributed is {total_CH4_distributed} MWh."
+    # )
+    # msg = (
+    #     f"Total amount of industrial H2 demand from P-E-S is equal to "
+    #     f"{H2_total_PES}, which should be identical to the distributed amount "
+    #     f"of {total_H2_distributed}, but it is not."
+    # )
+    # assert round(H2_total_PES) == round(total_H2_distributed), msg
+
+    # msg = (
+    #     f"Total amount of industrial CH4 demand from P-E-S is equal to "
+    #     f"{CH4_total_PES}, which should be identical to the distributed amount "
+    #     f"of {total_CH4_distributed}, but it is not."
+    # )
+    # assert round(CH4_total_PES) == round(total_CH4_distributed), msg
+
+    # industrial_gas_demand = pd.concat(
+    #     [
+    #         industrial_gas_demand_CH4,
+    #         industrial_gas_demand_H2,
+    #     ]
+    # )
+    # industrial_gas_demand = (
+    #     industrial_gas_demand.groupby(["bus", "carrier"])["p_set"]
+    #     .apply(lambda x: [sum(y) for y in zip(*x)])
+    #     .reset_index(drop=False)
+    # )
+
+    # industrial_gas_demand = insert_new_entries(industrial_gas_demand, scn_name)
+    # insert_industrial_gas_demand_time_series(industrial_gas_demand)
 
 
 def insert_industrial_gas_demand_time_series(egon_etrago_load_gas):
