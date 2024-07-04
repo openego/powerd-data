@@ -405,6 +405,12 @@ def insert_industrial_gas_demand_egon2035():
     None
 
     """
+    if "eGon2035" not in config.settings()["egon-data"]["--scenarios"]:
+        logger.warning("""
+        Scenario eGon2035 not in list of required scenarios. Taks skipped.
+        """)
+        return
+
     scn_name = "eGon2035"
     delete_old_entries(scn_name)
 
@@ -463,6 +469,12 @@ def insert_industrial_gas_demand_egon100RE():
     None
 
     """
+    if "eGon100RE" not in config.settings()["egon-data"]["--scenarios"]:
+        logger.warning("""
+        Scenario eGon100RE not in list of required scenarios. Taks skipped.
+        """)
+        return
+
     scn_name = "eGon100RE"
     delete_old_entries(scn_name)
 
