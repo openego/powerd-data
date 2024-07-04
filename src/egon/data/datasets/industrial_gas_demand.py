@@ -16,9 +16,10 @@ from shapely import wkt
 import numpy as np
 import pandas as pd
 import geopandas as gpd
+import logging
 import requests
 
-from egon.data import db
+from egon.data import db, config
 from egon.data.config import settings
 from egon.data.datasets import Dataset
 from egon.data.datasets.etrago_helpers import (
@@ -29,6 +30,7 @@ from egon.data.datasets.etrago_setup import link_geom_from_buses
 from egon.data.datasets.pypsaeursec import read_network
 from egon.data.datasets.scenario_parameters import get_sector_parameters
 
+logger = logging.getLogger(__name__)
 
 class IndustrialGasDemand(Dataset):
     """
@@ -663,6 +665,20 @@ def download_industrial_gas_demand():
     information on these data, refer to the `Extremos project documentation <https://opendata.ffe.de/project/extremos/>`_.
 
     """
+    s = config.settings()["egon-data"]["--scenarios"]
+    if "eGon2035" in s:
+        s.remove("eGon2035")
+    if "eGon100RE" in s:
+        s.remove("eGon100RE")
+
+    if not s:
+        logger.warning("""
+        Due to temporal problems in the FFE platform, data for the scenarios
+        eGon2035 and eGon100RE are imported lately from csv files. Data for
+        other scenarios is unfortunately unavailable.
+        """)
+        return
+
     correspondance_url = (
         "http://opendata.ffe.de:3000/region?id_region_type=eq.38"
     )
@@ -676,7 +692,7 @@ def download_industrial_gas_demand():
     carriers = {"H2_for_industry": "2,162", "CH4_for_industry": "2,11"}
     url = "http://opendata.ffe.de:3000/opendata?id_opendata=eq.66&&year=eq."
 
-    for scn_name in ["eGon2035", "eGon100RE"]:
+    for scn_name in s:
         year = str(
             get_sector_parameters("global", scn_name)["population_year"]
         )
