@@ -882,7 +882,7 @@ def impute_missing_hh_in_populated_cells(df_census_households_grid):
         # use fallback of last possible household distribution
         else:
             fallback_value = None
-            assert fallback_value, "There is no fallback_value, in this else caluse it is used before assignment!"
+            assert fallback_value, "There is no fallback_value, in this else clause, thus it is used before assignment!"
             population_value = fallback_value
 
         # get cells with specific population value from cells with
@@ -1770,6 +1770,7 @@ def get_hh_profiles_from_db(profile_ids):
 
     return df_profile_loads
 
+
 def get_demand_regio_hh_profiles_from_db(year):
     """
     Retrieve demand regio household electricity demand profiles in nuts3 level
@@ -1793,6 +1794,7 @@ def get_demand_regio_hh_profiles_from_db(year):
     )
 
     return df_profile_loads
+
 
 def mv_grid_district_HH_electricity_load(
     scenario_name, scenario_year
