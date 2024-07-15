@@ -364,7 +364,8 @@ def generate_synthetic_buildings(missing_buildings, edge_length):
         columns={
             "building_count": "building_id",
             "cell_profile_ids": "profiles",
-            "id": "cell_id",
+            # "id": "cell_id",   NEW from clara
+            "index": "cell_id",  # prev
         }
     )
 
@@ -787,8 +788,12 @@ def map_houseprofiles_to_buildings():
     # add synthetic buildings to df
     if "cell_id" not in synthetic_buildings.columns:
         col_to_dupl = "index"
-        print(f"cell_id not in synthetic_buildings.columns, adding it from col: {col_to_dupl}")
-        synthetic_buildings["cell_id"] = synthetic_buildings[col_to_dupl]
+        print(f"cell_id not in synthetic_buildings.columns; checking for {} ...")
+        if col_to_dupl in synthetic_buildings.columns:
+            print(f"cell_id not in synthetic_buildings.columns, adding it from existing col: {col_to_dupl}")
+            synthetic_buildings["cell_id"] = synthetic_buildings[col_to_dupl]
+        else:
+            print(f"col_to_dupl {col_to_dupl} not in columns, need to check export.")
 
     _export_data = True
     if _export_data:
@@ -800,14 +805,16 @@ def map_houseprofiles_to_buildings():
 
             import os
             p_export_data = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
-                os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))))), "debug_testee_data")
+                os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))))),
+                "debug_testee_data")
             if not os.path.isdir(p_export_data):
                 print(f"p_export_data not existing, thus creating it: {p_export_data}")
                 os.makedirs(p_export_data)
             print(f"p_export_data: {p_export_data}")
             egon_map_zensus_buildings_residential.head(3).to_csv(
-                os.path.join(p_export_data, "egon_map_zensus_buildings_residential__data"))
-            synthetic_buildings.head(3).to_csv(os.path.join(p_export_data, "synthetic_buildings__data"))
+                os.path.join(p_export_data, "egon_map_zensus_buildings_residential__data_rename_index_instead_id"))
+            synthetic_buildings.head(3).to_csv(os.path.join(
+                p_export_data, "synthetic_buildings__data_rename_index_instead_id"))
         except Exception as E:
             print(f"Cannot export data due to {E}")
 
