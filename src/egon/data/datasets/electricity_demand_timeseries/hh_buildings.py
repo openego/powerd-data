@@ -788,7 +788,7 @@ def map_houseprofiles_to_buildings():
     # add synthetic buildings to df
     if "cell_id" not in synthetic_buildings.columns:
         col_to_dupl = "index"
-        print(f"cell_id not in synthetic_buildings.columns; checking for {} ...")
+        print(f"cell_id not in synthetic_buildings.columns; checking for {col_to_dupl} ...")
         if col_to_dupl in synthetic_buildings.columns:
             print(f"cell_id not in synthetic_buildings.columns, adding it from existing col: {col_to_dupl}")
             synthetic_buildings["cell_id"] = synthetic_buildings[col_to_dupl]
