@@ -511,6 +511,8 @@ def district_heating_areas(scenario_name, plotting=False):
 
     """
 
+    assert isinstance(scenario_name, str), f"scenario_name has to be String but got scenario_name: {scenario_name}"
+
     # Load district heating shares from the scenario table
     if scenario_name == "eGon2015":
         district_heating_share = 0.08
