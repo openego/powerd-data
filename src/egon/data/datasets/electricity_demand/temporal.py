@@ -55,6 +55,8 @@ def calc_load_curve(share_wz, scn, annual_demand=1):
         Annual load curve of combindes cts branches
 
     """
+    assert isinstance(scn, str), f"scn has to be string but got scn: {scn}"
+
     year = int(get_sector_parameters("global", scn)["weather_year"])
 
     sources = egon.data.config.datasets()["electrical_load_curves_cts"][
