@@ -11,7 +11,7 @@ def hts_to_etrago(scenario):
     sources = config.datasets()["etrago_heat"]["sources"]
     targets = config.datasets()["etrago_heat"]["targets"]
     carriers = ["central_heat", "rural_heat", "rural_gas_boiler"]
-    
+
     assert isinstance(scenario, str), f"scenario hs to be string but got scenario: {scenario}"
 
     if scenario == "status2019":
