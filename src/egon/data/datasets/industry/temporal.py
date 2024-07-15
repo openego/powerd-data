@@ -373,8 +373,7 @@ def calc_load_curves_ind_sites(scenario):
             .set_index("industrial_sites_id")
             .demand
         )
-
-    load_curves = calc_load_curve(share_transpose, demands_ind_sites["demand"])
+    load_curves = calc_load_curve(share_transpose, scenario, demands_ind_sites["demand"])
 
     curves_da = identify_bus(load_curves, demand_area)
 
@@ -428,6 +427,9 @@ def insert_sites_ind_load():
     ]
 
     for scenario in egon.data.config.settings()["egon-data"]["--scenarios"]:
+
+        assert isinstance(scenario, str), f"scenario has to be String but got scenario: {scenario}"
+
         # Delete existing data from database
         db.execute_sql(
             f"""
