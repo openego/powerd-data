@@ -196,6 +196,7 @@ class EgonEtragoElectricityHouseholds(Base):
 
 class HouseholdDemands(Dataset):
     def __init__(self, dependencies):
+
         tasks = (create_table, houseprofiles_in_census_cells,)
 
         if (
@@ -241,6 +242,7 @@ class HouseholdDemands(Dataset):
             tasks=tasks,
         )
 
+
 def create_table():
     EgonEtragoElectricityHouseholds.__table__.drop(
         bind=engine, checkfirst=True
@@ -248,6 +250,7 @@ def create_table():
     EgonEtragoElectricityHouseholds.__table__.create(
         bind=engine, checkfirst=True
     )
+
 
 def clean(x):
     """Clean zensus household data row-wise
@@ -878,6 +881,8 @@ def impute_missing_hh_in_populated_cells(df_census_households_grid):
             population_value = population
         # use fallback of last possible household distribution
         else:
+            fallback_value = None
+            assert fallback_value, "There is no fallback_value, in this else caluse it is used before assignment!"
             population_value = fallback_value
 
         # get cells with specific population value from cells with
@@ -1790,7 +1795,7 @@ def get_demand_regio_hh_profiles_from_db(year):
     return df_profile_loads
 
 def mv_grid_district_HH_electricity_load(
-    scenario_name, scenario_year, drop_table=None
+    scenario_name, scenario_year
 ):
     """
     Aggregated household demand time series at HV/MV substation level
@@ -1805,9 +1810,6 @@ def mv_grid_district_HH_electricity_load(
         Scenario name identifier, i.e. "eGon2035"
     scenario_year: int
         Scenario year according to `scenario_name`
-    drop_table: bool
-        Toggle to True for dropping table at beginning of this function.
-        Be careful, delete any data.
 
     Returns
     -------
@@ -1815,10 +1817,6 @@ def mv_grid_district_HH_electricity_load(
         Multiindexed dataframe with `timestep` and `bus_id` as indexers.
         Demand is given in kWh.
     """
-
-    if not drop_table:  # drop_table not given as arg on python_callable=mv_grid_district_HH_electricity_load
-        drop_table = False
-
     def tuple_format(x):
         """Convert Profile ids from string to tuple (type, id)
         Convert from (str)a000(int) to (str), (int)
@@ -1919,13 +1917,14 @@ def mv_grid_district_HH_electricity_load(
     # Add remaining columns
     mvgd_profiles["scn_name"] = scenario_name
 
-    if drop_table:
-        EgonEtragoElectricityHouseholds.__table__.drop(
-            bind=engine, checkfirst=True
-        )
-    EgonEtragoElectricityHouseholds.__table__.create(
-        bind=engine, checkfirst=True
-    )
+    # TODO: can it be remoced tue to prev call in this file here def create_table()
+    # if drop_table:
+    #    EgonEtragoElectricityHouseholds.__table__.drop(
+    #        bind=engine, checkfirst=True
+    #    )
+    # EgonEtragoElectricityHouseholds.__table__.create(
+    #    bind=engine, checkfirst=True
+    # )
 
     # Insert data into respective database table
     mvgd_profiles.to_sql(
@@ -1937,6 +1936,7 @@ def mv_grid_district_HH_electricity_load(
         chunksize=10000,
         index=False,
     )
+
 
 def get_scaled_profiles_from_db(
     attribute, list_of_identifiers, year, aggregate=True, peak_load_only=False
