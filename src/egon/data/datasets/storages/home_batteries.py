@@ -83,6 +83,9 @@ def allocate_home_batteries_to_buildings():
     df_list = []
 
     for scenario in scenarios:
+
+        assert isinstance(scenario, str), f"scenario has to be String but got scenario: {scenario}"
+
         # get home battery capacity per mv grid id
         sql = f"""
         SELECT el_capacity as p_nom_min, bus_id as bus FROM
@@ -94,7 +97,7 @@ def allocate_home_batteries_to_buildings():
         cbat_pbat_ratio = get_sector_parameters(
             "electricity", scenario
         )["efficiency"]["battery"]["max_hours"]
-        
+
         home_batteries_df = db.select_dataframe(sql)
 
         home_batteries_df = home_batteries_df.assign(
