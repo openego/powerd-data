@@ -44,7 +44,7 @@ from egon.data.datasets.heat_demand_timeseries import HeatTimeSeries
 from egon.data.datasets.heat_etrago import HeatEtrago
 from egon.data.datasets.heat_etrago.hts_etrago import HtsEtragoTable
 from egon.data.datasets.heat_supply import HeatSupply
-from egon.data.datasets.heat_supply.individual_heating import HeatPumpsStatusQuo
+from egon.data.datasets.heat_supply.individual_heating import HeatPumps2019
 from egon.data.datasets.industrial_sites import MergeIndustrialSites
 from egon.data.datasets.industry import IndustrialDemandCurves
 from egon.data.datasets.loadarea import LoadArea, OsmLanduse
@@ -73,6 +73,7 @@ from egon.data.datasets.zensus_vg250 import ZensusVg250
 
 # Set number of threads used by numpy and pandas
 set_numexpr_threads()
+
 
 
 with airflow.DAG(
@@ -283,6 +284,8 @@ with airflow.DAG(
             cts_electricity_demand_annual,
             demand_curves_industry,
             hh_demand_buildings_setup,
+            household_electricity_demand_annual,
+            hh_demand_profiles_setup,
         ]
     )
 
@@ -368,11 +371,6 @@ with airflow.DAG(
         dependencies=[create_gas_polygons_status2019]
     )
 
-    # Import CH4 storages
-    insert_data_ch4_storages = CH4Storages(
-        dependencies=[create_gas_polygons_status2019]
-    )
-
     # CHP locations
     chp = Chp(
         dependencies=[
@@ -423,8 +421,8 @@ with airflow.DAG(
             scenario_capacities,
         ]
     )
-
-
+    
+    
     # Pumped hydro units
     pumped_hydro = Storages(
         dependencies=[
@@ -451,8 +449,8 @@ with airflow.DAG(
     # CHP to eTraGo
     chp_etrago = ChpEtrago(dependencies=[chp, heat_etrago])
 
-    # Heat pump disaggregation for status quo
-    heat_pumps_sq = HeatPumpsStatusQuo(
+    # Heat pump disaggregation for status2019
+    heat_pumps_2019 = HeatPumps2019(
         dependencies=[
             cts_demand_buildings,
             DistrictHeatingAreas,
@@ -469,7 +467,7 @@ with airflow.DAG(
             heat_etrago,
             heat_time_series,
             mv_grid_districts,
-            heat_pumps_sq,
+            heat_pumps_2019,
         ]
     )
 
@@ -494,7 +492,6 @@ with airflow.DAG(
             fill_etrago_generators,
             create_ocgt,
             gas_production_insert_data,
-            insert_data_ch4_storages,
         ]
     )
 

@@ -73,8 +73,7 @@ def settings() -> dict[str, dict[str, str]]:
                 "--jobs": 1,
                 "--random-seed": 42,
                 "--processes-per-task": 1,
-                # "--scenarios": ["status2019", "eGon2035"],  todo: as param?
-                "--scenarios": ["status2019"],
+                "--scenarios": ["status2019", "eGon2035"],
             }
         }
     with open(files[0]) as f:
@@ -104,7 +103,6 @@ def datasets(config_file=None):
         config_file = os.path.join(package_path, "datasets.yml")
 
     return yaml.load(open(config_file), Loader=yaml.SafeLoader)
-
 
 def set_numexpr_threads():
     """Sets maximum threads used by NumExpr

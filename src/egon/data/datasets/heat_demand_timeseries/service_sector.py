@@ -17,7 +17,7 @@ except ImportError as e:
 Base = declarative_base()
 
 
-def cts_demand_per_aggregation_level(aggregation_level, scenario, year=None):
+def cts_demand_per_aggregation_level(aggregation_level, scenario):
     """
 
     Description: Create dataframe assigining the CTS demand curve to individual zensus cell
@@ -51,19 +51,20 @@ def cts_demand_per_aggregation_level(aggregation_level, scenario, year=None):
             zensu population id
 
     """
-    assert year, f"year needs to be set for cts_demand_per_aggregation_level but given year={year}"
+
     demand_nuts = db.select_dataframe(
         f"""
         SELECT demand, a.zensus_population_id, b.vg250_nuts3
-        FROM demand.egon_peta_heat a
-        JOIN boundaries.egon_map_zensus_vg250 b
+        FROM demand.egon_peta_heat a 
+        JOIN boundaries.egon_map_zensus_vg250 b 
         ON a.zensus_population_id = b.zensus_population_id
-
+        
         WHERE a.sector = 'service'
         AND a.scenario = '{scenario}'
         ORDER BY a.zensus_population_id
         """
     )
+
     if os.path.isfile("CTS_heat_demand_profile_nuts3.csv"):
         df_CTS_gas_2011 = pd.read_csv(
             "CTS_heat_demand_profile_nuts3.csv", index_col=0
@@ -73,7 +74,7 @@ def cts_demand_per_aggregation_level(aggregation_level, scenario, year=None):
         df_CTS_gas_2011 = df_CTS_gas_2011.asfreq("H")
     else:
         df_CTS_gas_2011 = temporal.disagg_temporal_gas_CTS(
-            use_nuts3code=True, year=year
+            use_nuts3code=True, year=2019
         )
         df_CTS_gas_2011.to_csv("CTS_heat_demand_profile_nuts3.csv")
 
@@ -138,11 +139,11 @@ def cts_demand_per_aggregation_level(aggregation_level, scenario, year=None):
             SELECT bus_id, a.zensus_population_id
             FROM boundaries.egon_map_zensus_grid_districts a
 
-            JOIN demand.egon_peta_heat c
-            ON a.zensus_population_id = c.zensus_population_id
+				JOIN demand.egon_peta_heat c
+				ON a.zensus_population_id = c.zensus_population_id 
 
-            WHERE c.scenario = '{scenario}'
-            AND c.sector = 'service'
+				WHERE c.scenario = '{scenario}'
+				AND c.sector = 'service'
             """
         )
 
@@ -221,24 +222,23 @@ def CTS_demand_scale(aggregation_level):
     CTS_zensus = pd.DataFrame()
 
     for scenario in scenarios:
-        year = 2019  # todo how to set for different scenarios?
         (
             CTS_per_district,
             CTS_per_grid,
             CTS_per_zensus,
-        ) = cts_demand_per_aggregation_level(aggregation_level, scenario, year=year)
+        ) = cts_demand_per_aggregation_level(aggregation_level, scenario)
         CTS_per_district = CTS_per_district.transpose()
         CTS_per_grid = CTS_per_grid.transpose()
         CTS_per_zensus = CTS_per_zensus.transpose()
 
         demand = db.select_dataframe(
             f"""
-            SELECT demand, zensus_population_id
-            FROM demand.egon_peta_heat
-            WHERE sector = 'service'
-            AND scenario = '{scenario}'
-            ORDER BY zensus_population_id
-            """
+                SELECT demand, zensus_population_id
+                FROM demand.egon_peta_heat                
+                WHERE sector = 'service'
+                AND scenario = '{scenario}'
+                ORDER BY zensus_population_id
+                """
         )
 
         if aggregation_level == "district":
@@ -292,11 +292,11 @@ def CTS_demand_scale(aggregation_level):
                 SELECT bus_id, a.zensus_population_id
                 FROM boundaries.egon_map_zensus_grid_districts a
 
-                JOIN demand.egon_peta_heat c
-                ON a.zensus_population_id = c.zensus_population_id
+				JOIN demand.egon_peta_heat c
+				ON a.zensus_population_id = c.zensus_population_id 
 
-                WHERE c.scenario = '{scenario}'
-                AND c.sector = 'service'
+				WHERE c.scenario = '{scenario}'
+				AND c.sector = 'service'
                 """
             )
 
@@ -336,10 +336,10 @@ def CTS_demand_scale(aggregation_level):
             CTS_grid = pd.concat([CTS_grid, CTS_per_grid])
             CTS_grid = CTS_grid.sort_index()
 
-            CTS_per_zensus = 0  # todo: unused?
+            CTS_per_zensus = 0
 
         else:
-            CTS_per_district = 0  # todo: unused?
+            CTS_per_district = 0
             CTS_per_grid = 0
 
             CTS_per_zensus = pd.merge(

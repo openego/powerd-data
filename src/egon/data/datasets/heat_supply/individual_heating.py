@@ -184,7 +184,7 @@ from pathlib import Path
 import os
 import random
 
-from airflow.operators.python import PythonOperator
+from airflow.operators.python_operator import PythonOperator
 from psycopg2.extensions import AsIs, register_adapter
 from sqlalchemy import ARRAY, REAL, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
@@ -194,7 +194,7 @@ import pandas as pd
 import saio
 
 from egon.data import config, db, logger
-from egon.data.datasets import Dataset, wrapped_partial
+from egon.data.datasets import Dataset
 from egon.data.datasets.district_heating_areas import (
     MapZensusDistrictHeatingAreas,
 )
@@ -264,7 +264,6 @@ class HeatPumpsPypsaEurSec(Dataset):
             )
 
             tasks = set()
-
             for i in range(parallel_tasks):
                 tasks.add(
                     PythonOperator(
@@ -296,9 +295,9 @@ class HeatPumpsPypsaEurSec(Dataset):
         )
 
 
-class HeatPumpsStatusQuo(Dataset):
+class HeatPumps2019(Dataset):
     def __init__(self, dependencies):
-        def dyn_parallel_tasks_status_quo(scenario):
+        def dyn_parallel_tasks_2019():
             """Dynamically generate tasks
 
             The goal is to speed up tasks by parallelising bulks of mvgds.
@@ -311,67 +310,40 @@ class HeatPumpsStatusQuo(Dataset):
             set of airflow.PythonOperators
                 The tasks. Each element is of
                 :func:`egon.data.datasets.heat_supply.individual_heating.
-                determine_hp_cap_peak_load_mvgd_ts_status_quo`
+                determine_hp_cap_peak_load_mvgd_ts_2019`
             """
             parallel_tasks = config.datasets()["demand_timeseries_mvgd"].get(
                 "parallel_tasks", 1
             )
-
             tasks = set()
-
             for i in range(parallel_tasks):
                 tasks.add(
                     PythonOperator(
                         task_id=(
                             "individual_heating."
-                            f"determine-hp-capacity-{scenario}-"
+                            f"determine-hp-capacity-2019-"
                             f"mvgd-bulk{i}"
                         ),
                         python_callable=split_mvgds_into_bulks,
                         op_kwargs={
                             "n": i,
                             "max_n": parallel_tasks,
-                            "scenario": scenario,
-                            "func": determine_hp_cap_peak_load_mvgd_ts_status_quo,
+                            "func": determine_hp_cap_peak_load_mvgd_ts_2019,
                         },
                     )
                 )
             return tasks
 
-        tasks = ()
-
-        for scenario in config.settings()["egon-data"]["--scenarios"]:
-            if "status" in scenario:
-                postfix = f"_{scenario[-4:]}"
-
-                tasks += (
-                    wrapped_partial(
-                        delete_heat_peak_loads_status_quo,
-                        scenario=scenario,
-                        postfix=postfix,
-                    ),
-                    wrapped_partial(
-                        delete_hp_capacity_status_quo,
-                        scenario=scenario,
-                        postfix=postfix,
-                    ),
-                    wrapped_partial(
-                        delete_mvgd_ts_status_quo,
-                        scenario=scenario,
-                        postfix=postfix,
-                    ),
-                )
-
-                tasks += (
-                    {*dyn_parallel_tasks_status_quo(scenario)},
-                )
-
-
         super().__init__(
-            name="HeatPumpsStatusQuo",
-            version="0.0.4",
+            name="HeatPumps2019",
+            version="0.0.2",
             dependencies=dependencies,
-            tasks=tasks,
+            tasks=(
+                delete_heat_peak_loads_2019,
+                delete_hp_capacity_2019,
+                delete_mvgd_ts_2019,
+                {*dyn_parallel_tasks_2019()},
+            ),
         )
 
 
@@ -395,9 +367,7 @@ class HeatPumps2035(Dataset):
             parallel_tasks = config.datasets()["demand_timeseries_mvgd"].get(
                 "parallel_tasks", 1
             )
-
             tasks = set()
-
             for i in range(parallel_tasks):
                 tasks.add(
                     PythonOperator(
@@ -642,14 +612,12 @@ def cascade_heat_supply_indiv(scenario, distribution_level, plotting=True):
             columns=["estimated_flh", "priority"],
             data={"estimated_flh": [4000, 8000], "priority": [2, 1]},
         )
-    elif "status" in scenario:
+    elif scenario == "status2019":
         technologies = pd.DataFrame(
             index=["heat_pump"],
             columns=["estimated_flh", "priority"],
             data={"estimated_flh": [4000], "priority": [2]},
         )
-    else:
-        raise ValueError(f"{scenario=} is not valid.")
 
     # In the beginning, the remaining demand equals demand
     heat_per_mv["remaining_demand"] = heat_per_mv["demand"]
@@ -1914,9 +1882,9 @@ def determine_hp_cap_peak_load_mvgd_ts_2035(mvgd_ids):
     )
 
 
-def determine_hp_cap_peak_load_mvgd_ts_status_quo(mvgd_ids, scenario):
+def determine_hp_cap_peak_load_mvgd_ts_2019(mvgd_ids):
     """
-    Main function to determine HP capacity per building in status quo scenario.
+    Main function to determine HP capacity per building in status2019 scenario.
     Further, creates heat demand time series for all buildings with heat pumps
     in MV grid, as well as for all buildings with gas boilers, used in eTraGo.
 
@@ -1933,7 +1901,7 @@ def determine_hp_cap_peak_load_mvgd_ts_status_quo(mvgd_ids, scenario):
     # =====================================================
 
     df_peak_loads_db = pd.DataFrame()
-    df_hp_cap_per_building_status_quo_db = pd.DataFrame()
+    df_hp_cap_per_building_2019_db = pd.DataFrame()
     df_heat_mvgd_ts_db = pd.DataFrame()
 
     for mvgd in mvgd_ids:
@@ -1942,20 +1910,20 @@ def determine_hp_cap_peak_load_mvgd_ts_status_quo(mvgd_ids, scenario):
         # ############# aggregate residential and CTS demand profiles #####
 
         df_heat_ts = aggregate_residential_and_cts_profiles(
-            mvgd, scenario=scenario
+            mvgd, scenario="status2019"
         )
 
         # ##################### determine peak loads ###################
         logger.info(f"MVGD={mvgd} | Determine peak loads.")
 
-        peak_load_status_quo = df_heat_ts.max().rename(scenario)
+        peak_load_2019 = df_heat_ts.max().rename("status2019")
 
         # ######## determine HP capacity per building #########
         logger.info(f"MVGD={mvgd} | Determine HP capacities.")
 
         buildings_decentral_heating = (
             get_buildings_with_decentral_heat_demand_in_mv_grid(
-                mvgd, scenario=scenario
+                mvgd, scenario="status2019"
             )
         )
 
@@ -1963,30 +1931,33 @@ def determine_hp_cap_peak_load_mvgd_ts_status_quo(mvgd_ids, scenario):
         # TODO maybe remove after succesfull DE run
         # Might be fixed in #990
         buildings_decentral_heating = catch_missing_buidings(
-            buildings_decentral_heating, peak_load_status_quo
+            buildings_decentral_heating, peak_load_2019
         )
 
-        hp_cap_per_building_status_quo = determine_hp_cap_buildings_pvbased_per_mvgd(
-            scenario,
+        hp_cap_per_building_2019 = determine_hp_cap_buildings_pvbased_per_mvgd(
+            "status2019",
             mvgd,
-            peak_load_status_quo,
+            peak_load_2019,
             buildings_decentral_heating,
+        )
+        buildings_gas_2019 = pd.Index(buildings_decentral_heating).drop(
+            hp_cap_per_building_2019.index
         )
 
         # ################ aggregated heat profiles ###################
         logger.info(f"MVGD={mvgd} | Aggregate heat profiles.")
 
-        df_mvgd_ts_status_quo_hp = df_heat_ts.loc[
+        df_mvgd_ts_2019_hp = df_heat_ts.loc[
             :,
-            hp_cap_per_building_status_quo.index,
+            hp_cap_per_building_2019.index,
         ].sum(axis=1)
 
         df_heat_mvgd_ts = pd.DataFrame(
             data={
                 "carrier": "heat_pump",
                 "bus_id": mvgd,
-                "scenario": scenario,
-                "dist_aggregated_mw": [df_mvgd_ts_status_quo_hp.to_list()],
+                "scenario": "status2019",
+                "dist_aggregated_mw": [df_mvgd_ts_2019_hp.to_list()],
             }
         )
 
@@ -1994,7 +1965,7 @@ def determine_hp_cap_peak_load_mvgd_ts_status_quo(mvgd_ids, scenario):
         logger.info(f"MVGD={mvgd} | Collect results.")
 
         df_peak_loads_db = pd.concat(
-            [df_peak_loads_db, peak_load_status_quo.reset_index()],
+            [df_peak_loads_db, peak_load_2019.reset_index()],
             axis=0,
             ignore_index=True,
         )
@@ -2003,10 +1974,10 @@ def determine_hp_cap_peak_load_mvgd_ts_status_quo(mvgd_ids, scenario):
             [df_heat_mvgd_ts_db, df_heat_mvgd_ts], axis=0, ignore_index=True
         )
 
-        df_hp_cap_per_building_status_quo_db = pd.concat(
+        df_hp_cap_per_building_2019_db = pd.concat(
             [
-                df_hp_cap_per_building_status_quo_db,
-                hp_cap_per_building_status_quo.reset_index(),
+                df_hp_cap_per_building_2019_db,
+                hp_cap_per_building_2019.reset_index(),
             ],
             axis=0,
         )
@@ -2016,11 +1987,11 @@ def determine_hp_cap_peak_load_mvgd_ts_status_quo(mvgd_ids, scenario):
 
     export_to_db(df_peak_loads_db, df_heat_mvgd_ts_db, drop=False)
 
-    df_hp_cap_per_building_status_quo_db["scenario"] = scenario
+    df_hp_cap_per_building_2019_db["scenario"] = "status2019"
 
     # TODO debug duplicated building_ids
-    duplicates = df_hp_cap_per_building_status_quo_db.loc[
-        df_hp_cap_per_building_status_quo_db.duplicated("building_id", keep=False)
+    duplicates = df_hp_cap_per_building_2019_db.loc[
+        df_hp_cap_per_building_2019_db.duplicated("building_id", keep=False)
     ]
 
     if not duplicates.empty:
@@ -2029,14 +2000,14 @@ def determine_hp_cap_peak_load_mvgd_ts_status_quo(mvgd_ids, scenario):
             f"{duplicates.loc[:,['building_id', 'hp_capacity']]}"
         )
 
-    df_hp_cap_per_building_status_quo_db.drop_duplicates("building_id", inplace=True)
+    df_hp_cap_per_building_2019_db.drop_duplicates("building_id", inplace=True)
 
-    df_hp_cap_per_building_status_quo_db.building_id = (
-        df_hp_cap_per_building_status_quo_db.building_id.astype(int)
+    df_hp_cap_per_building_2019_db.building_id = (
+        df_hp_cap_per_building_2019_db.building_id.astype(int)
     )
 
     write_table_to_postgres(
-        df_hp_cap_per_building_status_quo_db,
+        df_hp_cap_per_building_2019_db,
         EgonHpCapacityBuildings,
         drop=False,
     )
@@ -2147,7 +2118,7 @@ def determine_hp_cap_peak_load_mvgd_ts_pypsa_eur_sec(mvgd_ids):
     export_min_cap_to_csv(df_hp_min_cap_mv_grid_pypsa_eur_sec)
 
 
-def split_mvgds_into_bulks(n, max_n, func, scenario=None):
+def split_mvgds_into_bulks(n, max_n, func):
     """
     Generic function to split task into multiple parallel tasks,
     dividing the number of MVGDs into even bulks.
@@ -2185,11 +2156,7 @@ def split_mvgds_into_bulks(n, max_n, func, scenario=None):
     mvgd_ids = mvgd_ids[n]
 
     logger.info(f"Bulk takes care of MVGD: {min(mvgd_ids)} : {max(mvgd_ids)}")
-
-    if scenario is not None:
-        func(mvgd_ids, scenario=scenario)
-    else:
-        func(mvgd_ids)
+    func(mvgd_ids)
 
 
 def delete_hp_capacity(scenario):
@@ -2232,10 +2199,10 @@ def delete_hp_capacity_100RE():
     delete_hp_capacity(scenario="eGon100RE")
 
 
-def delete_hp_capacity_status_quo(scenario):
-    """Remove all hp capacities for the selected status quo"""
+def delete_hp_capacity_2019():
+    """Remove all hp capacities for the selected status2019"""
     EgonHpCapacityBuildings.__table__.create(bind=engine, checkfirst=True)
-    delete_hp_capacity(scenario=scenario)
+    delete_hp_capacity(scenario="status2019")
 
 
 def delete_hp_capacity_2035():
@@ -2244,12 +2211,12 @@ def delete_hp_capacity_2035():
     delete_hp_capacity(scenario="eGon2035")
 
 
-def delete_mvgd_ts_status_quo(scenario):
-    """Remove all mvgd ts for the selected status quo"""
+def delete_mvgd_ts_2019():
+    """Remove all mvgd ts for the selected status2019"""
     EgonEtragoTimeseriesIndividualHeating.__table__.create(
         bind=engine, checkfirst=True
     )
-    delete_mvgd_ts(scenario=scenario)
+    delete_mvgd_ts(scenario="status2019")
 
 
 def delete_mvgd_ts_2035():
@@ -2268,13 +2235,13 @@ def delete_mvgd_ts_100RE():
     delete_mvgd_ts(scenario="eGon100RE")
 
 
-def delete_heat_peak_loads_status_quo(scenario):
-    """Remove all heat peak loads for status quo."""
+def delete_heat_peak_loads_2019():
+    """Remove all heat peak loads for status2019."""
     BuildingHeatPeakLoads.__table__.create(bind=engine, checkfirst=True)
     with db.session_scope() as session:
         # Buses
         session.query(BuildingHeatPeakLoads).filter(
-            BuildingHeatPeakLoads.scenario == scenario
+            BuildingHeatPeakLoads.scenario == "status2019"
         ).delete(synchronize_session=False)
 
 
