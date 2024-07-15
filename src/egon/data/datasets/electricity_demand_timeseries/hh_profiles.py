@@ -850,6 +850,18 @@ def inhabitants_to_households(df_hh_people_distribution_abs):
     return df_dist_households
 
 
+def _ensure_existing_fallback_value(df):
+    """ assert fallback_value"""
+    fallback_value = None
+    for population in df["population"].sort_values().unique():
+        # create fallback if no cell with specific population available
+        if population in df["population"].unique():
+            fallback_value = population
+            break
+    assert fallback_value, "Could not fetch a fallback_value from df_wo_hh[population].sort_values().unique()"
+    return fallback_value
+
+
 def impute_missing_hh_in_populated_cells(df_census_households_grid):
     """There are cells without household data but a population. A randomly
     chosen household distribution is taken from a subgroup of cells with same
@@ -873,6 +885,9 @@ def impute_missing_hh_in_populated_cells(df_census_households_grid):
         df_census_households_grid.isna().any(axis=1)
     ].reset_index(drop=True)
 
+    # init and assert a fallback_value
+    fallback_value = _ensure_existing_fallback_value(df_wo_hh)
+
     # iterate over unique population values
     for population in df_wo_hh["population"].sort_values().unique():
         # create fallback if no cell with specific population available
@@ -881,8 +896,6 @@ def impute_missing_hh_in_populated_cells(df_census_households_grid):
             population_value = population
         # use fallback of last possible household distribution
         else:
-            fallback_value = None
-            assert fallback_value, "There is no fallback_value, in this else clause, thus it is used before assignment!"
             population_value = fallback_value
 
         # get cells with specific population value from cells with
