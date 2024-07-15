@@ -1790,7 +1790,7 @@ def get_demand_regio_hh_profiles_from_db(year):
     return df_profile_loads
 
 def mv_grid_district_HH_electricity_load(
-    scenario_name, scenario_year, drop_table
+    scenario_name, scenario_year, drop_table=None
 ):
     """
     Aggregated household demand time series at HV/MV substation level
@@ -1815,6 +1815,9 @@ def mv_grid_district_HH_electricity_load(
         Multiindexed dataframe with `timestep` and `bus_id` as indexers.
         Demand is given in kWh.
     """
+
+    if not drop_table:  # drop_table not given as arg on python_callable=mv_grid_district_HH_electricity_load
+        drop_table = False
 
     def tuple_format(x):
         """Convert Profile ids from string to tuple (type, id)
