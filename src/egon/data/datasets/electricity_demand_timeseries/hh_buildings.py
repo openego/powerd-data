@@ -784,6 +784,27 @@ def map_houseprofiles_to_buildings():
         missing_buildings, edge_length=5
     )
 
+    _export_data = True
+    if _export_data:
+        try:
+            print(f"egon_map_zensus_buildings_residential has columns {egon_map_zensus_buildings_residential.columns}")
+            print(f"synthetic_buildings has columns {synthetic_buildings.columns}")
+            print(f"egon_map_zensus_buildings_residential.head(1): {egon_map_zensus_buildings_residential.head(1)}")
+            print(f"synthetic_buildings.head(1): {synthetic_buildings.head(1)}")
+
+            import os
+            p_export_data = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
+                os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))))), "debug_testee_data")
+            if not os.path.isdir(p_export_data):
+                print(f"p_export_data not existing, thus creating it: {p_export_data}")
+                os.makedirs(p_export_data)
+            print(f"p_export_data: {p_export_data}")
+            egon_map_zensus_buildings_residential.head(100).to_csv(
+                os.path.join(p_export_data, "egon_map_zensus_buildings_residential__data"))
+            synthetic_buildings.head(100).to_csv(os.path.join(p_export_data, "synthetic_buildings__data"))
+        except Exception as E:
+            print(f"Cannot export data due to {E}")
+
     # add synthetic buildings to df
     egon_map_zensus_buildings_residential_synth = pd.concat(
         [
