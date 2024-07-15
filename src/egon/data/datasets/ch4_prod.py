@@ -79,6 +79,7 @@ def load_NG_generators(scn_name):
 
     """
     # read carrier information from scnario parameter data
+    assert isinstance(scn_name, str), f"scn_name has to be String but got scn_name: {scn_name}"
     scn_params = get_sector_parameters("gas", scn_name)
 
     target_file = (
@@ -187,7 +188,8 @@ def load_biogas_generators(scn_name):
         Dataframe containing the biogas production units in Germany
 
     """
-    # read carrier information from scnario parameter data
+    # read carrier information from scenario parameter data
+    assert isinstance(scn_name, str), f"scn_name has to be String but got scn_name: {scn_name}"
     scn_params = get_sector_parameters("gas", scn_name)
 
     # Download file
@@ -325,6 +327,9 @@ def import_gas_generators():
     target = config.datasets()["gas_prod"]["target"]
 
     for scn_name in config.settings()["egon-data"]["--scenarios"]:
+
+        assert isinstance(scn_name, str), f"scn_name has to be String but got scn_name: {scn_name}"
+
         # Clean table
         db.execute_sql(
             f"""
