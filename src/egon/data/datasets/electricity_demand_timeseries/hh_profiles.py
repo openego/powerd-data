@@ -1809,9 +1809,7 @@ def get_demand_regio_hh_profiles_from_db(year):
     return df_profile_loads
 
 
-def mv_grid_district_HH_electricity_load(
-    scenario_name, scenario_year
-):
+def mv_grid_district_HH_electricity_load(scenario_name, scenario_year):
     """
     Aggregated household demand time series at HV/MV substation level
 
@@ -1832,6 +1830,7 @@ def mv_grid_district_HH_electricity_load(
         Multiindexed dataframe with `timestep` and `bus_id` as indexers.
         Demand is given in kWh.
     """
+
     def tuple_format(x):
         """Convert Profile ids from string to tuple (type, id)
         Convert from (str)a000(int) to (str), (int)
@@ -1931,15 +1930,6 @@ def mv_grid_district_HH_electricity_load(
 
     # Add remaining columns
     mvgd_profiles["scn_name"] = scenario_name
-
-    # TODO: can it be remoced tue to prev call in this file here def create_table()
-    # if drop_table:
-    #    EgonEtragoElectricityHouseholds.__table__.drop(
-    #        bind=engine, checkfirst=True
-    #    )
-    # EgonEtragoElectricityHouseholds.__table__.create(
-    #    bind=engine, checkfirst=True
-    # )
 
     # Insert data into respective database table
     mvgd_profiles.to_sql(
