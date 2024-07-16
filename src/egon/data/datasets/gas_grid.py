@@ -310,52 +310,36 @@ def insert_gas_buses_abroad(scn_name="eGon2035"):
         gdf_abroad_buses = geopandas.GeoDataFrame(
             gdf_abroad_buses, geometry="geom", crs=4326
         )
-        gdf_abroad_buses.drop_duplicates(subset="country",
-                                         keep="first",
-                                         inplace=True)
 
-    # Select the foreign buses
-    gdf_abroad_buses = central_buses_pypsaeur(sources, scenario=scn_name)
-    gdf_abroad_buses = gdf_abroad_buses.drop_duplicates(subset=["country"])
-
-    # Select next id value
-    new_id = db.next_etrago_id("bus")
-
-    gdf_abroad_buses = gdf_abroad_buses.drop(
-        columns=[
-            "v_nom",
-            "v_mag_pu_set",
-            "v_mag_pu_min",
-            "v_mag_pu_max",
-            "geom",
-        ]
-    )
-    gdf_abroad_buses["scn_name"] = scn_name
-    gdf_abroad_buses["carrier"] = main_gas_carrier
-    gdf_abroad_buses["bus_id"] = range(new_id, new_id + len(gdf_abroad_buses))
-
-    # Add central bus in Russia
-    gdf_abroad_buses = pd.concat(
-        [
-            gdf_abroad_buses,
-            pd.DataFrame(
-                index=[gdf_abroad_buses.index.max() + 1],
-                data={
-                    "scn_name": scn_name,
-                    "bus_id": (new_id + len(gdf_abroad_buses) + 1),
-                    "x": 41,
-                    "y": 55,
-                    "country": "RU",
-                    "carrier": main_gas_carrier,
-                },
-            ),
-        ],
-        ignore_index=True,
-    )
-    # if in test mode, add bus in center of Germany
-    boundary = settings()["egon-data"]["--dataset-boundary"]
-
-    if boundary != "Everything":
+    else:
+        db.execute_sql(
+            f"""
+        DELETE FROM grid.egon_etrago_bus WHERE "carrier" = '{main_gas_carrier}' AND
+        scn_name = '{scn_name}' AND country != 'DE';
+        """
+        )
+    
+        # Select the foreign buses
+        gdf_abroad_buses = central_buses_pypsaeur(sources, scenario=scn_name)
+        gdf_abroad_buses = gdf_abroad_buses.drop_duplicates(subset=["country"])
+    
+        # Select next id value
+        new_id = db.next_etrago_id("bus")
+    
+        gdf_abroad_buses = gdf_abroad_buses.drop(
+            columns=[
+                "v_nom",
+                "v_mag_pu_set",
+                "v_mag_pu_min",
+                "v_mag_pu_max",
+                "geom",
+            ]
+        )
+        gdf_abroad_buses["scn_name"] = scn_name
+        gdf_abroad_buses["carrier"] = main_gas_carrier
+        gdf_abroad_buses["bus_id"] = range(new_id, new_id + len(gdf_abroad_buses))
+    
+        # Add central bus in Russia
         gdf_abroad_buses = pd.concat(
             [
                 gdf_abroad_buses,
