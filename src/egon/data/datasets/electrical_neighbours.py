@@ -1493,6 +1493,7 @@ def insert_storage_units_sq(scn_name="status2019"):
 
     """
     year = int(get_sector_parameters("global", scn_name)["weather_year"])
+    logging.info(f"Having scn_name {scn_name}; year {year} and type(year) {type(year)}.")
     try:
         sto_sq = entsoe_historic_generation_capacities()
     except Exception as E:
@@ -1597,9 +1598,16 @@ def insert_storage_units_sq(scn_name="status2019"):
         "GB": [723.8, 952.3, 1380.9, 2333.3, 3928.5],
         "CZ": [0, pd.NA, pd.NA, pd.NA, pd.NA],
     }
-    bat_sq = pd.DataFrame(bat_per_country).T.set_axis(
-        ["2019", "2020", "2021", "2022", "2023"], axis=1
-    )
+    bat_sq_axis = ["2019", "2020", "2021", "2022", "2023"]
+    bat_sq = pd.DataFrame(bat_per_country).T.set_axis(bat_sq_axis, axis=1)
+
+    if year not in bat_sq_axis:
+        logging.warning(f"year {year} has type {type(year)} not in bat_sq_axis {bat_sq_axis} maybe it is not a String: "
+                        f"isinstance(year, str) is {isinstance(year, str)}")
+        year = str(year)
+        if year not in bat_sq_axis:
+            logging.warning(f"Could not find year {year} in bat_sq_axis: {bat_sq_axis}. Setting it to '2019'.")
+            year = "2019"
 
     # Select year of interest
     bat_sq = bat_sq[[year]].rename(columns={year: "p_nom"})
