@@ -1308,6 +1308,8 @@ def entsoe_historic_generation_capacities(
     ).read(36)
     client = entsoe.EntsoePandasClient(api_key=entsoe_token)
 
+    assert entsoe_token, "There is no .entsoe-token"
+
     start = pd.Timestamp(year_start, tz="Europe/Brussels")
     end = pd.Timestamp(year_end, tz="Europe/Brussels")
     start_gb = pd.Timestamp(year_start, tz="Europe/London")
@@ -1493,16 +1495,24 @@ def insert_storage_units_sq(scn_name="status2019"):
     year = int(get_sector_parameters("global", scn_name)["weather_year"])
     try:
         sto_sq = entsoe_historic_generation_capacities()
-    except:
+    except Exception as E:
         if year == 2019:
             logging.warning(
-                """Generation data from entsoe could not be retrieved.
-                            Backup data is used instead"""
+                "Generation data from entsoe could not be retrieved. Backup data is used instead. "
+                f"Failing fetching due to Exception {E}"
             )
-            sto_sq = pd.read_csv(
-                "data_bundle_egon_data/entsoe/gen_entsoe.csv",
-                index_col="Index",
-            )
+            try:
+                sto_sq_p = "data_bundle_egon_data/entsoe/gen_entsoe.csv"
+                sto_sq = pd.read_csv(sto_sq_p, index_col="Index")
+                logging.info(f"Succeed fetching data from {sto_sq_p}")
+            except Exception as E:
+                import os
+                logging.warning(f"Could not fetch sto_sq from {sto_sq_p} due to {E}")
+                sto_sq_p = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
+                    os.path.dirname(__file__)))))), "data_bundle_egon_data/entsoe/gen_entsoe.csv")
+                logging.info(f"Tyryiing to fetch from {sto_sq_p}")
+                sto_sq = pd.read_csv(sto_sq_p, index_col="Index")
+                logging.info(f"Succeed fetching data from {sto_sq_p}")
         else:
             raise ConnectionError("Data could not be retreived from entsoe")
 
