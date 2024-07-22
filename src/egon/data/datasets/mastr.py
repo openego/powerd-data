@@ -61,6 +61,8 @@ def _get_working_dir_mastr(target_file=None):
 
     dirs_to_check_for_working_dir += p_ALT  # check these dirs if they exist
 
+    print(f"MASTR: dirs_to_check_for_working_dir: {dirs_to_check_for_working_dir}")
+
     assert dirs_to_check_for_working_dir, \
         ("Looks like we don't have existing mastr working dirs; got "
          f"dirs_to_check_for_working_dir: {dirs_to_check_for_working_dir}")
