@@ -316,8 +316,9 @@ def allocate_storage_units_sq(scn_name, storage_types):
         fn = WORKING_DIR_MASTR_NEW / sources["mastr_storage"]
         if not os.path.isfile(fn):
             print(f'storage file {sources["mastr_storage"]} does not exist in {WORKING_DIR_MASTR_NEW}.'
-                  ' Trying to find in executionfolder/bnetza_mastr')
+                  ' Trying to find in execution_folder/bnetza_mastr')
             fn = _get_working_dir_mastr(target_file=sources["mastr_storage"])
+            print(f'Found {sources["mastr_storage"]} here fn: {fn}')
         mastr_ph = pd.read_csv(fn, delimiter=",", usecols=_storage_type_usecols, dtype={"Postleitzahl": str},)
 
         # Rename columns
