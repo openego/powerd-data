@@ -1,6 +1,6 @@
 """The central module containing all code dealing with power plant data.
 """
-
+import os.path
 from pathlib import Path
 
 from geoalchemy2 import Geometry
@@ -18,6 +18,7 @@ from egon.data.datasets.electrical_neighbours import entsoe_to_bus_etrago
 from egon.data.datasets.mastr import (
     WORKING_DIR_MASTR_NEW,
     WORKING_DIR_MASTR_OLD,
+    _get_working_dir_mastr
 )
 from egon.data.datasets.mv_grid_districts import Vg250GemClean
 from egon.data.datasets.power_plants import assign_bus_id, assign_voltage_level
@@ -306,28 +307,18 @@ def allocate_storage_units_sq(scn_name, storage_types):
         "other": "Sonstige",
     }
 
+    _storage_type_usecols = \
+        ["Nettonennleistung", "EinheitMastrNummer", "Kraftwerksnummer", "Technologie", "Postleitzahl",
+         "Laengengrad", "Breitengrad", "EinheitBetriebsstatus", "LokationMastrNummer", "Ort",
+         "Bundesland", "DatumEndgueltigeStilllegung", "Inbetriebnahmedatum",]
     for storage_type in storage_types:
         # Read-in data from MaStR
-        mastr_ph = pd.read_csv(
-            WORKING_DIR_MASTR_NEW / sources["mastr_storage"],
-            delimiter=",",
-            usecols=[
-                "Nettonennleistung",
-                "EinheitMastrNummer",
-                "Kraftwerksnummer",
-                "Technologie",
-                "Postleitzahl",
-                "Laengengrad",
-                "Breitengrad",
-                "EinheitBetriebsstatus",
-                "LokationMastrNummer",
-                "Ort",
-                "Bundesland",
-                "DatumEndgueltigeStilllegung",
-                "Inbetriebnahmedatum",
-            ],
-            dtype={"Postleitzahl": str},
-        )
+        fn = WORKING_DIR_MASTR_NEW / sources["mastr_storage"]
+        if not os.path.isfile(fn):
+            print(f'storage file {sources["mastr_storage"]} does not exist in {WORKING_DIR_MASTR_NEW}.'
+                  ' Trying to find in executionfolder/bnetza_mastr')
+            fn = _get_working_dir_mastr(target_file=sources["mastr_storage"])
+        mastr_ph = pd.read_csv(fn, delimiter=",", usecols=_storage_type_usecols, dtype={"Postleitzahl": str},)
 
         # Rename columns
         mastr_ph = mastr_ph.rename(
