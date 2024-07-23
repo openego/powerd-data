@@ -310,6 +310,9 @@ def insert_gas_buses_abroad(scn_name="eGon2035"):
         gdf_abroad_buses = geopandas.GeoDataFrame(
             gdf_abroad_buses, geometry="geom", crs=4326
         )
+        gdf_abroad_buses.drop_duplicates(subset="country",
+                                         keep="first",
+                                         inplace=True)
 
     else:
         db.execute_sql(
