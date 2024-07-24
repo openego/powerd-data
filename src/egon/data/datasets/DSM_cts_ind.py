@@ -8,6 +8,7 @@ the deviations are relatively small, a tolerance is currently accepted in the
 sanity checks. See [#1120](https://github.com/openego/eGon-data/issues/1120)
 for updates.
 """
+
 from sqlalchemy import ARRAY, Column, Float, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 import geopandas as gpd
@@ -16,7 +17,6 @@ import pandas as pd
 
 from egon.data import config, db
 from egon.data.datasets import Dataset
-
 from egon.data.datasets.electricity_demand.temporal import calc_load_curve
 from egon.data.datasets.industry.temporal import identify_bus
 
@@ -88,7 +88,7 @@ class DsmPotential(Dataset):
     def __init__(self, dependencies):
         super().__init__(
             name="DsmPotential",
-            version="0.0.5",
+            version="0.0.6",
             dependencies=dependencies,
             tasks=(dsm_cts_ind_processing),
         )
@@ -408,7 +408,9 @@ def calc_ind_site_timeseries(scenario):
         )
 
     # calculate load curves
-    load_curves = calc_load_curve(share_transpose, scenario, demands_ind_sites["demand"])
+    load_curves = calc_load_curve(
+        share_transpose, scenario, demands_ind_sites["demand"]
+    )
 
     # identify bus per industrial site
     curves_bus = identify_bus(load_curves, demand_area)
@@ -463,25 +465,21 @@ def ind_sites_data_import():
     # calculate timeseries per site
     scenarios = config.settings()["egon-data"]["--scenarios"]
 
+    dsm = pd.DataFrame(
+        columns=["bus_id", "scenario_name", "p_set", "application", "id"]
+    )
+
     # scenario eGon2035
     if "eGon2035" in scenarios:
-        dsm_2035 = calc_ind_site_timeseries("eGon2035")
-        dsm_2035.reset_index(inplace=True)
+        dsm_2035 = calc_ind_site_timeseries("eGon2035").reset_index()
+        dsm = pd.concat([dsm, dsm_2035], ignore_index=True)
     # scenario eGon100RE
     if "eGon100RE" in scenarios:
-        dsm_100 = calc_ind_site_timeseries("eGon100RE")
-        dsm_100.reset_index(inplace=True)
+        dsm_100 = calc_ind_site_timeseries("eGon100RE").reset_index()
+        dsm = pd.concat([dsm, dsm_100], ignore_index=True)
 
-    if ("eGon2035" in scenarios) & ("eGon100RE" in scenarios):
-        dsm_100.index = range(len(dsm_2035), (len(dsm_2035) + len((dsm_100))))
-        dsm = dsm_2035.append(dsm_100)
-    elif "eGon2035" in scenarios:
-        dsm = dsm_2035
-    elif "eGon100RE" in scenarios:
-        dsm = dsm_100
-
+    dsm.index = range(len(dsm))
     # relate calculated timeseries to Schmidt's industrial sites
-
     dsm = relate_to_schmidt_sites(dsm)
 
     return dsm[["application", "id", "bus", "scn_name", "p_set"]]
@@ -1106,7 +1104,8 @@ def dsm_cts_ind(
 
     df_dsm_buses = gpd.GeoDataFrame(
         pd.concat([df_dsm_buses, dsm_buses], ignore_index=True),
-        crs="EPSG:4326", geometry= "geom"
+        crs="EPSG:4326",
+        geometry="geom",
     )
     df_dsm_links = pd.DataFrame(
         pd.concat([df_dsm_links, dsm_links], ignore_index=True)
@@ -1155,7 +1154,8 @@ def dsm_cts_ind(
 
     df_dsm_buses = gpd.GeoDataFrame(
         pd.concat([df_dsm_buses, dsm_buses], ignore_index=True),
-        crs="EPSG:4326", geometry = "geom",
+        crs="EPSG:4326",
+        geometry="geom",
     )
     df_dsm_links = pd.DataFrame(
         pd.concat([df_dsm_links, dsm_links], ignore_index=True)
@@ -1189,7 +1189,8 @@ def dsm_cts_ind(
 
     df_dsm_buses = gpd.GeoDataFrame(
         pd.concat([df_dsm_buses, dsm_buses], ignore_index=True),
-        crs="EPSG:4326", geometry = "geom",
+        crs="EPSG:4326",
+        geometry="geom",
     )
     df_dsm_links = pd.DataFrame(
         pd.concat([df_dsm_links, dsm_links], ignore_index=True)
@@ -1221,7 +1222,8 @@ def dsm_cts_ind(
 
     df_dsm_buses = gpd.GeoDataFrame(
         pd.concat([df_dsm_buses, dsm_buses], ignore_index=True),
-        crs="EPSG:4326", geometry = "geom",
+        crs="EPSG:4326",
+        geometry="geom",
     )
     df_dsm_links = pd.DataFrame(
         pd.concat([df_dsm_links, dsm_links], ignore_index=True)
@@ -1255,7 +1257,8 @@ def dsm_cts_ind(
 
     df_dsm_buses = gpd.GeoDataFrame(
         pd.concat([df_dsm_buses, dsm_buses], ignore_index=True),
-        crs="EPSG:4326", geometry = "geom",
+        crs="EPSG:4326",
+        geometry="geom",
     )
     df_dsm_links = pd.DataFrame(
         pd.concat([df_dsm_links, dsm_links], ignore_index=True)
@@ -1295,7 +1298,8 @@ def dsm_cts_ind(
 
     df_dsm_buses = gpd.GeoDataFrame(
         pd.concat([df_dsm_buses, dsm_buses], ignore_index=True),
-        crs="EPSG:4326", geometry = "geom",
+        crs="EPSG:4326",
+        geometry="geom",
     )
     df_dsm_links = pd.DataFrame(
         pd.concat([df_dsm_links, dsm_links], ignore_index=True)
