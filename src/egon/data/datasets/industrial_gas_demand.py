@@ -9,17 +9,17 @@ the database after modification are to be found.
 """
 
 from pathlib import Path
+import logging
 import os
 
 from geoalchemy2.types import Geometry
 from shapely import wkt
+import geopandas as gpd
 import numpy as np
 import pandas as pd
-import geopandas as gpd
-import logging
 import requests
 
-from egon.data import db, config
+from egon.data import config, db
 from egon.data.config import settings
 from egon.data.datasets import Dataset
 from egon.data.datasets.etrago_helpers import (
@@ -31,6 +31,7 @@ from egon.data.datasets.pypsaeursec import read_network
 from egon.data.datasets.scenario_parameters import get_sector_parameters
 
 logger = logging.getLogger(__name__)
+
 
 class IndustrialGasDemand(Dataset):
     """
@@ -406,9 +407,11 @@ def insert_industrial_gas_demand_egon2035():
 
     """
     if "eGon2035" not in config.settings()["egon-data"]["--scenarios"]:
-        logger.warning("""
+        logger.warning(
+            """
         Scenario eGon2035 not in list of required scenarios. Taks skipped.
-        """)
+        """
+        )
         return
 
     scn_name = "eGon2035"
@@ -470,9 +473,11 @@ def insert_industrial_gas_demand_egon100RE():
 
     """
     if "eGon100RE" not in config.settings()["egon-data"]["--scenarios"]:
-        logger.warning("""
+        logger.warning(
+            """
         Scenario eGon100RE not in list of required scenarios. Taks skipped.
-        """)
+        """
+        )
         return
 
     scn_name = "eGon100RE"
@@ -684,11 +689,13 @@ def download_industrial_gas_demand():
         s.remove("eGon100RE")
 
     if not s:
-        logger.warning("""
+        logger.warning(
+            """
         Due to temporal problems in the FFE platform, data for the scenarios
         eGon2035 and eGon100RE are imported lately from csv files. Data for
         other scenarios is unfortunately unavailable.
-        """)
+        """
+        )
         return
 
     correspondance_url = (
