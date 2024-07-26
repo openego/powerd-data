@@ -2044,7 +2044,6 @@ if "status2019" in config.settings()["egon-data"]["--scenarios"]:
         insert_loads_sq,
     )
 
-
 class ElectricalNeighbours(Dataset):
     def __init__(self, dependencies):
         super().__init__(
