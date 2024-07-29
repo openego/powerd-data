@@ -1,8 +1,10 @@
 """The central module containing all code dealing with power plant data.
 """
 
-from geoalchemy2 import Geometry
 from pathlib import Path
+import logging
+
+from geoalchemy2 import Geometry
 from shapely.geometry import Point
 from sqlalchemy import BigInteger, Column, Float, Integer, Sequence, String
 from sqlalchemy.dialects.postgresql import JSONB
@@ -10,7 +12,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import geopandas as gpd
 import numpy as np
-import logging
 import pandas as pd
 
 from egon.data import db
@@ -237,10 +238,7 @@ def insert_biomass_plants(scenario):
     cfg = egon.data.config.datasets()["power_plants"]
 
     # import target values
-    if scenario != "eGon100RE":
-        target = select_target("biomass", scenario)
-    else:
-        target = 20000 #dummy value. Muss be fix with issue #268
+    target = select_target("biomass", scenario)
 
     # import data for MaStR
     mastr = pd.read_csv(
@@ -586,17 +584,20 @@ def insert_hydro_biomass():
     scenarios = []
     if "eGon2035" in s:
         scenarios.append("eGon2035")
+        insert_biomass_plants("eGon2035")
     if "eGon100RE" in s:
         scenarios.append("eGon100RE")
 
     for scenario in scenarios:
-        insert_biomass_plants(scenario)
         insert_hydro_plants(scenario)
 
 
 def allocate_conventional_non_chp_power_plants():
     # This function is only designed to work for the eGon2035 scenario
-    if "eGon2035" not in egon.data.config.settings()["egon-data"]["--scenarios"]:
+    if (
+        "eGon2035"
+        not in egon.data.config.settings()["egon-data"]["--scenarios"]
+    ):
         return
 
     carrier = ["oil", "gas"]
@@ -758,7 +759,10 @@ def allocate_conventional_non_chp_power_plants():
 
 def allocate_other_power_plants():
     # This function is only designed to work for the eGon2035 scenario
-    if "eGon2035" not in egon.data.config.settings()["egon-data"]["--scenarios"]:
+    if (
+        "eGon2035"
+        not in egon.data.config.settings()["egon-data"]["--scenarios"]
+    ):
         return
 
     # Get configuration
@@ -1308,16 +1312,20 @@ tasks = tasks + (
 )
 
 for scn_name in egon.data.config.settings()["egon-data"]["--scenarios"]:
-    tasks += (wrapped_partial(assign_weather_data.weatherId_and_busId,
-                              scn_name=scn_name,
-                              postfix=f"_{scn_name}"),)
+    tasks += (
+        wrapped_partial(
+            assign_weather_data.weatherId_and_busId,
+            scn_name=scn_name,
+            postfix=f"_{scn_name}",
+        ),
+    )
 
 
 class PowerPlants(Dataset):
     def __init__(self, dependencies):
         super().__init__(
             name="PowerPlants",
-            version="0.0.26",
+            version="0.0.27",
             dependencies=dependencies,
             tasks=tasks,
         )
