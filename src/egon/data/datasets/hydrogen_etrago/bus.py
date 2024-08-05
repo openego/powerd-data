@@ -6,7 +6,7 @@ for eTraGo are to be found.
 The H2 buses in the neighbouring countries (only present in eGon100RE)
 are defined in :py:mod:`pypsaeursec <egon.data.datasets.pypsaeursec>`.
 In both scenarios, there are two types of H2 buses in Germany:
-  * H2_grid buses: defined in :py:func:`insert_H2_buses_from_CH4_grid`,
+  * H2 buses: defined in :py:func:`insert_H2_buses_from_CH4_grid`,
     these buses are located at the places than the CH4 buses.
   * H2_saltcavern buses: defined in :py:func:`insert_H2_buses_from_saltcavern`,
     these buses are located at the intersection of AC buses and
@@ -29,14 +29,13 @@ def insert_hydrogen_buses():
     Insert hydrogen buses into the database (in etrago table)
 
     Hydrogen buses are inserted into the database using the functions:
-      * :py:func:`insert_H2_buses_from_CH4_grid` for H2_grid buses
+      * :py:func:`insert_H2_buses_from_CH4_grid` for H2 buses
       * :py:func:`insert_H2_buses_from_saltcavern` for the H2_saltcavern
         buses
 
     Parameters
     ----------
-    scenario : str, optional
-        Name of the scenario, the default is 'eGon2035'.
+    No parameter is required.
 
     """
     s = config.settings()["egon-data"]["--scenarios"]
@@ -46,7 +45,7 @@ def insert_hydrogen_buses():
     if "eGon100RE" in s:
         scn.append("eGon100RE")
 
-    for scenario in s:
+    for scenario in scn:
         sources = config.datasets()["etrago_hydrogen"]["sources"]
         target = config.datasets()["etrago_hydrogen"]["targets"]["hydrogen_buses"]
         # initalize dataframe for hydrogen buses
@@ -58,7 +57,7 @@ def insert_hydrogen_buses():
             hydrogen_buses, carrier, sources, target, scenario
         )
 
-        carrier = "H2_grid"
+        carrier = "H2"
         hydrogen_buses = initialise_bus_insertion(
             carrier, target, scenario=scenario
         )
