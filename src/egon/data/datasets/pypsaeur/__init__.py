@@ -508,6 +508,7 @@ def neighbor_reduction():
         AND bus_id NOT IN (SELECT bus_i FROM osmtgmod_results.bus_data)
         """
     )
+
     buses_with_defined_id = neighbors[
         (neighbors.carrier == "AC")
         & (neighbors.country.isin(foreign_ac_buses.country.values))
@@ -1195,11 +1196,9 @@ def prepared_network():
     else:
         target_file = (
             Path(".")
-            / "data_bundle_egon_data"
-            / "pypsa_eur_sec"
-            / "2022-07-26-egondata-integration"
-            / "postnetworks"
-            / "elec_s_37_lv2.0__Co2L0-1H-T-H-B-I-dist1_2050.nc"
+            / "data_bundle_powerd_data"
+            / "pypsa-eur"
+            / "elec_s_37_lv1.5__Co2L0-1H-T-H-B-I-A-solar+p3_2050.nc"
         )
 
     return pypsa.Network(target_file.absolute().as_posix())
