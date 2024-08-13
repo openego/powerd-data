@@ -29,7 +29,7 @@ class PreparePypsaEur(Dataset):
     def __init__(self, dependencies):
         super().__init__(
             name="PreparePypsaEur",
-            version="0.0.6",
+            version="0.0.7",
             dependencies=dependencies,
             tasks=(
                 download,
@@ -42,7 +42,7 @@ class RunPypsaEur(Dataset):
     def __init__(self, dependencies):
         super().__init__(
             name="SolvePypsaEur",
-            version="0.0.5",
+            version="0.0.6",
             dependencies=dependencies,
             tasks=(
                 execute,
@@ -79,7 +79,17 @@ def download():
             with open(path_to_env, "r") as stream:
                 env = yaml.safe_load(stream)
 
+            # The version of gurobipy has to fit to the version of gurobi.
+            # Since we mainly use gurobi 10.0 this is set here.
             env["dependencies"][-1]["pip"].append("gurobipy==10.0.0")
+
+            # Set python version to <3.12
+            # Python<=3.12 needs gurobipy>=11.0, in case gurobipy is updated,
+            # this can be removed
+            env["dependencies"] = [
+                "python>=3.8,<3.12" if x == "python>=3.8" else x
+                for x in env["dependencies"]
+            ]
 
             # Limit geopandas version
             # our pypsa-eur version is not compatible to geopandas>1
@@ -1476,43 +1486,46 @@ def rual_heat_technologies(network):
 
 
 def execute():
-    with open(__path__[0] + "/datasets/pypsaeur/config.yaml", "r") as stream:
-        data_config = yaml.safe_load(stream)
+    if egon.data.config.settings()["egon-data"]["--run-pypsa-eur"]:
+        with open(__path__[0] + "/datasets/pypsaeur/config.yaml", "r") as stream:
+            data_config = yaml.safe_load(stream)
 
-    network_path = (
-        Path(".")
-        / "run-pypsa-eur"
-        / "pypsa-eur"
-        / "results"
-        / data_config["run"]["name"]
-        / "prenetworks"
-        / f"elec_s_{data_config['scenario']['clusters'][0]}"
-        f"_l{data_config['scenario']['ll'][0]}"
-        f"_{data_config['scenario']['opts'][0]}"
-        f"_{data_config['scenario']['sector_opts'][0]}"
-        f"_{data_config['scenario']['planning_horizons'][0]}.nc"
-    )
+        network_path = (
+            Path(".")
+            / "run-pypsa-eur"
+            / "pypsa-eur"
+            / "results"
+            / data_config["run"]["name"]
+            / "prenetworks"
+            / f"elec_s_{data_config['scenario']['clusters'][0]}"
+            f"_l{data_config['scenario']['ll'][0]}"
+            f"_{data_config['scenario']['opts'][0]}"
+            f"_{data_config['scenario']['sector_opts'][0]}"
+            f"_{data_config['scenario']['planning_horizons'][0]}.nc"
+        )
 
-    network = pypsa.Network(network_path)
+        network = pypsa.Network(network_path)
 
-    network = drop_biomass(network)
+        network = drop_biomass(network)
 
-    network = drop_urban_decentral_heat(network)
+        network = drop_urban_decentral_heat(network)
 
-    network = district_heating_shares(network)
+        network = district_heating_shares(network)
 
-    network = update_heat_timeseries_germany(network)
+        network = update_heat_timeseries_germany(network)
 
-    network = update_electrical_timeseries_germany(network)
+        network = update_electrical_timeseries_germany(network)
 
-    network = geothermal_district_heating(network)
+        network = geothermal_district_heating(network)
 
-    network = h2_overground_stores(network)
+        network = h2_overground_stores(network)
 
-    network = drop_new_gas_pipelines(network)
+        network = drop_new_gas_pipelines(network)
 
-    network = drop_fossil_gas(network)
+        network = drop_fossil_gas(network)
 
-    network = rual_heat_technologies(network)
+        network = rual_heat_technologies(network)
 
-    network.export_to_netcdf(network_path)
+        network.export_to_netcdf(network_path)
+    else:
+        print("Pypsa-eur is not executed due to the settings of egon-data")
