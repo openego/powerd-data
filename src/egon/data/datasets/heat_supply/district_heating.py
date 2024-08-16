@@ -434,14 +434,7 @@ def backup_resistive_heaters(scenario):
     district_heating_areas = select_district_heating_areas(scenario)
 
     # Select target value
-    target_value = db.select_dataframe(
-        f"""
-        SELECT capacity
-        FROM supply.egon_scenario_capacities
-        WHERE carrier = 'urban_central_resistive_heater'
-        AND scenario_name = '{scenario}'
-        """
-    ).capacity[0]
+    target_value = 26649.7
 
     distributed = db.select_dataframe(
         f"""
