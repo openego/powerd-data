@@ -40,6 +40,7 @@ def capacity_per_district_heating_category(district_heating_areas, scenario):
         """,
         index_col="technology",
     )
+    target_values.loc["resistive_heater", "capacity"] = 26649.7
 
     capacity_per_category = pd.DataFrame(
         index=["small", "medium", "large"],
