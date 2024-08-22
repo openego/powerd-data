@@ -522,13 +522,19 @@ def to_pypsa():
     )
 
     for scenario_name in ["'eGon2035'", "'eGon100RE'", "'status2019'"]:
-
+        
+        
+        electrical_parameters = get_sector_parameters(
+            "electricity", scenario_name.replace("'", "")
+        )["electrical_parameters"]
+           
         capital_cost = get_sector_parameters(
             "electricity", scenario_name.replace("'", "")
         )["capital_cost"]
         lifetime = get_sector_parameters(
             "electricity", scenario_name.replace("'", "")
         )["lifetime"]
+        
         db.execute_sql(
             f"""
             -- BUS DATA
@@ -583,7 +589,7 @@ def to_pypsa():
               branch_id AS trafo_id,
               f_bus AS bus0,
               t_bus AS bus1,
-              br_x/100 AS x, --- change base from 100MVA (osmtgmod) to 1 MVA (pypsa)
+              (br_x/100)*rate_a AS x, --- change base from 100MVA (osmtgmod) to the transformer's s_nom (pypsa)
               rate_a as s_nom,
               rate_a as s_nom_min,
               TRUE,
@@ -628,17 +634,35 @@ def to_pypsa():
             WHERE a.line_id = result.line_id
             AND scn_name = {scenario_name};
 
-            -- set capital costs for eHV-lines 
+            -- set capital costs for eHV-lines (overhead) 
             UPDATE grid.egon_etrago_line
             SET capital_cost = {capital_cost['ac_ehv_overhead_line']} * length
             WHERE v_nom > 110
-            AND scn_name = {scenario_name};
+            AND scn_name = {scenario_name}
+            AND ((s_nom/{electrical_parameters['ac_line_220kV']['s_nom']}) % 1 = 0 
+                 OR (s_nom/{electrical_parameters['ac_line_380kV']['s_nom']}) % 1 = 0);
 
-            -- set capital costs for HV-lines 
+            -- set capital costs for HV-lines (overhead)
             UPDATE grid.egon_etrago_line
             SET capital_cost = {capital_cost['ac_hv_overhead_line']} * length
             WHERE v_nom = 110
-            AND scn_name = {scenario_name};
+            AND scn_name = {scenario_name}
+            AND (s_nom/{electrical_parameters['ac_line_110kV']['s_nom']}) % 1 = 0;
+            
+            -- set capital costs for eHV-cables (underground)
+            UPDATE grid.egon_etrago_line
+            SET capital_cost = {capital_cost['ac_ehv_cable']} * length
+            WHERE v_nom > 110
+            AND scn_name = {scenario_name}
+            AND ((s_nom/{electrical_parameters['ac_cable_220kV']['s_nom']}) % 1 = 0 
+                 OR (s_nom/{electrical_parameters['ac_cable_380kV']['s_nom']}) % 1 = 0);
+
+            -- set capital costs for HV-cables (underground)
+            UPDATE grid.egon_etrago_line
+            SET capital_cost = {capital_cost['ac_hv_cable']} * length
+            WHERE v_nom = 110
+            AND scn_name = {scenario_name}
+            AND (s_nom/{electrical_parameters['ac_cable_110kV']['s_nom']}) % 1 = 0;
             
             -- set capital costs for transformers 
             UPDATE grid.egon_etrago_transformer a

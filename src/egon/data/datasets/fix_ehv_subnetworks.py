@@ -76,7 +76,7 @@ def add_bus(x, y, v_nom, scn_name):
     )
 
 
-def drop_bus(x, y, v_nom, scn_name):
+def drop_bus(x, y, v_nom, scn_name, attached_comp_to_nearest=False):
     bus = select_bus_id(x, y, v_nom, scn_name, carrier="AC")
 
     if bus is not None:
@@ -90,9 +90,52 @@ def drop_bus(x, y, v_nom, scn_name):
             AND carrier = 'AC'
             """
         )
+        
+        if attached_comp_to_nearest==True:
+            
+            new_bus = select_bus_id(x, y, v_nom, scn_name, carrier="AC", find_closest=True)
+    
+            one_port = ["load", "generator", "store", "storage"]
+            for i in one_port:
+                
+                
+                db.execute_sql(
+                f"""
+                UPDATE grid.egon_etrago_{i}
+                SET 
+                bus = {new_bus}
+                WHERE
+                scn_name = '{scn_name}' 
+                AND bus = {bus}
+                """
+                )
+                
+            two_port = ["line", "link", "transformer"]
+            for i in two_port:
+                               
+                db.execute_sql(
+                f"""
+                UPDATE grid.egon_etrago_{i}
+                SET 
+                bus0 = {new_bus}
+                WHERE
+                scn_name = '{scn_name}' 
+                AND bus0 = {bus}
+                """
+                ) 
+                db.execute_sql(
+                f"""
+                UPDATE grid.egon_etrago_{i}
+                SET 
+                bus1 = {new_bus}
+                WHERE
+                scn_name = '{scn_name}' 
+                AND bus1 = {bus}
+                """
+                ) 
 
 
-def add_line(x0, y0, x1, y1, v_nom, scn_name, cables):
+def add_line(x0, y0, x1, y1, v_nom, scn_name, cables, geom_length=None, layingtype='overhead' ):
     parameters = get_sector_parameters("electricity", scenario=scn_name)
     bus0 = select_bus_id(
         x0, y0, v_nom, scn_name, carrier="AC", find_closest=True
@@ -114,24 +157,45 @@ def add_line(x0, y0, x1, y1, v_nom, scn_name, cables):
     )
 
     gdf = link_geom_from_buses(df, scn_name)
+    
+    if geom_length is not None:
+        gdf["length"] = geom_length
+    else:
+        gdf["length"] = gdf.to_crs(3035).topo.length.mul(1e-3)
+        
+    if layingtype=='overhead':
 
-    gdf["length"] = gdf.to_crs(3035).topo.length.mul(1e-3)
+        # all the values used for x, r and b are taken from the electrical values
+        # reference table from oemtgmod: github.com/wupperinst/osmTGmod
+        if v_nom == 110:
+            s_nom = 260
+            x_per_km = 0.0012 * 2 * np.pi * 50
+            r_per_km = 0.05475
+            b_per_km = 9.5 * 2 * np.pi * 50 * 1e-9
+            cost_per_km = parameters["capital_cost"]["ac_hv_overhead_line"]
+        
+        if v_nom == 220:
+            s_nom = 520
+            x_per_km = 0.001 * 2 * np.pi * 50
+            r_per_km = 0.05475
+            b_per_km = 11 * 2 * np.pi * 50 * 1e-9
+            cost_per_km = parameters["capital_cost"]["ac_ehv_overhead_line"]
+    
+        elif v_nom == 380:
+            s_nom = 1790
+            x_per_km = 0.0008 * 2 * np.pi * 50
+            r_per_km = 0.027375
+            b_per_km = 14 * 2 * np.pi * 50 * 1e-9
+            cost_per_km = parameters["capital_cost"]["ac_ehv_overhead_line"]
+            
+    elif layingtype=='underground':
 
-    # all the values used for x, r and b are taken from the electrical values
-    # reference table from oemtgmod: github.com/wupperinst/osmTGmod
-    if v_nom == 220:
-        s_nom = 520
-        x_per_km = 0.001 * 2 * np.pi * 50
-        r_per_km = 0.05475
-        b_per_km = 11 * 2 * np.pi * 50 * 1e-9
-        cost_per_km = parameters["capital_cost"]["ac_ehv_overhead_line"]
-
-    elif v_nom == 380:
-        s_nom = 1790
-        x_per_km = 0.0008 * 2 * np.pi * 50
-        r_per_km = 0.027375
-        b_per_km = 14 * 2 * np.pi * 50 * 1e-9
-        cost_per_km = parameters["capital_cost"]["ac_ehv_overhead_line"]
+        if v_nom == 110:
+            s_nom = 280
+            x_per_km = 0.0003 * 2 * np.pi * 50
+            r_per_km = 0.0177
+            b_per_km = 250 * 2 * np.pi * 50 * 1e-9
+            cost_per_km = parameters["capital_cost"]["ac_hv_cable"]
 
     gdf["s_nom"] = s_nom * gdf["cables"] / 3
     gdf["s_nom_extendable"] = True
@@ -148,10 +212,9 @@ def add_line(x0, y0, x1, y1, v_nom, scn_name, cables):
         "egon_etrago_line", schema="grid", con=db.engine(), if_exists="append"
     )
 
-
 def drop_line(x0, y0, x1, y1, v_nom, scn_name):
-    bus0 = select_bus_id(x0, y0, v_nom, scn_name, carrier="AC")
-    bus1 = select_bus_id(x1, y1, v_nom, scn_name, carrier="AC")
+    bus0 = select_bus_id(x0, y0, v_nom, scn_name, carrier="AC", find_closest=True)
+    bus1 = select_bus_id(x1, y1, v_nom, scn_name, carrier="AC", find_closest=True)
 
     if (bus0 is not None) and (bus1 is not None):
         db.execute_sql(
@@ -204,8 +267,8 @@ def add_trafo(x, y, v_nom0, v_nom1, scn_name, n=1):
 
 
 def drop_trafo(x, y, v_nom0, v_nom1, scn_name):
-    bus0 = select_bus_id(x, y, v_nom0, scn_name, carrier="AC")
-    bus1 = select_bus_id(x, y, v_nom1, scn_name, carrier="AC")
+    bus0 = select_bus_id(x, y, v_nom0, scn_name, carrier="AC", find_closest=True)
+    bus1 = select_bus_id(x, y, v_nom1, scn_name, carrier="AC", find_closest=True)
 
     if (bus0 is not None) and (bus1 is not None):
         db.execute_sql(
@@ -217,6 +280,26 @@ def drop_trafo(x, y, v_nom0, v_nom1, scn_name):
             AND bus1 = {bus1}
             """
         )
+        
+def change_trafo(x, y, v_nom0, v_nom1, scn_name, s_nom, reactance_pu):
+    bus0 = select_bus_id(x, y, v_nom0, scn_name, carrier="AC", find_closest=True)
+    bus1 = select_bus_id(x, y, v_nom1, scn_name, carrier="AC", find_closest=True)
+
+    if (bus0 is not None) and (bus1 is not None):
+        db.execute_sql(
+            f"""
+            UPDATE grid.egon_etrago_transformer
+            SET 
+            s_nom = {s_nom},
+            s_nom_min = {s_nom},
+            x = {reactance_pu}
+            WHERE
+            scn_name = '{scn_name}'
+            AND bus0 = {bus0}
+            AND bus1 = {bus1}
+            """
+        )
+
 
 
 def fix_subnetworks(scn_name):
