@@ -1109,11 +1109,82 @@ def heat(scenario):
         }
 
     elif scenario == "eGon100RE":
+        costs = read_csv(2050)
+
         parameters = {
             "DE_demand_reduction_residential": 0.640720648501849,
             "DE_demand_reduction_service": 0.390895195300713,
             "DE_district_heating_share": 0.19,
         }
+
+        parameters["marginal_cost"] = {
+            "central_heat_pump": read_costs(
+                costs, "central air-sourced heat pump", "VOM"
+            ),
+            "central_gas_chp": read_costs(costs, "central gas CHP", "VOM"),
+            "central_gas_boiler": read_costs(
+                costs, "central gas boiler", "VOM"
+            ),
+            "central_resistive_heater": read_costs(
+                costs, "central resistive heater", "VOM"
+            ),
+            "geo_thermal": 2.9,  # Danish Energy Agency
+            "water_tank_charger": 0,  # Danish Energy Agency
+            "water_tank_discharger": 0,  # Danish Energy Agency
+            "rural_heat_pump": 0,  # Danish Energy Agency, Technology Data for Individual Heating Plants
+        }
+
+        # Insert efficiency in p.u.
+        parameters["efficiency"] = {
+            "water_tank_charger": read_costs(
+                costs, "water tank charger", "efficiency"
+            ),
+            "water_tank_discharger": read_costs(
+                costs, "water tank discharger", "efficiency"
+            ),
+            "central_resistive_heater": read_costs(
+                costs, "central resistive heater", "efficiency"
+            ),
+            "central_gas_boiler": read_costs(
+                costs, "central gas boiler", "efficiency"
+            ),
+            "rural_resistive_heater": read_costs(
+                costs, "decentral resistive heater", "efficiency"
+            ),
+            "rural_gas_boiler": read_costs(
+                costs, "decentral gas boiler", "efficiency"
+            ),
+        }
+
+        # Insert overnight investment costs, in EUR/MWh
+        parameters["overnight_cost"] = {
+            "central_water_tank": read_costs(
+                costs, "central water tank storage", "investment"
+            ),
+            "rural_water_tank": read_costs(
+                costs, "decentral water tank storage", "investment"
+            ),
+        }
+
+        # Insert lifetime
+        parameters["lifetime"] = {
+            "central_water_tank": read_costs(
+                costs, "central water tank storage", "lifetime"
+            ),
+            "rural_water_tank": read_costs(
+                costs, "decentral water tank storage", "lifetime"
+            ),
+        }
+
+        # Insert annualized capital costs
+        parameters["capital_cost"] = {}
+
+        for comp in parameters["overnight_cost"].keys():
+            parameters["capital_cost"][comp] = annualize_capital_costs(
+                parameters["overnight_cost"][comp],
+                parameters["lifetime"][comp],
+                global_settings("eGon2035")["interest_rate"],
+            )
 
     elif scenario == "eGon2021":
         parameters = {}
