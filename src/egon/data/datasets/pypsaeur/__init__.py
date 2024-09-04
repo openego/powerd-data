@@ -169,7 +169,8 @@ def download():
                 / "records"
                 / "10356004"
                 / "files"
-            )
+            ).mkdir(parents=True, exist_ok=True)
+
         urlretrieve(
             "https://zenodo.org/records/10356004/files/ENSPRESO_BIOMASS.xlsx",
             filepath
@@ -1532,11 +1533,17 @@ def district_heating_shares(network):
             )
         )
 
-    # Drop links with undefined buses
+    # Drop links with undefined buses or carrier
     network.mremove(
         "Link",
         network.links[
             ~network.links.bus0.isin(network.buses.index.values)
+        ].index,
+    )
+    network.mremove(
+        "Link",
+        network.links[
+            network.links.carrier==""
         ].index,
     )
 
@@ -1556,7 +1563,8 @@ def drop_new_gas_pipelines(network):
 
 def drop_fossil_gas(network):
     network.mremove(
-        "Store", network.stores[network.stores.carrier == "gas"].index
+        "Generator",
+        network.generators[network.generators.carrier == "gas"].index
     )
 
     return network
@@ -1576,8 +1584,6 @@ def rual_heat_technologies(network):
             network.generators.carrier.str.contains("rural solar thermal")
         ].index,
     )
-
-    network.links.loc["DE1 0 services rural ground heat pump", "p_nom_min"] = 0
 
     return network
 
