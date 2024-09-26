@@ -19,7 +19,6 @@ import egon.data.config
 import egon.data.subprocess as subproc
 
 
-
 def run():
     sys.setrecursionlimit(5000)
     # execute osmTGmod
@@ -47,7 +46,6 @@ def run():
 
 
 def import_osm_data():
-
     osmtgmod_repos = Path(".") / "osmTGmod"
 
     # Delete repository if it already exists
@@ -180,7 +178,6 @@ def osmtgmod(
     filtered_osm_pbf_path_to_file=None,
     docker_db_config=None,
 ):
-
     if ("germany-21" in filtered_osm_pbf_path_to_file) | (
         "germany-22" in filtered_osm_pbf_path_to_file
     ):
@@ -439,8 +436,8 @@ def osmtgmod(
             [
                 segment.replace(";", "§") if i % 2 == 0 else segment
                 for i, segment in enumerate(
-                    sqlfile_without_comments.split("'")
-                )
+                sqlfile_without_comments.split("'")
+            )
             ]
         ).split("§")[:-1]
     ):
@@ -522,7 +519,6 @@ def to_pypsa():
     )
 
     for scenario_name in ["'eGon2035'", "'eGon100RE'", "'status2019'"]:
-
         capital_cost = get_sector_parameters(
             "electricity", scenario_name.replace("'", "")
         )["capital_cost"]
@@ -628,19 +624,19 @@ def to_pypsa():
             WHERE a.line_id = result.line_id
             AND scn_name = {scenario_name};
 
-            -- set capital costs for eHV-lines 
+            -- set capital costs for eHV-lines
             UPDATE grid.egon_etrago_line
             SET capital_cost = {capital_cost['ac_ehv_overhead_line']} * length
             WHERE v_nom > 110
             AND scn_name = {scenario_name};
 
-            -- set capital costs for HV-lines 
+            -- set capital costs for HV-lines
             UPDATE grid.egon_etrago_line
             SET capital_cost = {capital_cost['ac_hv_overhead_line']} * length
             WHERE v_nom = 110
             AND scn_name = {scenario_name};
-            
-            -- set capital costs for transformers 
+
+            -- set capital costs for transformers
             UPDATE grid.egon_etrago_transformer a
             SET capital_cost = {capital_cost['transformer_380_220']}
             WHERE (a.bus0 IN (
@@ -688,20 +684,20 @@ def to_pypsa():
                 SELECT bus_id FROM grid.egon_etrago_bus
                 WHERE v_nom = 220))
             AND scn_name = {scenario_name};
-            
-            -- set lifetime for eHV-lines 
+
+            -- set lifetime for eHV-lines
             UPDATE grid.egon_etrago_line
-            SET lifetime = {lifetime['ac_ehv_overhead_line']} 
+            SET lifetime = {lifetime['ac_ehv_overhead_line']}
             WHERE v_nom > 110
             AND scn_name = {scenario_name};
 
-            -- set capital costs for HV-lines 
+            -- set capital costs for HV-lines
             UPDATE grid.egon_etrago_line
             SET lifetime = {lifetime['ac_hv_overhead_line']}
             WHERE v_nom = 110
             AND scn_name = {scenario_name};
-            
-            -- set capital costs for transformers 
+
+            -- set capital costs for transformers
             UPDATE grid.egon_etrago_transformer a
             SET lifetime = {lifetime['transformer_380_220']}
             WHERE (a.bus0 IN (
@@ -749,7 +745,7 @@ def to_pypsa():
                 SELECT bus_id FROM grid.egon_etrago_bus
                 WHERE v_nom = 220))
             AND scn_name = {scenario_name};
-            
+
             -- delete buses without connection to AC grid and generation or
             -- load assigned
 
@@ -772,11 +768,46 @@ def to_pypsa():
         )
 
 
+def fix_transformer_snom():
+    db.execute_sql(
+        """
+        UPDATE grid.egon_etrago_transformer AS t
+        SET s_nom_vRLI = CAST(
+            LEAST(
+                (SELECT SUM(COALESCE(l.s_nom,0))
+                 FROM grid.egon_etrago_line AS l
+                 WHERE (l.bus0 = t.bus0 OR l.bus1 = t.bus0)
+                 AND l.scn_name = t.scn_name),
+                (SELECT SUM(COALESCE(l.s_nom,0))
+                 FROM grid.egon_etrago_line AS l
+                 WHERE (l.bus0 = t.bus1 OR l.bus1 = t.bus1)
+                 AND l.scn_name = t.scn_name)
+            ) AS smallint
+        );
+        """)
+    db.execute_sql(
+        """
+        UPDATE grid.egon_etrago_transformer AS t
+        SET s_nom_vHI = CAST(
+            GREATEST(
+                (SELECT SUM(COALESCE(l.s_nom,0))
+                 FROM grid.egon_etrago_line AS l
+                 WHERE (l.bus0 = t.bus0 OR l.bus1 = t.bus0)
+                 AND l.scn_name = t.scn_name),
+                (SELECT SUM(COALESCE(l.s_nom,0))
+                 FROM grid.egon_etrago_line AS l
+                 WHERE (l.bus0 = t.bus1 OR l.bus1 = t.bus1)
+                 AND l.scn_name = t.scn_name)
+            ) AS smallint
+        );
+        """)
+
+
 class Osmtgmod(Dataset):
     def __init__(self, dependencies):
         super().__init__(
             name="Osmtgmod",
-            version="0.0.5",
+            version="0.0.6",
             dependencies=dependencies,
             tasks=(
                 import_osm_data,
@@ -785,5 +816,6 @@ class Osmtgmod(Dataset):
                     extract,
                     to_pypsa,
                 },
+                fix_transformer_snom,
             ),
         )
