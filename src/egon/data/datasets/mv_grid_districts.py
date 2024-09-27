@@ -195,7 +195,7 @@ def substations_in_municipalities():
     """
     engine = db.engine()
 
-    table_name = "HvmvSubstPerMunicipality"
+    table_name = "hvmv_subst_per_municipality"
 
     # check if table exists
     if inspect(engine).has_table(table_name, schema="grid"):
@@ -283,7 +283,7 @@ def split_multi_substation_municipalities():
     """
     engine = db.engine()
 
-    table_name = "VoronoiMunicipalityCutsAssigned"
+    table_name = "voronoi_municipality_cuts_assigned"
 
     # check if table exists
     if inspect(engine).has_table(table_name, schema="grid"):
@@ -588,7 +588,7 @@ def merge_polygons_to_grid_district():
 
     engine = db.engine()
 
-    table_name = "MvGridDistricts"
+    table_name = "egon_mv_grid_district"
 
     # check if table exists
     if inspect(engine).has_table(table_name, schema="grid"):
@@ -844,7 +844,7 @@ def define_mv_grid_districts():
 
     engine = db.engine()
 
-    table_name = "HvmvSubstPerMunicipality"
+    table_name = "hvmv_subst_per_municipality"
 
     # check if table exists
     if inspect(engine).has_table(table_name, schema="grid"):
