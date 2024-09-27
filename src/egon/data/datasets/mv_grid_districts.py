@@ -75,6 +75,7 @@ from sqlalchemy import (
     func,
 )
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import inspect
 
 from egon.data import db
 from egon.data.datasets import Dataset
@@ -193,60 +194,70 @@ def substations_in_municipalities():
        not containing a substation, are added
     """
     engine = db.engine()
-    HvmvSubstPerMunicipality.__table__.drop(bind=engine, checkfirst=True)
-    HvmvSubstPerMunicipality.__table__.create(bind=engine)
 
-    with session_scope() as session:
-        # Insert municipalities with number of substations > 0
-        q = (
-            session.query(
-                Vg250GemClean,
-                func.count(EgonHvmvSubstation.point).label("subst_count"),
+    # check if table exists
+    if inspect(engine).has_table("HvmvSubstPerMunicipality", schema="grid"):
+        print("There is alreay a table HvmvSubstPerMunicipality, skipping re-creation.")
+        create_table = False
+    else:  # optionally force re-creation
+        create_table = True
+
+    if create_table:
+
+        HvmvSubstPerMunicipality.__table__.drop(bind=engine, checkfirst=True)
+        HvmvSubstPerMunicipality.__table__.create(bind=engine)
+
+        with session_scope() as session:
+            # Insert municipalities with number of substations > 0
+            q = (
+                session.query(
+                    Vg250GemClean,
+                    func.count(EgonHvmvSubstation.point).label("subst_count"),
+                )
+                .filter(
+                    func.ST_Contains(
+                        Vg250GemClean.geometry,
+                        func.ST_Transform(EgonHvmvSubstation.point, 3035),
+                    )
+                )
+                .group_by(Vg250GemClean.id)
             )
-            .filter(
-                func.ST_Contains(
-                    Vg250GemClean.geometry,
-                    func.ST_Transform(EgonHvmvSubstation.point, 3035),
+
+            muns_with_subst = (
+                HvmvSubstPerMunicipality.__table__.insert().from_select(
+                    HvmvSubstPerMunicipality.__table__.columns, q
                 )
             )
-            .group_by(Vg250GemClean.id)
-        )
+            session.execute(muns_with_subst)
+            session.commit()
 
-        muns_with_subst = (
-            HvmvSubstPerMunicipality.__table__.insert().from_select(
-                HvmvSubstPerMunicipality.__table__.columns, q
+            # Insert remaining municipalities
+            already_inserted_muns = session.query(
+                HvmvSubstPerMunicipality.id
+            ).subquery()
+            muns_without_subst = (
+                HvmvSubstPerMunicipality.__table__.insert().from_select(
+                    [
+                        _
+                        for _ in HvmvSubstPerMunicipality.__table__.columns
+                        if _.name != "subst_count"
+                    ],
+                    session.query(Vg250GemClean).filter(
+                        Vg250GemClean.id.notin_(already_inserted_muns)
+                    ),
+                )
             )
-        )
-        session.execute(muns_with_subst)
-        session.commit()
+            session.execute(muns_without_subst)
+            session.commit()
 
-        # Insert remaining municipalities
-        already_inserted_muns = session.query(
-            HvmvSubstPerMunicipality.id
-        ).subquery()
-        muns_without_subst = (
-            HvmvSubstPerMunicipality.__table__.insert().from_select(
-                [
-                    _
-                    for _ in HvmvSubstPerMunicipality.__table__.columns
-                    if _.name != "subst_count"
-                ],
-                session.query(Vg250GemClean).filter(
-                    Vg250GemClean.id.notin_(already_inserted_muns)
-                ),
+            # Set subst_count for municipalities with zero substations to 0
+            session.query(HvmvSubstPerMunicipality).filter(
+                HvmvSubstPerMunicipality.subst_count == None
+            ).update(
+                {HvmvSubstPerMunicipality.subst_count: 0},
+                synchronize_session="fetch",
             )
-        )
-        session.execute(muns_without_subst)
-        session.commit()
-
-        # Set subst_count for municipalities with zero substations to 0
-        session.query(HvmvSubstPerMunicipality).filter(
-            HvmvSubstPerMunicipality.subst_count == None
-        ).update(
-            {HvmvSubstPerMunicipality.subst_count: 0},
-            synchronize_session="fetch",
-        )
-        session.commit()
+            session.commit()
 
 
 def split_multi_substation_municipalities():
