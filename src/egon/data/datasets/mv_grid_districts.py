@@ -195,9 +195,11 @@ def substations_in_municipalities():
     """
     engine = db.engine()
 
+    table_name = "HvmvSubstPerMunicipality"
+
     # check if table exists
-    if inspect(engine).has_table("HvmvSubstPerMunicipality", schema="grid"):
-        print("There is alreay a table HvmvSubstPerMunicipality, skipping re-creation.")
+    if inspect(engine).has_table(table_name, schema="grid"):
+        print(f"There is alreay a table {table_name}, skipping re-creation.")
         create_table = False
     else:  # optionally force re-creation
         create_table = True
@@ -280,173 +282,185 @@ def split_multi_substation_municipalities():
 
     """
     engine = db.engine()
-    VoronoiMunicipalityCuts.__table__.drop(bind=engine, checkfirst=True)
-    VoronoiMunicipalityCuts.__table__.create(bind=engine)
-    VoronoiMunicipalityCutsAssigned.__table__.drop(
-        bind=engine, checkfirst=True
-    )
-    VoronoiMunicipalityCutsAssigned.__table__.create(bind=engine)
 
-    with session_scope() as session:
-        # Step 1: cut municipalities with voronoi polygons
-        q = (
-            session.query(
-                HvmvSubstPerMunicipality.id.label("municipality_id"),
-                HvmvSubstPerMunicipality.ags_0,
-                func.ST_Dump(
-                    func.ST_Intersection(
-                        HvmvSubstPerMunicipality.geometry,
-                        func.ST_Transform(
-                            EgonHvmvSubstationVoronoi.geom, 3035
-                        ),
-                    )
-                ).geom.label("geom"),
-                EgonHvmvSubstationVoronoi.bus_id,
-                EgonHvmvSubstationVoronoi.id.label("voronoi_id"),
-            )
-            .filter(HvmvSubstPerMunicipality.subst_count > 1)
-            .filter(
-                HvmvSubstPerMunicipality.geometry.intersects(
-                    func.ST_Transform(EgonHvmvSubstationVoronoi.geom, 3035)
+    table_name = "VoronoiMunicipalityCutsAssigned"
+
+    # check if table exists
+    if inspect(engine).has_table(table_name, schema="grid"):
+        print(f"There is alreay a table {table_name}, skipping re-creation.")
+        create_table = False
+    else:  # optionally force re-creation
+        create_table = True
+
+    if create_table:
+
+        VoronoiMunicipalityCuts.__table__.drop(bind=engine, checkfirst=True)
+        VoronoiMunicipalityCuts.__table__.create(bind=engine)
+        VoronoiMunicipalityCutsAssigned.__table__.drop(
+            bind=engine, checkfirst=True
+        )
+        VoronoiMunicipalityCutsAssigned.__table__.create(bind=engine)
+
+        with session_scope() as session:
+            # Step 1: cut municipalities with voronoi polygons
+            q = (
+                session.query(
+                    HvmvSubstPerMunicipality.id.label("municipality_id"),
+                    HvmvSubstPerMunicipality.ags_0,
+                    func.ST_Dump(
+                        func.ST_Intersection(
+                            HvmvSubstPerMunicipality.geometry,
+                            func.ST_Transform(
+                                EgonHvmvSubstationVoronoi.geom, 3035
+                            ),
+                        )
+                    ).geom.label("geom"),
+                    EgonHvmvSubstationVoronoi.bus_id,
+                    EgonHvmvSubstationVoronoi.id.label("voronoi_id"),
                 )
-            )
-            .subquery()
-        )
-
-        voronoi_cuts = VoronoiMunicipalityCuts.__table__.insert().from_select(
-            [
-                VoronoiMunicipalityCuts.municipality_id,
-                VoronoiMunicipalityCuts.ags_0,
-                VoronoiMunicipalityCuts.geom,
-                VoronoiMunicipalityCuts.bus_id,
-                VoronoiMunicipalityCuts.voronoi_id,
-            ],
-            q,
-        )
-        session.execute(voronoi_cuts)
-        session.commit()
-
-        # Step 2: Determine number of substations inside cut polygons
-        cuts_substation_subquery = (
-            session.query(
-                VoronoiMunicipalityCuts.id,
-                EgonHvmvSubstation.bus_id,
-                func.ST_Transform(EgonHvmvSubstation.point, 3035).label(
-                    "geom_sub"
-                ),
-                func.count(EgonHvmvSubstation.point).label("subst_count"),
-            )
-            .filter(
-                func.ST_Contains(
-                    VoronoiMunicipalityCuts.geom,
-                    func.ST_Transform(EgonHvmvSubstation.point, 3035),
-                )
-            )
-            .group_by(
-                VoronoiMunicipalityCuts.id,
-                EgonHvmvSubstation.bus_id,
-                EgonHvmvSubstation.point,
-            )
-            .subquery()
-        )
-        session.query(VoronoiMunicipalityCuts).filter(
-            VoronoiMunicipalityCuts.id == cuts_substation_subquery.c.id
-        ).update(
-            {
-                "subst_count": cuts_substation_subquery.c.subst_count,
-                "bus_id": cuts_substation_subquery.c.bus_id,
-                "geom_sub": cuts_substation_subquery.c.geom_sub,
-            },
-            synchronize_session="fetch",
-        )
-        session.commit()
-
-        # Step 3: separate cut polygons with exactly one substation inside
-        # These polygons are taken as reference to assign other parts of cut
-        # polygons subsequently
-        cut_1subst = (
-            session.query(VoronoiMunicipalityCuts)
-            .filter(VoronoiMunicipalityCuts.subst_count == 1)
-            .subquery()
-        )
-
-        originally_1subst = (
-            VoronoiMunicipalityCutsAssigned.__table__.insert().from_select(
-                [
-                    _
-                    for _ in VoronoiMunicipalityCutsAssigned.__table__.columns
-                    if _.name != "temp_id"
-                ],
-                cut_1subst,
-            )
-        )
-        session.execute(originally_1subst)
-        session.commit()
-
-        # Step 4: Assign polygon without a substation to next neighboring
-        # polygon with a substation.
-        # This considers only polygons that are directly neighboring poylgons
-        # without any space in between (aka. polygons touch each other)
-
-        # Initialize with very large number
-        remaining_polygons = [10 ** 10]
-
-        while True:
-            # This loop runs until all polygon that inital haven't had a
-            # substation inside to a next neighboring polygon.
-            # The assignment process is performed iteratively. In each
-            # iteration, touching polygons are used for assignment
-            already_assigned_polygons_query = session.query(
-                VoronoiMunicipalityCutsAssigned.id
-            ).all()
-            already_assigned_polygons = [
-                p for p, in already_assigned_polygons_query
-            ]
-            cut_0subst = (
-                session.query(VoronoiMunicipalityCuts)
-                .filter(VoronoiMunicipalityCuts.subst_count == None)
+                .filter(HvmvSubstPerMunicipality.subst_count > 1)
                 .filter(
-                    VoronoiMunicipalityCuts.id.notin_(
-                        already_assigned_polygons
+                    HvmvSubstPerMunicipality.geometry.intersects(
+                        func.ST_Transform(EgonHvmvSubstationVoronoi.geom, 3035)
                     )
                 )
+                .subquery()
             )
-            remaining_polygons.append(len(cut_0subst.all()))
 
-            # Select polygons for assignment
-            # This has to be done iteratively, because already assigned
-            # polygons that don't have a substation assigned initially, are
-            # considered as assignment target subsequently
-            relevant_columns = [
-                col
-                for col in VoronoiMunicipalityCutsAssigned.__table__.columns
-                if col.name != "temp_id"
-            ]
-            polygons_for_assignment = session.query(
-                *relevant_columns
-            ).subquery()
+            voronoi_cuts = VoronoiMunicipalityCuts.__table__.insert().from_select(
+                [
+                    VoronoiMunicipalityCuts.municipality_id,
+                    VoronoiMunicipalityCuts.ags_0,
+                    VoronoiMunicipalityCuts.geom,
+                    VoronoiMunicipalityCuts.bus_id,
+                    VoronoiMunicipalityCuts.voronoi_id,
+                ],
+                q,
+            )
+            session.execute(voronoi_cuts)
+            session.commit()
 
-            # Check if in the last iteration polygons were assigned. If not,
-            # there are no further polygons without a substation that touch
-            # another polygon that has a substation or that was already
-            # assigned
-            if (remaining_polygons[-1]) < remaining_polygons[-2]:
-                assign_substation_municipality_fragments(
-                    polygons_for_assignment,
-                    cut_0subst.subquery(),
-                    "touches",
-                    session,
+            # Step 2: Determine number of substations inside cut polygons
+            cuts_substation_subquery = (
+                session.query(
+                    VoronoiMunicipalityCuts.id,
+                    EgonHvmvSubstation.bus_id,
+                    func.ST_Transform(EgonHvmvSubstation.point, 3035).label(
+                        "geom_sub"
+                    ),
+                    func.count(EgonHvmvSubstation.point).label("subst_count"),
                 )
-            else:
-                break
+                .filter(
+                    func.ST_Contains(
+                        VoronoiMunicipalityCuts.geom,
+                        func.ST_Transform(EgonHvmvSubstation.point, 3035),
+                    )
+                )
+                .group_by(
+                    VoronoiMunicipalityCuts.id,
+                    EgonHvmvSubstation.bus_id,
+                    EgonHvmvSubstation.point,
+                )
+                .subquery()
+            )
+            session.query(VoronoiMunicipalityCuts).filter(
+                VoronoiMunicipalityCuts.id == cuts_substation_subquery.c.id
+            ).update(
+                {
+                    "subst_count": cuts_substation_subquery.c.subst_count,
+                    "bus_id": cuts_substation_subquery.c.bus_id,
+                    "geom_sub": cuts_substation_subquery.c.geom_sub,
+                },
+                synchronize_session="fetch",
+            )
+            session.commit()
 
-        # Step 5: Assign remaining polygons that are non-touching
-        assign_substation_municipality_fragments(
-            polygons_for_assignment,
-            cut_0subst.subquery(),
-            "min_distance",
-            session,
-        )
+            # Step 3: separate cut polygons with exactly one substation inside
+            # These polygons are taken as reference to assign other parts of cut
+            # polygons subsequently
+            cut_1subst = (
+                session.query(VoronoiMunicipalityCuts)
+                .filter(VoronoiMunicipalityCuts.subst_count == 1)
+                .subquery()
+            )
+
+            originally_1subst = (
+                VoronoiMunicipalityCutsAssigned.__table__.insert().from_select(
+                    [
+                        _
+                        for _ in VoronoiMunicipalityCutsAssigned.__table__.columns
+                        if _.name != "temp_id"
+                    ],
+                    cut_1subst,
+                )
+            )
+            session.execute(originally_1subst)
+            session.commit()
+
+            # Step 4: Assign polygon without a substation to next neighboring
+            # polygon with a substation.
+            # This considers only polygons that are directly neighboring poylgons
+            # without any space in between (aka. polygons touch each other)
+
+            # Initialize with very large number
+            remaining_polygons = [10 ** 10]
+
+            while True:
+                # This loop runs until all polygon that inital haven't had a
+                # substation inside to a next neighboring polygon.
+                # The assignment process is performed iteratively. In each
+                # iteration, touching polygons are used for assignment
+                already_assigned_polygons_query = session.query(
+                    VoronoiMunicipalityCutsAssigned.id
+                ).all()
+                already_assigned_polygons = [
+                    p for p, in already_assigned_polygons_query
+                ]
+                cut_0subst = (
+                    session.query(VoronoiMunicipalityCuts)
+                    .filter(VoronoiMunicipalityCuts.subst_count == None)
+                    .filter(
+                        VoronoiMunicipalityCuts.id.notin_(
+                            already_assigned_polygons
+                        )
+                    )
+                )
+                remaining_polygons.append(len(cut_0subst.all()))
+
+                # Select polygons for assignment
+                # This has to be done iteratively, because already assigned
+                # polygons that don't have a substation assigned initially, are
+                # considered as assignment target subsequently
+                relevant_columns = [
+                    col
+                    for col in VoronoiMunicipalityCutsAssigned.__table__.columns
+                    if col.name != "temp_id"
+                ]
+                polygons_for_assignment = session.query(
+                    *relevant_columns
+                ).subquery()
+
+                # Check if in the last iteration polygons were assigned. If not,
+                # there are no further polygons without a substation that touch
+                # another polygon that has a substation or that was already
+                # assigned
+                if (remaining_polygons[-1]) < remaining_polygons[-2]:
+                    assign_substation_municipality_fragments(
+                        polygons_for_assignment,
+                        cut_0subst.subquery(),
+                        "touches",
+                        session,
+                    )
+                else:
+                    break
+
+            # Step 5: Assign remaining polygons that are non-touching
+            assign_substation_municipality_fragments(
+                polygons_for_assignment,
+                cut_0subst.subquery(),
+                "min_distance",
+                session,
+            )
 
 
 def assign_substation_municipality_fragments(
@@ -573,124 +587,136 @@ def merge_polygons_to_grid_district():
     """
 
     engine = db.engine()
-    MvGridDistrictsDissolved.__table__.drop(bind=engine, checkfirst=True)
-    MvGridDistrictsDissolved.__table__.create(bind=engine)
-    MvGridDistricts.__table__.drop(bind=engine, checkfirst=True)
-    MvGridDistricts.__table__.create(bind=engine)
 
-    with session_scope() as session:
-        # Step 1: Merge municipality parts cut by voronoi polygons according
-        # to prior determined associated substation
-        joined_municipality_parts = session.query(
-            VoronoiMunicipalityCutsAssigned.bus_id,
-            func.ST_Multi(
-                func.ST_Union(VoronoiMunicipalityCutsAssigned.geom)
-            ).label("geom"),
-            func.sum(func.ST_Area(VoronoiMunicipalityCutsAssigned.geom)).label(
-                "area"
-            ),
-        ).group_by(VoronoiMunicipalityCutsAssigned.bus_id)
+    table_name = "MvGridDistricts"
 
-        joined_municipality_parts_insert = (
-            MvGridDistrictsDissolved.__table__.insert().from_select(
-                [
-                    c
-                    for c in MvGridDistrictsDissolved.__table__.columns
-                    if c.name != "id"
-                ],
-                joined_municipality_parts.subquery(),
-            )
-        )
-        session.execute(joined_municipality_parts_insert)
-        session.commit()
+    # check if table exists
+    if inspect(engine).has_table(table_name, schema="grid"):
+        print(f"There is alreay a table {table_name}, skipping re-creation.")
+        create_table = False
+    else:  # optionally force re-creation
+        create_table = True
 
-        # Step 2: Insert municipality polygons with exactly one substation
-        one_substation = (
-            session.query(
-                EgonHvmvSubstation.bus_id,
-                func.ST_Multi(HvmvSubstPerMunicipality.geometry).label("geom"),
-                func.ST_Area(
-                    func.ST_Multi(HvmvSubstPerMunicipality.geometry)
-                ).label("area"),
-            )
-            .filter(HvmvSubstPerMunicipality.subst_count == 1)
-            .filter(
-                func.ST_Contains(
-                    HvmvSubstPerMunicipality.geometry,
-                    func.ST_Transform(EgonHvmvSubstation.point, 3035),
+    if create_table:
+
+        MvGridDistrictsDissolved.__table__.drop(bind=engine, checkfirst=True)
+        MvGridDistrictsDissolved.__table__.create(bind=engine)
+        MvGridDistricts.__table__.drop(bind=engine, checkfirst=True)
+        MvGridDistricts.__table__.create(bind=engine)
+
+        with session_scope() as session:
+            # Step 1: Merge municipality parts cut by voronoi polygons according
+            # to prior determined associated substation
+            joined_municipality_parts = session.query(
+                VoronoiMunicipalityCutsAssigned.bus_id,
+                func.ST_Multi(
+                    func.ST_Union(VoronoiMunicipalityCutsAssigned.geom)
+                ).label("geom"),
+                func.sum(func.ST_Area(VoronoiMunicipalityCutsAssigned.geom)).label(
+                    "area"
+                ),
+            ).group_by(VoronoiMunicipalityCutsAssigned.bus_id)
+
+            joined_municipality_parts_insert = (
+                MvGridDistrictsDissolved.__table__.insert().from_select(
+                    [
+                        c
+                        for c in MvGridDistrictsDissolved.__table__.columns
+                        if c.name != "id"
+                    ],
+                    joined_municipality_parts.subquery(),
                 )
             )
-        )
+            session.execute(joined_municipality_parts_insert)
+            session.commit()
 
-        one_substation_insert = (
-            MvGridDistrictsDissolved.__table__.insert().from_select(
-                [
-                    c
-                    for c in MvGridDistrictsDissolved.__table__.columns
-                    if c.name != "id"
-                ],
-                one_substation.subquery(),
-            )
-        )
-        session.execute(one_substation_insert)
-        session.commit()
-
-        # Step 3: Assign municipality polygons without a substation and insert
-        # to table
-        already_assigned = []
-        while True:
-            previous_ids_length = len(already_assigned)
-            with_substation = session.query(
-                MvGridDistrictsDissolved.bus_id,
-                MvGridDistrictsDissolved.geom,
-                MvGridDistrictsDissolved.id,
-            ).subquery()
-            without_substation = (
+            # Step 2: Insert municipality polygons with exactly one substation
+            one_substation = (
                 session.query(
-                    HvmvSubstPerMunicipality.geometry.label("geom"),
-                    HvmvSubstPerMunicipality.id,
+                    EgonHvmvSubstation.bus_id,
+                    func.ST_Multi(HvmvSubstPerMunicipality.geometry).label("geom"),
+                    func.ST_Area(
+                        func.ST_Multi(HvmvSubstPerMunicipality.geometry)
+                    ).label("area"),
                 )
-                .filter(HvmvSubstPerMunicipality.subst_count == 0)
-                .filter(HvmvSubstPerMunicipality.id.notin_(already_assigned))
-                .subquery()
+                .filter(HvmvSubstPerMunicipality.subst_count == 1)
+                .filter(
+                    func.ST_Contains(
+                        HvmvSubstPerMunicipality.geometry,
+                        func.ST_Transform(EgonHvmvSubstation.point, 3035),
+                    )
+                )
             )
 
-            # Find nearest neighboring polygon from with_substation for each
-            # polygon from without_substation
-            newly_assigned_ids = nearest_polygon_with_substation(
-                with_substation, without_substation, "touches", session
-            )
-            already_assigned.extend(newly_assigned_ids)
-
-            if not len(already_assigned) > previous_ids_length:
-                nearest_polygon_with_substation(
-                    with_substation, without_substation, "within", session
+            one_substation_insert = (
+                MvGridDistrictsDissolved.__table__.insert().from_select(
+                    [
+                        c
+                        for c in MvGridDistrictsDissolved.__table__.columns
+                        if c.name != "id"
+                    ],
+                    one_substation.subquery(),
                 )
-                break
+            )
+            session.execute(one_substation_insert)
+            session.commit()
 
-        # Step 4: Merge MV grid district parts
-        # Forms one (multi-)polygon for each substation
-        joined_mv_grid_district_parts = session.query(
-            MvGridDistrictsDissolved.bus_id,
-            func.ST_Multi(
-                func.ST_Buffer(
+            # Step 3: Assign municipality polygons without a substation and insert
+            # to table
+            already_assigned = []
+            while True:
+                previous_ids_length = len(already_assigned)
+                with_substation = session.query(
+                    MvGridDistrictsDissolved.bus_id,
+                    MvGridDistrictsDissolved.geom,
+                    MvGridDistrictsDissolved.id,
+                ).subquery()
+                without_substation = (
+                    session.query(
+                        HvmvSubstPerMunicipality.geometry.label("geom"),
+                        HvmvSubstPerMunicipality.id,
+                    )
+                    .filter(HvmvSubstPerMunicipality.subst_count == 0)
+                    .filter(HvmvSubstPerMunicipality.id.notin_(already_assigned))
+                    .subquery()
+                )
+
+                # Find nearest neighboring polygon from with_substation for each
+                # polygon from without_substation
+                newly_assigned_ids = nearest_polygon_with_substation(
+                    with_substation, without_substation, "touches", session
+                )
+                already_assigned.extend(newly_assigned_ids)
+
+                if not len(already_assigned) > previous_ids_length:
+                    nearest_polygon_with_substation(
+                        with_substation, without_substation, "within", session
+                    )
+                    break
+
+            # Step 4: Merge MV grid district parts
+            # Forms one (multi-)polygon for each substation
+            joined_mv_grid_district_parts = session.query(
+                MvGridDistrictsDissolved.bus_id,
+                func.ST_Multi(
                     func.ST_Buffer(
-                        func.ST_Union(MvGridDistrictsDissolved.geom), 0.1
-                    ),
-                    -0.1,
-                )
-            ).label("geom"),
-            func.sum(MvGridDistrictsDissolved.area).label("area"),
-        ).group_by(MvGridDistrictsDissolved.bus_id)
+                        func.ST_Buffer(
+                            func.ST_Union(MvGridDistrictsDissolved.geom), 0.1
+                        ),
+                        -0.1,
+                    )
+                ).label("geom"),
+                func.sum(MvGridDistrictsDissolved.area).label("area"),
+            ).group_by(MvGridDistrictsDissolved.bus_id)
 
-        joined_mv_grid_district_parts_insert = (
-            MvGridDistricts.__table__.insert().from_select(
-                MvGridDistricts.__table__.columns,
-                joined_mv_grid_district_parts.subquery(),
+            joined_mv_grid_district_parts_insert = (
+                MvGridDistricts.__table__.insert().from_select(
+                    MvGridDistricts.__table__.columns,
+                    joined_mv_grid_district_parts.subquery(),
+                )
             )
-        )
-        session.execute(joined_mv_grid_district_parts_insert)
-        session.commit()
+            session.execute(joined_mv_grid_district_parts_insert)
+            session.commit()
 
 
 def nearest_polygon_with_substation(
@@ -817,12 +843,20 @@ def define_mv_grid_districts():
     merge_polygons_to_grid_district()
 
     engine = db.engine()
-    HvmvSubstPerMunicipality.__table__.drop(bind=engine, checkfirst=True)
-    VoronoiMunicipalityCuts.__table__.drop(bind=engine, checkfirst=True)
-    VoronoiMunicipalityCutsAssigned.__table__.drop(
-        bind=engine, checkfirst=True
-    )
-    MvGridDistrictsDissolved.__table__.drop(bind=engine, checkfirst=True)
+
+    table_name = "HvmvSubstPerMunicipality"
+
+    # check if table exists
+    if inspect(engine).has_table(table_name, schema="grid"):
+        print(f"There is alreay a table {table_name}, skipping re-creation.")
+
+    else:  # optionally force re-creation
+        HvmvSubstPerMunicipality.__table__.drop(bind=engine, checkfirst=True)
+        VoronoiMunicipalityCuts.__table__.drop(bind=engine, checkfirst=True)
+        VoronoiMunicipalityCutsAssigned.__table__.drop(
+            bind=engine, checkfirst=True
+        )
+        MvGridDistrictsDissolved.__table__.drop(bind=engine, checkfirst=True)
 
 
 mv_grid_districts_setup = partial(
