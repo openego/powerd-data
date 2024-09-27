@@ -567,6 +567,7 @@ def insert_hh_demand(scenario, year, engine):
     None.
 
     """
+    print(f"insert_hh_demand for year {year}.")
     targets = egon.data.config.datasets()["demandregio_household_demand"][
         "targets"
     ]["household_demand"]
@@ -616,7 +617,7 @@ def insert_cts_ind(scenario, year, engine, target_values):
     Parameters
     ----------
     scenario : str
-        Name of the corresponing scenario.
+        Name of the corresponding scenario.
     year : int
         The number of households per region is taken from this year.
     target_values : dict
@@ -702,7 +703,8 @@ def insert_household_demand():
 
     scenarios = egon.data.config.settings()["egon-data"]["--scenarios"]
 
-    scenarios.append("eGon2021")
+    if not True:  # lets check what happens if we turn that off ?
+        scenarios.append("eGon2021")
 
     for t in targets:
         db.execute_sql(
