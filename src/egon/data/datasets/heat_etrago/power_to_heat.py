@@ -44,14 +44,14 @@ def insert_individual_power_to_heat(scenario):
         DELETE FROM {targets['heat_links']['schema']}.
         {targets['heat_links']['table']}
         WHERE carrier IN ('individual_heat_pump', 'rural_heat_pump')
-        AND bus0 IN 
-        (SELECT bus_id 
+        AND bus0 IN
+        (SELECT bus_id
          FROM {targets['heat_buses']['schema']}.
          {targets['heat_buses']['table']}
          WHERE scn_name = '{scenario}'
          AND country = 'DE')
-        AND bus1 IN 
-        (SELECT bus_id 
+        AND bus1 IN
+        (SELECT bus_id
          FROM {targets['heat_buses']['schema']}.
          {targets['heat_buses']['table']}
          WHERE scn_name = '{scenario}'
@@ -60,8 +60,7 @@ def insert_individual_power_to_heat(scenario):
     )
 
     # Select heat pumps for individual heating
-    heat_pumps = db.select_dataframe(
-        f"""
+    q = f"""
         SELECT mv_grid_id as power_bus,
         a.carrier, capacity, b.bus_id as heat_bus, d.feedin as cop
         FROM {sources['individual_heating_supply']['schema']}.
@@ -84,7 +83,13 @@ def insert_individual_power_to_heat(scenario):
         AND b.carrier = 'rural_heat'
         AND d.carrier = 'heat_pump_cop'
         """
-    )
+
+    print("q:::", q)
+
+    heat_pumps = db.select_dataframe(q)
+
+    print("len heat_pumps", len(heat_pumps))
+    print(heat_pumps.head(10))
 
     # Assign voltage level
     heat_pumps["voltage_level"] = 7
@@ -139,14 +144,14 @@ def insert_central_power_to_heat(scenario):
         DELETE FROM {targets['heat_links']['schema']}.
         {targets['heat_links']['table']}
         WHERE carrier = 'central_heat_pump'
-        AND bus0 IN 
-        (SELECT bus_id 
+        AND bus0 IN
+        (SELECT bus_id
          FROM {targets['heat_buses']['schema']}.
          {targets['heat_buses']['table']}
          WHERE scn_name = '{scenario}'
          AND country = 'DE')
-        AND bus1 IN 
-        (SELECT bus_id 
+        AND bus1 IN
+        (SELECT bus_id
          FROM {targets['heat_buses']['schema']}.
          {targets['heat_buses']['table']}
          WHERE scn_name = '{scenario}'
@@ -157,7 +162,7 @@ def insert_central_power_to_heat(scenario):
     # Select heat pumps in district heating
     central_heat_pumps = db.select_geodataframe(
         f"""
-        SELECT a.index, a.district_heating_id, a.carrier, a.category, a.capacity, a.geometry, a.scenario, d.feedin as cop 
+        SELECT a.index, a.district_heating_id, a.carrier, a.category, a.capacity, a.geometry, a.scenario, d.feedin as cop
         FROM {sources['district_heating_supply']['schema']}.
             {sources['district_heating_supply']['table']} a
         JOIN {sources['weather_cells']['schema']}.
@@ -208,14 +213,14 @@ def insert_central_power_to_heat(scenario):
         DELETE FROM {targets['heat_links']['schema']}.
         {targets['heat_links']['table']}
         WHERE carrier = 'central_resistive_heater'
-        AND bus0 IN 
-        (SELECT bus_id 
+        AND bus0 IN
+        (SELECT bus_id
          FROM {targets['heat_buses']['schema']}.
          {targets['heat_buses']['table']}
          WHERE scn_name = '{scenario}'
          AND country = 'DE')
-        AND bus1 IN 
-        (SELECT bus_id 
+        AND bus1 IN
+        (SELECT bus_id
          FROM {targets['heat_buses']['schema']}.
          {targets['heat_buses']['table']}
          WHERE scn_name = '{scenario}'
@@ -225,7 +230,7 @@ def insert_central_power_to_heat(scenario):
     # Select heat pumps in district heating
     central_resistive_heater = db.select_geodataframe(
         f"""
-        SELECT district_heating_id, carrier, category, SUM(capacity) as capacity, 
+        SELECT district_heating_id, carrier, category, SUM(capacity) as capacity,
                geometry, scenario
         FROM {sources['district_heating_supply']['schema']}.
             {sources['district_heating_supply']['table']}
@@ -297,7 +302,7 @@ def insert_power_to_heat_per_level(
     None.
 
     """
-    sources = config.datasets()["etrago_heat"]["sources"]
+    # sources = config.datasets()["etrago_heat"]["sources"]  todo: unused, can be deleted?
     targets = config.datasets()["etrago_heat"]["targets"]
 
     if "central" in carrier:
@@ -320,6 +325,9 @@ def insert_power_to_heat_per_level(
     )
 
     # Create topology of heat pumps
+    print("len(geom_buses)", len(geom_buses))
+    print("len gdf", len(gdf))
+
     gdf["geom_power"] = geom_buses.geom[gdf.power_bus].values
     gdf["geom_heat"] = geom_buses.loc[gdf.heat_bus, "geom"].reset_index().geom
     gdf["geometry"] = gdf.apply(
