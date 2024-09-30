@@ -553,14 +553,20 @@ solar_rooftop:
     generator_timeseries:
       schema: 'grid'
       table: 'egon_etrago_generator_timeseries'
+    generators:
+      schema: 'grid'
+      table: 'egon_etrago_generator'
 
 data-bundle:
   sources:
     zenodo:
       deposit_id: 10226009
+      deposit_id_powerd: 11618105
   targets:
     file:
       'data_bundle_egon_data.zip'
+    file_powerd:
+      'data_bundle_powerd_data.zip'
 
 pypsa-technology-data:
   sources:
