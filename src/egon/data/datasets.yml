@@ -1,13 +1,13 @@
 openstreetmap:
   original_data:
     source:
-      url: "https://download.geofabrik.de/europe/germany-200101.osm.pbf"
-      url_testmode: "https://download.geofabrik.de/europe/germany/schleswig-holstein-200101.osm.pbf"
+      url: "https://download.geofabrik.de/europe/germany-DATE.osm.pbf"
+      url_testmode: "https://download.geofabrik.de/europe/germany/schleswig-holstein-DATE.osm.pbf"
       stylefile: "oedb.style"
     target:
       table_prefix: "osm"
-      file: "germany-200101.osm.pbf"
-      file_testmode: "schleswig-holstein-200101.osm.pbf"
+      file: "germany-DATE.osm.pbf"
+      file_testmode: "schleswig-holstein-DATE.osm.pbf"
   processed:
     schema: "openstreetmap"
     tables:
@@ -1139,9 +1139,12 @@ emobility_mit:
         file_processed: "regiostar-referenzdateien_preprocessed.csv"
         sheet: "ReferenzGebietsstand2020"
       KBA:
-        url: "https://www.kba.de/SharedDocs/Downloads/DE/Statistik/Fahrzeuge/FZ1/fz1_2020_xlsx.xlsx?__blob=publicationFile&v=2"
-        file: "fz1_2020_xlsx.xlsx"
-        file_processed: "fz1_2020_preprocessed.csv"
+        url: "https://www.kba.de/SharedDocs/Downloads/DE/Statistik/Fahrzeuge/FZ1/fz1_YEAR_xlsx.xlsx?__blob=publicationFile&v=2"
+        url_fallback: "https://www.kba.de/SharedDocs/Downloads/DE/Statistik/Fahrzeuge/FZ1/fz1_2020_xlsx.xlsx?__blob=publicationFile&v=2"
+        file: "fz1_YEAR_xlsx.xlsx"
+        file_fallback: "fz1_2020_xlsx.xlsx"
+        file_processed: "fz1_YEAR_preprocessed.csv"
+        file_processed_fallback: "fz1_2020_preprocessed.csv"
         sheet: "FZ1.1"
         columns: "D, J:N"
         skiprows: 8
