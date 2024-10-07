@@ -10,9 +10,7 @@ import pandas as pd
 from egon.data import db
 import egon.data.datasets.era5 as era
 
-
 from math import ceil
-
 
 Base = declarative_base()
 
@@ -154,7 +152,7 @@ def map_climate_zones_to_zensus():
     )
 
 
-def daily_demand_shares_per_climate_zone():
+def daily_demand_shares_per_climate_zone(year: int = 2019):
     """Calculates shares of heat demand per day for each cliamte zone
 
     Returns
@@ -162,6 +160,7 @@ def daily_demand_shares_per_climate_zone():
     None.
 
     """
+    assert year, f"year mandatory for daily_demand_shares_per_climate_zone but is given year={year}"
     # Drop old table and create new one
     engine = db.engine()
     EgonDailyHeatDemandPerClimateZone.__table__.drop(
@@ -172,13 +171,13 @@ def daily_demand_shares_per_climate_zone():
     )
 
     # Calulate daily demand shares
-    h = h_value()
+    h = h_value(year=year)
 
     # Normalize data to sum()=1
     daily_demand_shares = h.resample("d").sum() / h.sum()
 
     # Extract temperature class for each day and climate zone
-    temperature_classes = temp_interval().resample("D").max()
+    temperature_classes = temp_interval(year=year).resample("D").max()
 
     # Initilize dataframe
     df = pd.DataFrame(
@@ -242,11 +241,11 @@ class IdpProfiles:
 
         if how == "geometric_series":
             temperature_mean = (
-                temperature
-                + 0.5 * np.roll(temperature, 24)
-                + 0.25 * np.roll(temperature, 48)
-                + 0.125 * np.roll(temperature, 72)
-            ) / 1.875
+                                   temperature
+                                   + 0.5 * np.roll(temperature, 24)
+                                   + 0.25 * np.roll(temperature, 48)
+                                   + 0.125 * np.roll(temperature, 72)
+                               ) / 1.875
         elif how == "mean":
             temperature_mean = temperature
 
@@ -317,7 +316,7 @@ def temperature_profile_extract():
     return temperature_profile
 
 
-def temp_interval():
+def temp_interval(year=None):
     """
     Description: Create Dataframe with temperature data for TRY Climate Zones
     Returns
@@ -326,7 +325,8 @@ def temp_interval():
         Hourly temperature intrerval of all 15 TRY Climate station#s temperature profile
 
     """
-    index = pd.date_range(datetime(2019, 1, 1, 0), periods=8760, freq="H")
+    assert year, f"year mandatory for daily_demand_shares_per_climate_zone but is given year={year}"
+    index = pd.date_range(datetime(year, 1, 1, 0), periods=8760, freq="H")
     temperature_interval = pd.DataFrame()
     temp_profile = temperature_profile_extract()
 
@@ -342,7 +342,7 @@ def temp_interval():
     return temperature_interval
 
 
-def h_value():
+def h_value(year=None):
     """
     Description: Assignment of daily demand scaling factor to each day of all TRY Climate Zones
 
@@ -353,7 +353,8 @@ def h_value():
         Extracted from demandlib.
 
     """
-    index = pd.date_range(datetime(2019, 1, 1, 0), periods=8760, freq="H")
+    assert year, f"year mandatory for h_value but is given year={year}"
+    index = pd.date_range(datetime(year, 1, 1, 0), periods=8760, freq="H")
 
     a = 3.0469695
 
