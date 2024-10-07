@@ -79,9 +79,6 @@ def insert_PHES():
 
 
 def extendable_batteries_per_scenario(scenario):
-
-    assert isinstance(scenario, str), f"Scenario has to be String but got scenario: {scenario}"
-
     # Get datasets configuration
     sources = config.datasets()["storage_etrago"]["sources"]
     targets = config.datasets()["storage_etrago"]["targets"]
