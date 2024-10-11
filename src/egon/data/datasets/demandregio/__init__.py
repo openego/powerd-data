@@ -141,6 +141,26 @@ def create_tables():
     )
 
 
+demand_regio_scaling_lookup = {
+    # 2035 given from eGon2035
+    2035: {"household": 119000000},  # 119 TWh NEP 2021 scenario c 2035
+    # 2013 to 2023 src.:
+    # https://www.bdew.de/service/daten-und-grafiken/nettostromverbrauch-nach-verbrauchergruppen/
+    # or just google bdew nettostromverbrauch nach verbrauchsgruppen to find the most actual bdew src
+    2013: {"industry": 241000000, "household": 128000000, "CTS": 153000000},
+    2014: {"industry": 242000000, "household": 125000000, "CTS": 143000000},
+    2015: {"industry": 238000000, "household": 128000000, "CTS": 145000000},
+    2016: {"industry": 240000000, "household": 128000000, "CTS": 146000000},
+    2017: {"industry": 240000000, "household": 131000000, "CTS": 144000000},
+    2018: {"industry": 239000000, "household": 128000000, "CTS": 142000000},
+    2019: {"industry": 229000000, "household": 127000000, "CTS": 139000000},
+    2020: {"industry": 217000000, "household": 128000000, "CTS": 134000000},
+    2021: {"industry": 225000000, "household": 139000000, "CTS": 127000000},
+    2022: {"industry": 212000000, "household": 135000000, "CTS": 123000000},
+    2023: {"industry": 201000000, "household": 131000000, "CTS": 118000000},
+}
+
+
 def data_in_boundaries(df):
     """Select rows with nuts3 code within boundaries, used for testmode
 
