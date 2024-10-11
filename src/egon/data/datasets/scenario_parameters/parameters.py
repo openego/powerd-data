@@ -965,27 +965,58 @@ def gas(scenario):
 
         year = int(scenario.split("status")[-1])
         costs = read_csv(year + 1)  # consider end of target year
-        parameters = {
-            "main_gas_carrier": "CH4",
-        }
-
-        parameters["marginal_cost"] = {
+        parameters = {"main_gas_carrier": "CH4", "marginal_cost": {
             "CH4": global_settings(scenario)["fuel_costs"]["gas"]
                    + global_settings(scenario)["co2_costs"]
                    * global_settings(scenario)["co2_emissions"]["gas"],
             "OCGT": read_costs(costs, "OCGT", "VOM"),
             "biogas": global_settings(scenario)["fuel_costs"]["gas"],
             "chp_gas": read_costs(costs, "central gas CHP", "VOM"),
-        }
-        # Insert effciencies in p.u.
-        parameters["efficiency"] = {
+        }, "efficiency": {
             "OCGT": read_costs(costs, "OCGT", "efficiency"),
-        }
+        }}
+
+        # Insert effciencies in p.u.
 
     else:
         print(f"Scenario name {scenario} is not valid.")
 
     return parameters
+
+
+# remod ev count from here:
+# https://www.energy-charts.info/charts/remod_sector_data/chart.htm?source=car&legendItems=010
+# or here https://www.energy-charts.info/charts/remod_sector_data/chart.htm
+# or here https://www.energy-charts.info/charts/remod_sector_data/chart.htm?l=de&c=DE&source=car
+remod_ev_count_lookup = {
+    2019: 0,
+    2020: 100_000,
+    2021: 100_000,
+    2022: 1_200_000,
+    2023: 3_100_000,
+    2024: 5_200_000,
+    2025: 7_400_000,
+    2026: 9_700_000,
+    2027: 12_100_000,
+    2028: 14_500_000,
+    2029: 17_000_000,
+    2030: 19_700_000,
+    2031: 22_300_000,
+    2032: 25_000_000,
+    2033: 27_700_000,
+    2034: 30_400_000,
+    2035: 33_100_000,
+    2036: 35_800_000,
+    2037: 37_300_000,
+    2038: 38_200_000,
+    2039: 38_900_000,
+    2040: 39_400_000,
+    2041: 39_900_000,
+    2042: 40_200_000,
+    2043: 40_600_000,
+    2044: 40_900_000,
+    2045: 41_100_000,
+}
 
 
 def mobility(scenario):
