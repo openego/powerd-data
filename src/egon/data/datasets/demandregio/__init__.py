@@ -484,7 +484,11 @@ def disagg_households_power(
         # df *= 119000000 / df.sum().sum()
         # demand_regio_scaling_lookup[year]["household"] = 119000000
         df *= demand_regio_scaling_lookup[year]["household"] / df.sum().sum()
-        # TODO: ensure validation after run inf possible, e.g. via entso-e or energy-charts
+        # TODO: ensure validation after run inf possible, e.g. via entso-e or energy-charts,
+        #  also check and ensure time series if shifting needs to be applied, e.g.
+        #  4th march 2019 -> Rosenmontag is Montag is holdiay and NOT working day
+        #  4th march 2020 -> Wednesday no holiday normal working day
+        #  4th march 2024 -> Monday is normal working day
 
     elif scenario == "eGon100RE":
         # chose demand per household size from survey without DHW
