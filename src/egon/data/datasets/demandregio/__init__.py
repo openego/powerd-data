@@ -141,6 +141,7 @@ def create_tables():
     )
 
 
+# TODO: UPDATE 2024 when values are public, maybe in febrzary 2025? Sofar applying latest data 2023 for 2024
 demand_regio_scaling_lookup = {
     # 2035 given from eGon2035
     2035: {"household": 119000000, "industry": 225400, "CTS": 135300},  # 119 TWh NEP 2021 scenario c 2035
@@ -158,6 +159,7 @@ demand_regio_scaling_lookup = {
     2021: {"industry": 225000000, "household": 139000000, "CTS": 127000000},
     2022: {"industry": 212000000, "household": 135000000, "CTS": 123000000},
     2023: {"industry": 201000000, "household": 131000000, "CTS": 118000000},
+    2024: {"industry": 201000000, "household": 131000000, "CTS": 118000000},
 }
 
 
