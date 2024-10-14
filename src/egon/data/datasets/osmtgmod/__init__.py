@@ -767,31 +767,32 @@ def to_pypsa():
                 """
         )
 
-
-def fix_transformer_snom():
-    """rename s_nom from osmtgmod to s_nom_osmtgmod to apply approach of RLI as s_nom"""
-
-    db.execute_sql(
-        """
-        ALTER TABLE grid.egon_etrago_transformer RENAME COLUMN s_nom TO s_nom_osmtgmod;
-        ALTER TABLE grid.egon_etrago_transformer ADD s_nom smallint;
-        """)
-    db.execute_sql(
-        """
-        UPDATE grid.egon_etrago_transformer AS t
-        SET s_nom = CAST(
-            LEAST(
-                (SELECT SUM(COALESCE(l.s_nom,0))
-                 FROM grid.egon_etrago_line AS l
-                 WHERE (l.bus0 = t.bus0 OR l.bus1 = t.bus0)
-                 AND l.scn_name = t.scn_name),
-                (SELECT SUM(COALESCE(l.s_nom,0))
-                 FROM grid.egon_etrago_line AS l
-                 WHERE (l.bus0 = t.bus1 OR l.bus1 = t.bus1)
-                 AND l.scn_name = t.scn_name)
-            ) AS smallint
-        );
-        """)
+# ULF should have fixed taht directly in OSMTGMOD on 2024 October 08,
+# Change from v_S_long_MVA_sum_max to v_S_long_MVA_sum_min check:
+# https://github.com/openego/osmTGmod/commit/e6ae3b8522c67b863cb625cb5bf3e2a6df1fe5ef
+# def fix_transformer_snom():
+#    """rename s_nom from osmtgmod to s_nom_osmtgmod to apply approach of RLI as s_nom"""
+#    db.execute_sql(
+#        """
+#        ALTER TABLE grid.egon_etrago_transformer RENAME COLUMN s_nom TO s_nom_osmtgmod;
+#        ALTER TABLE grid.egon_etrago_transformer ADD s_nom smallint;
+#        """)
+#    db.execute_sql(
+#        """
+#        UPDATE grid.egon_etrago_transformer AS t
+#        SET s_nom = CAST(
+#            LEAST(
+#                (SELECT SUM(COALESCE(l.s_nom,0))
+#                 FROM grid.egon_etrago_line AS l
+#                 WHERE (l.bus0 = t.bus0 OR l.bus1 = t.bus0)
+#                 AND l.scn_name = t.scn_name),
+#                (SELECT SUM(COALESCE(l.s_nom,0))
+#                 FROM grid.egon_etrago_line AS l
+#                 WHERE (l.bus0 = t.bus1 OR l.bus1 = t.bus1)
+#                 AND l.scn_name = t.scn_name)
+#            ) AS smallint
+#        );
+#        """)
 
 
 class Osmtgmod(Dataset):
@@ -807,6 +808,5 @@ class Osmtgmod(Dataset):
                     extract,
                     to_pypsa,
                 },
-                fix_transformer_snom,
             ),
         )
