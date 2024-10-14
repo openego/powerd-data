@@ -142,6 +142,13 @@ def create_tables():
 
 
 # TODO: UPDATE 2024 when values are public, maybe in febrzary 2025? Sofar applying latest data 2023 for 2024
+""" status2023 branch (RLI) assuming values
+https://github.com/openego/powerd-data/blob/features/status2023/src/egon/data/datasets/demandregio/__init__.py#L770
+"status2023": {
+    "CTS": 121160 * 1e3,
+    "industry": 200380 * 1e3
+},
+"""
 demand_regio_scaling_lookup = {
     # 2035 given from eGon2035
     2035: {"household": 119000000, "industry": 225400, "CTS": 135300},  # 119 TWh NEP 2021 scenario c 2035
