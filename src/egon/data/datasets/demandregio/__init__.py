@@ -468,7 +468,7 @@ def disagg_households_power(
     )
 
     # Bottom-Up: Power demand by household sizes in [MWh/a] for each scenario
-    if scenario in ["status2019", "eGon2021", "eGon2035"]:
+    if scenario.startswith("status") | scenario in ["status2019", "eGon2021", "eGon2035"]:
         # chose demand per household size from survey including weighted DHW
         power_per_HH = demand_per_hh_size["weighted DWH"] / 1e3
 
@@ -478,9 +478,13 @@ def disagg_households_power(
             * power_per_HH
         )
 
-        if scenario == "eGon2035":
-            # scale to fit demand of NEP 2021 scebario C 2035 (119TWh)
-            df *= 119000000 / df.sum().sum()
+        # if scenario == "eGon2035":
+        # scale, e.g.
+        # to fit demand of NEP 2021 scebario C 2035 (119TWh)
+        # df *= 119000000 / df.sum().sum()
+        # demand_regio_scaling_lookup[year]["household"] = 119000000
+        df *= demand_regio_scaling_lookup[year]["household"] / df.sum().sum()
+        # TODO: ensure validation after run inf possible, e.g. via entso-e or energy-charts
 
     elif scenario == "eGon100RE":
         # chose demand per household size from survey without DHW
