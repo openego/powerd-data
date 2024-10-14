@@ -143,7 +143,7 @@ def create_tables():
 
 demand_regio_scaling_lookup = {
     # 2035 given from eGon2035
-    2035: {"household": 119000000},  # 119 TWh NEP 2021 scenario c 2035
+    2035: {"household": 119000000, "industry": 225400, "CTS": 135300},  # 119 TWh NEP 2021 scenario c 2035
     # 2013 to 2023 src.:
     # https://www.bdew.de/service/daten-und-grafiken/nettostromverbrauch-nach-verbrauchergruppen/
     # or just google bdew nettostromverbrauch nach verbrauchsgruppen to find the most actual bdew src
@@ -770,27 +770,38 @@ def insert_cts_ind_demands():
 
     scenarios = egon.data.config.settings()["egon-data"]["--scenarios"]
 
-    scenarios.append("eGon2021")
+    # scenarios.append("eGon2021") TODO: do we need that here ? I don't think so.
 
     for scn in scenarios:
         year = scenario_parameters.global_settings(scn)["population_year"]
 
-        if year > 2035:
+        if year > 2035:  # TODO: what is with egon100RE with population year 2050 ?
             year = 2035
 
         # target values per scenario in MWh
         target_values = {
             # according to NEP 2021
             # new consumers will be added seperatly
-            "eGon2035": {"CTS": 135300, "industry": 225400},
+            "eGon2035": {"CTS": 135300, "industry": 225400},  # TODO: are units reasonable comparing to households ?
             # CTS: reduce overall demand from demandregio (without traffic)
             # by share of heat according to JRC IDEES, data from 2011
             # industry: no specific heat demand, use data from demandregio
             "eGon100RE": {"CTS": (1 - (5.96 + 6.13) / 154.64) * 125183.403},
-            # no adjustments for status quo
+            # no adjustments for status quo. # TODO: WHY ? check demand_regio_scaling_lookup
             "eGon2021": {},
             "status2019": {},
         }
+        if scn.startswith("status"):
+            if year in demand_regio_scaling_lookup.keys():
+                # / 1000 due to units having factor 1000
+                _cts_lookup_val = demand_regio_scaling_lookup[year]["CTS"] = 1000
+                _industry_lookup_val = demand_regio_scaling_lookup[year]["industry"] = 1000
+                print(f"For scenario name {scn} year {year} setting target_values for "
+                      f"CTS={_cts_lookup_val} and industry={_industry_lookup_val}")
+                target_values[scn] = {
+                    "CTS": _cts_lookup_val,
+                    "industry": _industry_lookup_val
+                }
 
         insert_cts_ind(scn, year, engine, target_values)
 
