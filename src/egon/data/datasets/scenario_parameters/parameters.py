@@ -1024,10 +1024,10 @@ def gas(scenario):
 # or here https://www.energy-charts.info/charts/remod_sector_data/chart.htm
 # or here https://www.energy-charts.info/charts/remod_sector_data/chart.htm?l=de&c=DE&source=car
 remod_ev_count_lookup = {
-    2019: 0,
-    2020: 100_000,
-    2021: 100_000,
-    2022: 1_200_000,
+    2019: 100_000,    # powerd-data dev branchs has 200_000 ? # TODO: why? are thre other sources, e.g. kba?
+    2020: 200_000,
+    2021: 250_000,    # kba
+    2022: 1_200_000,  # from here on remod_sector_data bev
     2023: 3_100_000,
     2024: 5_200_000,
     2025: 7_400_000,
@@ -1132,21 +1132,32 @@ def mobility(scenario):
     elif scenario == "eGon2021":
         parameters = {}
 
-    elif scenario == "status2019":
-        parameters = {
-            "motorized_individual_travel": {
-                "status2019": {
-                    "ev_count": 200000,
-                    "bev_mini_share": 0.1589,
-                    "bev_medium_share": 0.3533,
-                    "bev_luxury_share": 0.1053,
-                    "phev_mini_share": 0.0984,
-                    "phev_medium_share": 0.2189,
-                    "phev_luxury_share": 0.0652,
-                    "model_parameters": {},
+    elif "status" in scenario:
+        year = int(scenario.split("status")[-1])  # e.g. year=2019 if "status2019"
+        print(f"Scenario {scenario} has year {year}, checking if it exists in remod_ev_count_lookup...")
+        if year in remod_ev_count_lookup.keys():
+            ev_count = remod_ev_count_lookup[year]
+            print(f"Scenario {scenario} with year {year} has ev_count {ev_count}")
+            parameters = {
+                "motorized_individual_travel": {
+                    scenario: {
+                        # e.g. (dev branch) 2019: "ev_count": 200000, reomd 2019: 0 # TODO: why/ check
+                        "ev_count": ev_count,
+                        "bev_mini_share": 0.1589,
+                        "bev_medium_share": 0.3533,
+                        "bev_luxury_share": 0.1053,
+                        "phev_mini_share": 0.0984,
+                        "phev_medium_share": 0.2189,
+                        "phev_luxury_share": 0.0652,
+                        "model_parameters": {},
+                    }
                 }
             }
-        }
+        else:
+            print(f"Scenario {scenario} with year {year} not set in "
+                  f"remod_ev_count_lookup.keys: {remod_ev_count_lookup.keys()}\n"
+                  "Consider to fetch from remod_sector_data on energy_charts: "
+                  "https://www.energy-charts.info/charts/remod_sector_data/chart.htm?l=de&c=DE&source=car")
 
     else:
         print(f"Scenario name {scenario} is not valid.")
