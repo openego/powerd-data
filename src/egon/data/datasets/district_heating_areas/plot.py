@@ -53,7 +53,9 @@ def plot_heat_density_sorted(heat_denisty_per_scenario, scenario_name=None):
     fig, ax = plt.subplots(1, 1)
 
     colors = pd.DataFrame(
-        columns=["share", "curve"], index=["status2019", "eGon2035", "eGon100RE"]
+        columns=["share", "curve"], 
+        index=["status2019", "status2020", "status2021", "status2022", "status2023", "status2024",
+               "eGon2035", "eGon100RE"]
     )
 
     colors["share"]["eGon2035"] = "darkblue"
@@ -62,6 +64,17 @@ def plot_heat_density_sorted(heat_denisty_per_scenario, scenario_name=None):
     colors["curve"]["eGon100RE"] = "orange"
     colors["share"]["status2019"] = "darkgreen"
     colors["curve"]["status2019"] = "green"
+    colors["share"]["status2019"] = "darkgreen"
+    colors["curve"]["status2020"] = "green"
+    colors["share"]["status2020"] = "darkgreen"
+    colors["curve"]["status2021"] = "green"
+    colors["share"]["status2021"] = "darkgreen"
+    colors["curve"]["status2022"] = "green"
+    colors["share"]["status2023"] = "darkgreen"
+    colors["curve"]["status2023"] = "green"
+    colors["share"]["status2024"] = "darkgreen"
+    colors["curve"]["status2024"] = "green"
+    # TODO statusYEAR > status2019 set plotting=False?
 
     for scenario in heat_denisty_per_scenario.keys():
 
@@ -81,7 +94,7 @@ def plot_heat_density_sorted(heat_denisty_per_scenario, scenario_name=None):
             x=total_district_heat / 1000000,
             ls="--",
             lw=0.5,
-            label=(f"{scenario}: District Heating Share of {procent} %"),
+            label=f"{scenario}: District Heating Share of {procent} %",
             color=colors["share"][scenario],
         )
         # add the sorted heat demand density curve
