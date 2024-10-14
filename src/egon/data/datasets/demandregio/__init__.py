@@ -724,6 +724,7 @@ def insert_household_demand():
     scenarios = egon.data.config.settings()["egon-data"]["--scenarios"]
 
     if not True:  # lets check what happens if we turn that off ?
+        # TODO why is this appended?
         scenarios.append("eGon2021")
 
     for t in targets:
