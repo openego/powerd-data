@@ -60,6 +60,9 @@ def _get_year_from_scenario_name(scenario):
     years_dct = {}
     if scenario.startswith("status"):
         year = int(scenario.split("status")[-1])
+        assert year > 2000, \
+            (f"year doesn't seem reasonable due to year is {year} and assert year > 2000. If intention is"
+             " year<2001 it needs to be implemented. Please feel free to update values for missing years.")
         years_dct["weather_year"] = year
         years_dct["population_year"] = year
         years_dct["costs_year"] = year + 1
@@ -165,7 +168,39 @@ def global_settings(scenario, years_dct=None):
             "co2_emissions": co2_emissions_dct,
             "interest_rate": 0.05,  # [p.u.]
         },
+        "status2024": {
+            "weather_year": years_dct["weather_year"],
+            "population_year": years_dct["population_year"],
+            "costs_year": years_dct["costs_year"],
+            "fuel_costs": {
+                "oil": 18.8 * 3.6,  # [EUR/MWh]
+                "gas": 6.46 * 3.6,  # [EUR/MWh]
+                "coal": 3.79 * 3.6,  # [EUR/MWh]
+                "lignite": 1.1 * 3.6,  # [EUR/MWh]
+                "nuclear": 0.47 * 3.6,  # [EUR/MWh]
+                "biomass": read_costs(read_csv(years_dct["costs_year"]), "biomass", "fuel"),
+            },
+            "co2_costs": 23.0,  # [EUR/t_CO2],
+            "co2_emissions": co2_emissions_dct,
+            "interest_rate": 0.05,  # [p.u.]
+        },
         "status2023": {
+            "weather_year": years_dct["weather_year"],
+            "population_year": years_dct["population_year"],
+            "costs_year": years_dct["costs_year"],
+            "fuel_costs": {
+                "oil": 16.4 * 3.6,  # [EUR/MWh]
+                "gas": 6.1 * 3.6,  # [EUR/MWh]
+                "coal": 3.4 * 3.6,  # [EUR/MWh]
+                "lignite": 1.1 * 3.6,  # [EUR/MWh]
+                "nuclear": 0.47 * 3.6,  # [EUR/MWh]
+                "biomass": read_costs(read_csv(years_dct["costs_year"]), "biomass", "fuel"),
+            },
+            "co2_costs": 21.7,  # [EUR/t_CO2],
+            "co2_emissions": co2_emissions_dct,
+            "interest_rate": 0.05,  # [p.u.]
+        },
+        "status2022": {
             "weather_year": years_dct["weather_year"],
             "population_year": years_dct["population_year"],
             "costs_year": years_dct["costs_year"],
