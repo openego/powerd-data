@@ -320,8 +320,11 @@ mastr_new:
     - "biomass"
     - "combustion"
     - "nuclear"
+    - "storage"
   file_basename: "bnetza_mastr"
-  deposit_id: 10480958
+  deposit_id: 10491882
+  deposit_id_rli: 10491882
+  deposit_id_dev: 10480958
   egon2021_date_max: "2021-12-31 23:59:00"
   status2019_date_max: "2019-12-31 23:59:00"
 
