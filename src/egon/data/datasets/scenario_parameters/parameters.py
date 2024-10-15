@@ -11,7 +11,9 @@ def read_csv(year):
         "data_dir"
     ]
     p = f"{source}costs_{year}.csv"
-    print(f"read csv {p}\nDoes year has to be year or year++?")
+    _verbose = True   # False if scenario_parameters.insert_scenarios tasks runs successfully
+    if _verbose:
+        print(f"read csv: {p}")
     return pd.read_csv(p)
 
 
@@ -56,6 +58,35 @@ def annualize_capital_costs(overnight_costs, lifetime, p):
     return overnight_costs / PVA
 
 
+def _get_costs_year(year):
+    """existsing costs years so far:
+    user:~/execution_folder/PyPSA-technology-data-94085a8/outputs$ ls
+    costs_2020.csv  costs_2025.csv  costs_2030.csv  costs_2035.csv  costs_2040.csv  costs_2045.csv  costs_2050.csv
+
+    thus, take next closer one
+    """
+    if year < 2023:
+        costs_year = 2020
+    elif 2022 < year < 2028:
+        costs_year = 2025
+    elif 2027 < year < 2033:
+        costs_year = 2030
+    elif 2032 < year < 2038:
+        costs_year = 2035
+    elif 2037 < year < 2043:
+        costs_year = 2040
+    elif 2042 < year < 2048:
+        costs_year = 2045
+    elif year > 2047:
+        costs_year = 2050
+    else:  # else take next closer one to today 15 Oct 2024
+        costs_year = 2025
+    _verbose = True
+    if _verbose:
+        print(f"For year {year} setting costs year {costs_year} to read .../outputs/costs_{costs_year}.csv")
+    return costs_year
+
+
 def _get_year_from_scenario_name(scenario):
     years_dct = {}
     if scenario.startswith("status"):
@@ -65,19 +96,22 @@ def _get_year_from_scenario_name(scenario):
              " year<2001 it needs to be implemented. Please feel free to update values for missing years.")
         years_dct["weather_year"] = year
         years_dct["population_year"] = year
-        years_dct["costs_year"] = year + 1
+        years_dct["costs_year"] = _get_costs_year(year)
     elif scenario == "eGon2035":
+        year = 2025
         years_dct["weather_year"] = 2011
         years_dct["population_year"] = 2035
-        years_dct["costs_year"] = 2035
+        years_dct["costs_year"] = _get_costs_year(year)
     elif scenario == "eGon100RE":
+        year = 2050
         years_dct["weather_year"] = 2011
         years_dct["population_year"] = 2050
-        years_dct["costs_year"] = 2050
+        years_dct["costs_year"] = _get_costs_year(year)
     elif scenario == "eGon2021":
+        year = 2021
         years_dct["weather_year"] = 2011
         years_dct["population_year"] = 2021
-        years_dct["costs_year"] = 2021
+        years_dct["costs_year"] = _get_costs_year(year)
     assert years_dct, f"Couldn't fetch year from scenario {scenario}. years_dct = {years_dct}"
     return years_dct
 
