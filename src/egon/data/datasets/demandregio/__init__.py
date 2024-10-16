@@ -477,7 +477,7 @@ def disagg_households_power(
     )
 
     # Bottom-Up: Power demand by household sizes in [MWh/a] for each scenario
-    if scenario.startswith("status") | scenario in ["status2019", "eGon2021", "eGon2035"]:
+    if scenario.startswith("status") or scenario in ["status2019", "eGon2021", "eGon2035"]:
         # chose demand per household size from survey including weighted DHW
         power_per_HH = demand_per_hh_size["weighted DWH"] / 1e3
 
@@ -498,6 +498,9 @@ def disagg_households_power(
         #  4th march 2019 -> Rosenmontag is Montag is holdiay and NOT working day
         #  4th march 2020 -> Wednesday no holiday normal working day
         #  4th march 2024 -> Monday is normal working day
+        #  check if scenario == "status2023":
+        #      hh_load_timeseries.iloc[:24 * 7] = hh_load_timeseries.iloc[24 * 7:24 * 7 * 2].values
+        #  https://github.com/openego/powerd-data/blob/features/status2023/src/egon/data/datasets/demandregio/__init__.py#L620
 
     elif scenario == "eGon100RE":
         # chose demand per household size from survey without DHW
@@ -695,7 +698,7 @@ def insert_cts_ind(scenario, year, engine, target_values):
         # scale values according to target_values
         if sector in target_values[scenario].keys():
             ec_cts_ind *= (
-                target_values[scenario][sector] * 1e3 / ec_cts_ind.sum().sum()
+                target_values[scenario][sector]/ ec_cts_ind.sum().sum()
             )
 
         # include new largescale consumers according to NEP 2021
@@ -791,11 +794,11 @@ def insert_cts_ind_demands():
         target_values = {
             # according to NEP 2021
             # new consumers will be added seperatly
-            "eGon2035": {"CTS": 135300, "industry": 225400},  # TODO: are units reasonable comparing to households ?
+            "eGon2035": {"CTS": 135300 * 1e3 , "industry": 225400 * 1e3 },
             # CTS: reduce overall demand from demandregio (without traffic)
             # by share of heat according to JRC IDEES, data from 2011
             # industry: no specific heat demand, use data from demandregio
-            "eGon100RE": {"CTS": (1 - (5.96 + 6.13) / 154.64) * 125183.403},
+            "eGon100RE": {"CTS": (1 - (5.96 + 6.13) / 154.64) * 125183.403  * 1e3 },
             # no adjustments for status quo. # TODO: WHY ? check demand_regio_scaling_lookup
             "eGon2021": {},
             "status2019": {},
