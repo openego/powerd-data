@@ -68,11 +68,18 @@ def import_osm_data():
     scn = settings()["egon-data"]["--scenarios"]
     assert len(scn) == 1, "Not implemented yet error. Need to implement osmtgmod for multiple scenarios."
     scn = scn[0]  # due to its only 1 element, grab 1st one
-    year = scn[-4:]  # assuming scn like status2019 with 4 last chars as date
+    date = scn[-4:]  # assuming scn like status2019 with 4 last chars as date
     try:
-        assert int(year) > 2000, f"Not implemented for years <= 2000 but given year is {year}"
+        date = int(date)
+        assert date > 2000, f"Not implemented for years <= 2000 but given date is {date}"
     except Exception as E:
-        assert False, f"Not possible to fetch year from scn {scn} due to Exception {E}"
+        assert False, f"Not possible to fetch date from scn {scn} due to Exception {E}"
+
+    # for 2019, osm filename has to be germany-200101.osm.pb for 2020 january first, 20: 2020; 01: january; 01 1st
+    # thus adjust year
+    date += 1
+    date = str(date)
+    date = date[-2:] + "01" + "01"  # take date add month add day
 
     if settings()["egon-data"]["--dataset-boundary"] == "Everything":
         target_path = osm_config["target"]["file"]
@@ -81,7 +88,7 @@ def import_osm_data():
 
     if "DATE" in target_path:
         print(f"target_path: {target_path} needs to replace DATE with scenario year")
-        target_path = target_path.replace("DATE", year)
+        target_path = target_path.replace("DATE", date)
         print(f"target_path: {target_path} is updated")
 
     filtered_osm_pbf_path_to_file = Path(".") / "openstreetmap" / target_path
