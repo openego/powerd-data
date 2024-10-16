@@ -65,11 +65,24 @@ def import_osm_data():
 
     data_config = egon.data.config.datasets()
     osm_config = data_config["openstreetmap"]["original_data"]
+    scn = settings()["egon-data"]["--scenarios"]
+    assert len(scn) == 1, "Not implemented yet error. Need to implement osmtgmod for multiple scenarios."
+    scn = scn[0]  # due to its only 1 element, grab 1st one
+    year = scn[-4:]  # assuming scn like status2019 with 4 last chars as date
+    try:
+        assert int(year) > 2000, f"Not implemented for years <= 2000 but given year is {year}"
+    except Exception as E:
+        assert False, f"Not possible to fetch year from scn {scn} due to Exception {E}"
 
     if settings()["egon-data"]["--dataset-boundary"] == "Everything":
         target_path = osm_config["target"]["file"]
     else:
         target_path = osm_config["target"]["file_testmode"]
+
+    if "DATE" in target_path:
+        print(f"target_path: {target_path} needs to replace DATE with scenario year")
+        target_path = target_path.replace("DATE", year)
+        print(f"target_path: {target_path} is updated")
 
     filtered_osm_pbf_path_to_file = Path(".") / "openstreetmap" / target_path
 
