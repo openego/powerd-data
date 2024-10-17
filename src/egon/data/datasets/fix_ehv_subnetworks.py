@@ -36,8 +36,7 @@ def select_bus_id(x, y, v_nom, scn_name, carrier, find_closest=False):
 
     if bus_id.empty:
         if find_closest:
-            bus_id = db.select_dataframe(
-                f"""
+            q = f"""
             SELECT bus_id, st_distance(geom, 'SRID=4326;POINT({x} {y})'::geometry)
             FROM grid.egon_etrago_bus
             WHERE v_nom = {v_nom}
@@ -46,7 +45,10 @@ def select_bus_id(x, y, v_nom, scn_name, carrier, find_closest=False):
             ORDER BY st_distance
             Limit 1
             """
-            )
+            print(f"bus_id is empty, thus going to find_closest:\nq")
+            bus_id = db.select_dataframe(q)
+            if bus_id.empty:
+                return None
             return bus_id.bus_id[0]
         else:
             return None
@@ -174,33 +176,37 @@ def add_trafo(x, y, v_nom0, v_nom1, scn_name, n=1):
         x, y, v_nom1, scn_name, carrier="AC", find_closest=True
     )
 
-    df = pd.DataFrame(
-        index=[db.next_etrago_id("line")],
-        data={
-            "bus0": bus0,
-            "bus1": bus1,
-            "scn_name": scn_name,
-        },
-    )
+    if (bus0 is not None) and (bus1 is not None):
+        df = pd.DataFrame(
+            index=[db.next_etrago_id("line")],
+            data={
+                "bus0": bus0,
+                "bus1": bus1,
+                "scn_name": scn_name,
+            },
+        )
 
-    gdf = link_geom_from_buses(df, scn_name)
+        gdf = link_geom_from_buses(df, scn_name)
 
-    if (v_nom0 == 220) & (v_nom1 == 380):
-        s_nom = 600
-        x = 0.0002
+        if (v_nom0 == 220) & (v_nom1 == 380):
+            s_nom = 600
+            x = 0.0002
 
-    gdf["s_nom"] = s_nom * n
+        gdf["s_nom"] = s_nom * n
 
-    gdf["x"] = x / n
+        gdf["x"] = x / n
 
-    gdf.index.name = "trafo_id"
+        gdf.index.name = "trafo_id"
 
-    gdf.reset_index().to_postgis(
-        "egon_etrago_transformer",
-        schema="grid",
-        con=db.engine(),
-        if_exists="append",
-    )
+        gdf.reset_index().to_postgis(
+            "egon_etrago_transformer",
+            schema="grid",
+            con=db.engine(),
+            if_exists="append",
+        )
+    else:
+        print(f"Cannot run add trafo for x {x}, y {y}, v_nom0 {v_nom0}, v_nom1 {v_nom1}, scn_name {scn_name}, n=1 due "
+              f"to is None for bus0 {bus0} or bus1 {bus1}")
 
 
 def drop_trafo(x, y, v_nom0, v_nom1, scn_name):
