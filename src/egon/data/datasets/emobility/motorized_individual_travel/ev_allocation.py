@@ -419,11 +419,18 @@ def allocate_evs_numbers():
     -------
 
     """
-    # Import
-    kba_data = read_kba_data()
-    rs7_data = read_rs7_data()
 
     for scenario_name in config.settings()["egon-data"]["--scenarios"]:
+        if scenario_name.startswith("status"):
+            year = int(scenario_name.split("status")[1])
+            year += 1
+            year = str(year)
+        else:
+            year = str(2020)  # fallback
+        # Import
+        kba_data = read_kba_data(year=year)
+        rs7_data = read_rs7_data()
+
         # Load scenario params
         scenario_parameters = get_sector_parameters(
             "mobility", scenario=scenario_name

@@ -85,14 +85,21 @@ TRIP_COLUMN_MAPPING = {
 MVGD_MIN_COUNT = 3600 if TESTMODE_OFF else 150
 
 
-def read_kba_data():
+def read_kba_data(year=None):
     """Read KBA data from CSV"""
-    return pd.read_csv(
-        WORKING_DIR
-        / egon.data.config.datasets()["emobility_mit"]["original_data"][
-            "sources"
-        ]["KBA"]["file_processed"]
-    )
+    p = WORKING_DIR / egon.data.config.datasets()["emobility_mit"]["original_data"][
+        "sources"]["KBA"]["file_processed"]
+    if year:
+        try:
+            p.replace("YEAR", "2020")
+            return pd.read_csv(p)
+        except Exception as E:
+            print(f"Cannot read_csv for p {p} due to {E}")
+
+    # fallback default
+    p = WORKING_DIR / egon.data.config.datasets()["emobility_mit"]["original_data"][
+        "sources"]["KBA"]["file_processed"]
+    return pd.read_csv(p)
 
 
 def read_rs7_data():
