@@ -166,6 +166,7 @@ def create_tables():
 def update_kba_filename_from_scenario_year(fn, scenario):
     """filename containing hardcoded DATE string. replace with scenario year from param"""
     year = str(int(scenario.split("status20")[1]) + 1)
+    print(f"fn {fn}; scenario {scenario}; year {year}")
     return fn.replace("YEAR", year)
 
 
@@ -194,11 +195,19 @@ def download_and_preprocess():
         url = mit_sources["KBA"]["url"]
         file = WORKING_DIR / mit_sources["KBA"]["file"]
 
+        print(f"0, url {url}")
         url = update_kba_filename_from_scenario_year(url, scn)
+        print(f"1, url {url}")
+
+        print(f"0, file {file}")
         file = update_kba_filename_from_scenario_year(file, scn)
+        print(f"1, file {file}")
+
         file_processed = mit_sources["KBA"]["file_processed"]
+        print(f"0, file_processed {file_processed}")
         mit_sources["KBA"]["file_processed"] = (
             update_kba_filename_from_scenario_year(file_processed, scn))
+        print(f"1, mit_sources[KBA][file_processed] {mit_sources['KBA']['file_processed']}")
 
         try:
             if not os.path.isfile(file):
