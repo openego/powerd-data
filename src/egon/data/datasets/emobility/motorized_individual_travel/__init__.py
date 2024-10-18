@@ -168,6 +168,10 @@ def update_kba_filename_from_scenario_year(fn, scenario):
     year = str(int(scenario.split("status")[1]) + 1)
     print(f"fn {fn}; scenario {scenario}; year {year}", "type(year)", type(year), "len(year)", len(year))
     try:
+        if not isinstance(fn, str):  # e.g. BASE_DIR
+            print(f"fn {fn} is type {type(fn)}")
+            fn = str(fn)
+            print(f"fn {fn} is type {type(fn)}")
         return fn.replace("YEAR", year)
     except Exception as E:
         print(f"fn is {fn}. year is {year}. Setting year=2020 hard. Cannot replace year due to {E}.")
