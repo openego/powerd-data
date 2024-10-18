@@ -95,9 +95,14 @@ def import_installed_ch4_storages(scn_name):
             usecols=["lat", "long", "country_code", "param"],
         )
     except Exception:
-        target_file = (
-        Path(".") / "gas_data" / "data" / "IGGIELGN_Storages.csv"
-        )
+        import os
+        
+        target_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                   "gas_data", "data", "IGGIELGN_Storages.csv")
+        print("target_file", target_file)
+
+        assert os.path.isfile(target_file), f"target_file {target_file} does not exist."
+
         Gas_storages_list = pd.read_csv(
             target_file,
             delimiter=";",
