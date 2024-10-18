@@ -68,7 +68,6 @@ def calc_load_curve(share_wz, scn, annual_demand=1):
         FROM {sources['demandregio_timeseries']['schema']}.
             {sources['demandregio_timeseries']['table']}
         WHERE year = {year}"""
-    print(f"Select normalizes load curves per cts branch via q: {q}")
     df_select = db.select_dataframe(q, index_col="wz").transpose()
 
     # Cretae timeindex for each hour of the selected year

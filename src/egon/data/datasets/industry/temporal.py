@@ -78,7 +78,6 @@ def identify_bus(load_curves, demand_area):
     q = f"""SELECT bus_id, geom FROM
                 {sources['egon_mv_grid_district']['schema']}.
                 {sources['egon_mv_grid_district']['table']}"""
-    print(f"Select mv griddistrict via q: {q}")
     griddistrict = db.select_geodataframe(
         q,
         geom_col="geom",
@@ -104,7 +103,6 @@ def identify_bus(load_curves, demand_area):
     peak_hv["centroid"] = peak_hv["geom"].centroid
     peak_hv = peak_hv.set_geometry("centroid")
     peak_hv_c = gpd.sjoin(peak_hv, griddistrict, how="inner", op="intersects")
-    print("len(peak_hv_c)", len(peak_hv_c))
 
     # Perform a spatial join between the polygon of the demand area  and mv
     # grid districts to ensure every area got assign to a bus
@@ -112,8 +110,6 @@ def identify_bus(load_curves, demand_area):
     peak_hv_p = gpd.sjoin(
         peak_hv_p, griddistrict, how="inner", op="intersects"
     ).drop_duplicates(subset=["id"])
-    print("len(peak_hv_p)", len(peak_hv_p))
-
 
     # Bring both dataframes together
     peak_bus = pd.concat([peak_hv_c, peak_hv_p], ignore_index=True)
@@ -146,7 +142,6 @@ def identify_bus(load_curves, demand_area):
         left_index=True,
         right_on="id",
     )
-    print("len(curves_da)", len(curves_da))
 
     return curves_da
 
@@ -168,7 +163,6 @@ def calc_load_curves_ind_osm(scenario):
         aggregated per substation id
 
     """
-    print("0, Calc load curves ind osm")
     sources = egon.data.config.datasets()["electrical_load_curves_industry"][
         "sources"
     ]
@@ -180,7 +174,6 @@ def calc_load_curves_ind_osm(scenario):
             WHERE scenario = '{scenario}'
             AND demand > 0
             """
-    print(f"1, {q}")
     demands_osm_area = db.select_dataframe(q).set_index(["osm_id", "wz"])
 
     # Select industrial landuse polygons as demand area
@@ -188,7 +181,6 @@ def calc_load_curves_ind_osm(scenario):
                 {sources['osm_landuse']['schema']}.
                 {sources['osm_landuse']['table']}
                 WHERE sector = 3 """
-    print(f"2, {q}")
     demand_area = db.select_geodataframe(
         q,
         index_col="id",
@@ -273,7 +265,6 @@ def insert_osm_ind_load():
             {targets['osm_load']['schema']}.{targets['osm_load']['table']}
             WHERE scn_name = '{scenario}'
             """
-        print(f"q0: {q}")
         db.execute_sql(q)
 
         q = f"""
@@ -283,7 +274,6 @@ def insert_osm_ind_load():
             WHERE scn_name = '{scenario}'
             """
         db.execute_sql(q)
-        print(f"q1: {q}")
 
         # Calculate cts load curves per mv substation (hvmv bus)
         data, curves_individual = calc_load_curves_ind_osm(scenario)
