@@ -167,6 +167,7 @@ def update_kba_filename_from_scenario_year(fn, scenario):
     """filename containing hardcoded DATE string. replace with scenario year from param"""
     year = str(int(scenario.split("status20")[1]) + 1)
     print(f"fn {fn}; scenario {scenario}; year {year}")
+    print("type(year)", type(year), "len(year)", len(year))
     return fn.replace("YEAR", year)
 
 
