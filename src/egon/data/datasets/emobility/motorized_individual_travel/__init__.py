@@ -165,10 +165,13 @@ def create_tables():
 
 def update_kba_filename_from_scenario_year(fn, scenario):
     """filename containing hardcoded DATE string. replace with scenario year from param"""
-    year = str(int(scenario.split("status20")[1]) + 1)
-    print(f"fn {fn}; scenario {scenario}; year {year}")
-    print("type(year)", type(year), "len(year)", len(year))
-    return fn.replace("YEAR", year)
+    year = str(int(scenario.split("status")[1]) + 1)
+    print(f"fn {fn}; scenario {scenario}; year {year}", "type(year)", type(year), "len(year)", len(year))
+    try:
+        return fn.replace("YEAR", year)
+    except Exception as E:
+        print(f"fn is {fn}. year is {year}. Setting year=2020 hard. Cannot replace year due to {E}.")
+        return fn.replace("YEAR", "2020")
 
 
 def download_and_preprocess():
