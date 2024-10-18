@@ -84,12 +84,26 @@ def import_installed_ch4_storages(scn_name):
         Path(".") / "datasets" / "gas_data" / "data" / "IGGIELGN_Storages.csv"
     )
 
-    Gas_storages_list = pd.read_csv(
-        target_file,
-        delimiter=";",
-        decimal=".",
-        usecols=["lat", "long", "country_code", "param"],
-    )
+    print(f"Path(.): {Path('.')}")
+    print("target_file", target_file)
+
+    try:
+        Gas_storages_list = pd.read_csv(
+            target_file,
+            delimiter=";",
+            decimal=".",
+            usecols=["lat", "long", "country_code", "param"],
+        )
+    except Exception:
+        target_file = (
+        Path(".") / "gas_data" / "data" / "IGGIELGN_Storages.csv"
+        )
+        Gas_storages_list = pd.read_csv(
+            target_file,
+            delimiter=";",
+            decimal=".",
+            usecols=["lat", "long", "country_code", "param"],
+        )
 
     Gas_storages_list = Gas_storages_list[
         Gas_storages_list["country_code"].str.match("DE")
@@ -283,12 +297,12 @@ def insert_ch4_stores(scn_name):
     # Clean table
     db.execute_sql(
         f"""
-        DELETE FROM {target['stores']['schema']}.{target['stores']['table']}  
+        DELETE FROM {target['stores']['schema']}.{target['stores']['table']}
         WHERE "carrier" = 'CH4'
         AND scn_name = '{scn_name}'
         AND bus IN (
             SELECT bus_id FROM {source['buses']['schema']}.{source['buses']['table']}
-            WHERE scn_name = '{scn_name}' 
+            WHERE scn_name = '{scn_name}'
             AND country = 'DE'
             );
         """
