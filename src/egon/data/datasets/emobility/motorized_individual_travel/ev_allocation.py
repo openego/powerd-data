@@ -428,7 +428,10 @@ def allocate_evs_numbers():
         else:
             year = str(2020)  # fallback
         # Import
-        kba_data = read_kba_data(year=year)
+        try:
+            kba_data = read_kba_data(year=year)
+        except Exception:
+            kba_data = read_kba_data(year=None)
         rs7_data = read_rs7_data()
 
         # Load scenario params

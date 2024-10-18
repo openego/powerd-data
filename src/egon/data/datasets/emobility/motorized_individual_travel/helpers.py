@@ -93,7 +93,7 @@ def read_kba_data(year=None):
         try:
             print("p", p, "type p", type(p))
             p = str(p)
-            p.replace("YEAR", "2020")
+            p = p.replace("YEAR", "2020")
             return pd.read_csv(p)
         except Exception as E:
             print(f"Cannot read_csv for p {p} due to {E}")
