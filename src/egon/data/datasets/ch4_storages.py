@@ -99,6 +99,8 @@ def import_installed_ch4_storages(scn_name):
 
         target_file = os.path.dirname(os.path.abspath(__file__))
         print("0 target_file", target_file)
+        for segment in target_file.split(os.sep):
+            print(segment)
         target_file = os.path.join(target_file, "gas_data", "data", "IGGIELGN_Storages.csv")
         print("1 target_file", target_file)
 

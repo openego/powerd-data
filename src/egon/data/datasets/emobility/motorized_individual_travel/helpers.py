@@ -91,6 +91,8 @@ def read_kba_data(year=None):
         "sources"]["KBA"]["file_processed"]
     if year:
         try:
+            print("p", p, "type p", type(p))
+            p = str(p)
             p.replace("YEAR", "2020")
             return pd.read_csv(p)
         except Exception as E:
