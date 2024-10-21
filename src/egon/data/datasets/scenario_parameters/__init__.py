@@ -169,12 +169,18 @@ def get_sector_parameters(sector, scenario=None):
     """
 
     if scenario:
+        print(f"osmtgmod.__init__.get_sector_parameters has scenario {scenario}")
+        print("scenario in db.select_dataframe(SELECT name FROM scenario.egon_scenario_parameters",
+              scenario in db.select_dataframe(
+                  "SELECT name FROM scenario.egon_scenario_parameters"
+              ))
         if (
             scenario
             in db.select_dataframe(
                 "SELECT name FROM scenario.egon_scenario_parameters"
             ).name.values
         ):
+            print(f"Scenario name {scenario} is valid.")
             values = db.select_dataframe(
                 f"""
                     SELECT {sector}_parameters as val
