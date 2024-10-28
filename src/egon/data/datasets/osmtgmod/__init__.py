@@ -31,11 +31,16 @@ def run():
     else:
         target_path = osm_config["target"]["file_testmode"]
 
+    print(f"0 run: target_path: {target_path}")
     target_path = _update_target_path(target_path)
+    print(f"1 run: target_path: {target_path}")
 
     filtered_osm_pbf_path_to_file = os.path.join(
         egon.data.__path__[0], "datasets", "osm", target_path
     )
+
+    print(f"filtered_osm_pbf_path_to_file: {filtered_osm_pbf_path_to_file}")
+
     docker_db_config = db.credentials()
 
     osmtgmod(
@@ -100,9 +105,12 @@ def import_osm_data():
     else:
         target_path = osm_config["target"]["file_testmode"]
 
+    print(f"0 osmtgmod.__init__.import_osm_data: target_path: {target_path}")
     target_path = _update_target_path(target_path)
+    print(f"1 osmtgmod.__init__.import_osm_data: target_path: {target_path}")
 
     filtered_osm_pbf_path_to_file = Path(".") / "openstreetmap" / target_path
+    print(f"osmtgmod.__init__.import_osm_data: filtered_osm_pbf_path_to_file: {filtered_osm_pbf_path_to_file}")
 
     docker_db_config = db.credentials()
     config_database = docker_db_config["POSTGRES_DB"]
@@ -209,6 +217,8 @@ def osmtgmod(
     filtered_osm_pbf_path_to_file=None,
     docker_db_config=None,
 ):
+
+    print(f"filtered_osm_pbf_path_to_file: {filtered_osm_pbf_path_to_file}")
     if ("germany-21" in filtered_osm_pbf_path_to_file) | (
         "germany-22" in filtered_osm_pbf_path_to_file
     ):
@@ -271,6 +281,7 @@ def osmtgmod(
         )
     )
     config = configparser.ConfigParser()
+    print(f"config_basepath: {config_basepath}")
     config.read(config_basepath + ".cfg")
     config["postgres_server"]["host"] = docker_db_config["HOST"]
     config["postgres_server"]["port"] = docker_db_config["PORT"]
@@ -282,7 +293,9 @@ def osmtgmod(
     # Setting osmTGmod folder structure:
     logging.info("Checking/Creating file directories")
     input_data_dir = os.path.join(config_basepath, "input_data")
+    print(f"input_data_dir: {input_data_dir}")
     result_dir = os.path.join(config_basepath, "results")
+    print(f"result_dir: {result_dir}")
     # Basic folders are created if not existent
     if not os.path.exists(input_data_dir):
         os.makedirs(input_data_dir)
