@@ -35,7 +35,7 @@ from egon.data.datasets.era5 import WeatherData
 from egon.data.datasets.etrago_setup import EtragoSetup
 from egon.data.datasets.fill_etrago_gen import Egon_etrago_gen
 from egon.data.datasets.fix_ehv_subnetworks import FixEhvSubnetworks
-from egon.data.datasets.gas_areas import GasAreasStatusQuo
+from egon.data.datasets.gas_areas import GasAreas
 from egon.data.datasets.gas_grid import GasNodesAndPipes
 from egon.data.datasets.gas_neighbours import GasNeighbours
 from egon.data.datasets.heat_demand import HeatDemandImport
@@ -44,7 +44,7 @@ from egon.data.datasets.heat_demand_timeseries import HeatTimeSeries
 from egon.data.datasets.heat_etrago import HeatEtrago
 from egon.data.datasets.heat_etrago.hts_etrago import HtsEtragoTable
 from egon.data.datasets.heat_supply import HeatSupply
-from egon.data.datasets.heat_supply.individual_heating import HeatPumpsStatusQuo
+from egon.data.datasets.heat_supply.individual_heating import HeatPumps2019
 from egon.data.datasets.industrial_sites import MergeIndustrialSites
 from egon.data.datasets.industry import IndustrialDemandCurves
 from egon.data.datasets.loadarea import LoadArea, OsmLanduse
@@ -108,7 +108,7 @@ with airflow.DAG(
     scenario_parameters = ScenarioParameters(dependencies=[setup])
 
     # Download TYNDP data
-    tyndp_data = Tyndp(dependencies=[setup]) #TODO: kick out or adjust
+    tyndp_data = Tyndp(dependencies=[setup])  # TODO: kick out or adjust
 
     # Import zensus population
     zensus_population = ZensusPopulation(dependencies=[setup, vg250])
@@ -359,8 +359,8 @@ with airflow.DAG(
             tasks["etrago_setup.create-tables"],
         ]
     )
-    # Create gas voronoi status quo
-    create_gas_polygons_statusquo = GasAreasStatusQuo(
+    # Create gas voronoi status2019
+    create_gas_polygons_status2019 = GasAreas(
         dependencies=[setup_etrago, vg250, gas_grid_insert_data, substation_voronoi]
     )
 
@@ -370,24 +370,19 @@ with airflow.DAG(
             gas_grid_insert_data,
             run_pypsaeur,
             foreign_lines,
-            create_gas_polygons_statusquo,
+            create_gas_polygons_status2019,
         ]
     )
 
     # Import gas production
     gas_production_insert_data = CH4Production(
-        dependencies=[create_gas_polygons_statusquo]
-    )
-
-    # Import CH4 storages
-    insert_data_ch4_storages = CH4Storages(
-        dependencies=[create_gas_polygons_statusquo]
+        dependencies=[create_gas_polygons_status2019]
     )
 
     # CHP locations
     chp = Chp(
         dependencies=[
-            create_gas_polygons_statusquo,
+            create_gas_polygons_status2019,
             demand_curves_industry,
             district_heating_areas,
             industrial_sites,
@@ -416,7 +411,7 @@ with airflow.DAG(
     )
 
     create_ocgt = OpenCycleGasTurbineEtrago(
-        dependencies=[create_gas_polygons_statusquo, power_plants]
+        dependencies=[create_gas_polygons_status2019, power_plants]
     )
 
     # Fill eTraGo generators tables
@@ -461,8 +456,8 @@ with airflow.DAG(
     # CHP to eTraGo
     chp_etrago = ChpEtrago(dependencies=[chp, heat_etrago])
 
-    # Heat pump disaggregation for status quo
-    heat_pumps_status_quo = HeatPumpsStatusQuo(
+    # Heat pump disaggregation for status2019
+    heat_pumps_2019 = HeatPumps2019(
         dependencies=[
             cts_demand_buildings,
             DistrictHeatingAreas,
@@ -479,7 +474,7 @@ with airflow.DAG(
             heat_etrago,
             heat_time_series,
             mv_grid_districts,
-            heat_pumps_status_quo,
+            heat_pumps_2019,
         ]
     )
 
@@ -526,5 +521,4 @@ with airflow.DAG(
             demand_curves_industry,
         ]
     )
-
 
