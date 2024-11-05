@@ -327,7 +327,7 @@ with airflow.DAG(
 
     # Deal with electrical neighbours
     foreign_lines = ElectricalNeighbours(
-        dependencies=[run_pypsaeursec, tyndp_data]
+        dependencies=[run_pypsaeursec, tyndp_data, osmtgmod, fix_subnetworks]
     )
 
     # Import NEP (Netzentwicklungsplan) data
