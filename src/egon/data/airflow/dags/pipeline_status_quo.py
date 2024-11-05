@@ -313,8 +313,9 @@ with airflow.DAG(
     )
 
     # run pypsa-eur-sec
-    run_pypsaeursec = PypsaEurSec(
+    run_pypsaeur = RunPypsaEur(
         dependencies=[
+            prepare_pypsa_eur,
             weather_data,
             hd_abroad,
             osmtgmod,
@@ -327,14 +328,14 @@ with airflow.DAG(
 
     # Deal with electrical neighbours
     foreign_lines = ElectricalNeighbours(
-        dependencies=[run_pypsaeursec, tyndp_data, osmtgmod, fix_subnetworks]
+        dependencies=[prepare_pypsa_eur, tyndp_data, osmtgmod, fix_subnetworks]
     )
 
     # Import NEP (Netzentwicklungsplan) data
     scenario_capacities = ScenarioCapacities(
         dependencies=[
             data_bundle,
-            run_pypsaeursec,
+            run_pypsaeur,
             setup,
             vg250,
             zensus_population,
@@ -360,7 +361,7 @@ with airflow.DAG(
     gas_abroad_insert_data = GasNeighbours(
         dependencies=[
             gas_grid_insert_data,
-            run_pypsaeursec,
+            run_pypsaeur,
             foreign_lines,
             create_gas_polygons_statusquo,
         ]
