@@ -6,7 +6,7 @@ import airflow
 from egon.data.config import set_numexpr_threads
 from egon.data.datasets import database
 from egon.data.datasets.ch4_prod import CH4Production
-from egon.data.datasets.ch4_storages import CH4Storages  # todo: unused in dev?
+from egon.data.datasets.ch4_storages import CH4Storages
 from egon.data.datasets.chp import Chp
 from egon.data.datasets.chp_etrago import ChpEtrago
 from egon.data.datasets.data_bundle import DataBundle
