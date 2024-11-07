@@ -1319,7 +1319,7 @@ def heat(scenario):
         # source: AG Energiebilanzen 2019 (https://ag-energiebilanzen.de/wp-content/uploads/2020/10/ageb_20v_v1.pdf)
         # [TJ], space heating + hot water,
         # source: AG Energiebilanzen 2023 (https://ag-energiebilanzen.de/wp-content/uploads/2023/01/AGEB_22p2_rev-1.pdf)
-        heating_loopup_TJ = {
+        heating_lookup_TJ = {
             2019: {"residential": {"space heating": 1658400, "hot water": 383300},
                    "service": {"space heating": 567300, "hot water": 71500}},
             2020: {"residential": {"space heating": 1645900, "hot water": 372700},
@@ -1329,7 +1329,7 @@ def heat(scenario):
             2022: {"residential": {"space heating": 1637800, "hot water": 381000},
                    "service": {"space heating": 578900, "hot water": 39700}}
         }
-        base_year_max = max(heating_loopup_TJ.keys())
+        base_year_max = max(heating_lookup_TJ.keys())
         if year < 2015:
             ydelta = min(int(2015 - year), 1)
             growth_rate = 1.01
@@ -1345,18 +1345,18 @@ def heat(scenario):
             _add_to_lookup = False
         if _add_to_lookup:
             # using most actual as base to extrapolate
-            heating_loopup_TJ[year] = {
+            heating_lookup_TJ[year] = {
                 "residential": {
-                    "space heating": heating_loopup_TJ[base_year_max]["residential"]["space heating"] * factor,
-                    "hot water": heating_loopup_TJ[base_year_max]["hot water"] * factor},
+                    "space heating": heating_lookup_TJ[base_year_max]["residential"]["space heating"] * factor,
+                    "hot water": heating_lookup_TJ[base_year_max]["hot water"] * factor},
                 "service": {
-                    "space heating": heating_loopup_TJ[base_year_max]["residential"]["space heating"] * factor,
-                    "hot water": heating_loopup_TJ[base_year_max]["hot water"] * factor}}
+                    "space heating": heating_lookup_TJ[base_year_max]["residential"]["space heating"] * factor,
+                    "hot water": heating_lookup_TJ[base_year_max]["hot water"] * factor}}
         parameters = {
-            "DE_demand_residential_TJ": sum(heating_loopup_TJ[year]["residential"].values()),
-            "DE_demand_service_TJ": sum(heating_loopup_TJ[year]["service"].values()),
+            "DE_demand_residential_TJ": sum(heating_lookup_TJ[year]["residential"].values()),
+            "DE_demand_service_TJ": sum(heating_lookup_TJ[year]["service"].values()),
             "DE_district_heating_share": (189760 + 38248) * factor / (
-                sum(heating_loopup_TJ[year]["residential"].values()) + sum(heating_loopup_TJ[year]["service"].values()))
+                sum(heating_lookup_TJ[year]["residential"].values()) + sum(heating_lookup_TJ[year]["service"].values()))
         }
 
         costs = read_csv(year + 1)
