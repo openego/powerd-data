@@ -794,11 +794,11 @@ def insert_cts_ind_demands():
         target_values = {
             # according to NEP 2021
             # new consumers will be added seperatly
-            "eGon2035": {"CTS": 135300 * 1e3 , "industry": 225400 * 1e3 },
+            "eGon2035": {"CTS": 135300 * 1e3, "industry": 225400 * 1e3},
             # CTS: reduce overall demand from demandregio (without traffic)
             # by share of heat according to JRC IDEES, data from 2011
             # industry: no specific heat demand, use data from demandregio
-            "eGon100RE": {"CTS": (1 - (5.96 + 6.13) / 154.64) * 125183.403  * 1e3 },
+            "eGon100RE": {"CTS": (1 - (5.96 + 6.13) / 154.64) * 125183.403 * 1e3 },
             # no adjustments for status quo. # TODO: WHY ? check demand_regio_scaling_lookup
             "eGon2021": {},
             "status2019": {},
@@ -806,8 +806,8 @@ def insert_cts_ind_demands():
         if scn.startswith("status"):
             if year in demand_regio_scaling_lookup.keys():
                 # / 1000 due to units having factor 1000
-                _cts_lookup_val = demand_regio_scaling_lookup[year]["CTS"] = 1000
-                _industry_lookup_val = demand_regio_scaling_lookup[year]["industry"] = 1000
+                _cts_lookup_val = demand_regio_scaling_lookup[year]["CTS"] / 1000
+                _industry_lookup_val = demand_regio_scaling_lookup[year]["industry"] / 1000
                 print(f"For scenario name {scn} year {year} setting target_values for "
                       f"CTS={_cts_lookup_val} and industry={_industry_lookup_val}")
                 target_values[scn] = {
