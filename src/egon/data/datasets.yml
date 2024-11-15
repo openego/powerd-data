@@ -1274,4 +1274,4 @@ home_batteries:
 
 scenario_path:
   sources:
-    url_status2019: 'https://zenodo.org/records/13865306/files/PoWerD_status2019_v2.backup'
+    url_status2019: 'https://zenodo.org/records/14168340/files/PoWerD_status2019_v3.backup'
