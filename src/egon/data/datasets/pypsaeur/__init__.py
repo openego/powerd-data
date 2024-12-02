@@ -1693,6 +1693,95 @@ def rual_heat_technologies(network):
     return network
 
 
+def industrial_demands(network):
+
+    year = network.year
+
+    factor_h2 = 33.33 # MWh/t_H2
+
+    # Set H2 demand for steel and chemical indutry in 2045
+    # Source: Presentation from project meeting
+    demand_steel_2045 = 2.4*1e6 # t_H2 
+    demand_chemical_2045 = 1.9*1e6 # t_H2
+
+    # Set percentages of hydrogen demands per year
+    # Source: Presentation from project meeting
+    factor_steel_years = {
+        2025: 0.05,
+        2030: 0.348, 
+        2035: 0.565, 
+        2045: 1,    
+        }
+
+    # Get industrial production from pypsa-eur
+    industrial_production = pd.read_csv(
+        "run-pypsa-eur/pypsa-eur/resources/industrial_production_per_country_tomorrow_2045.csv", index_col=0)
+    industrial_production = industrial_production.loc["DE"]
+
+    # Get industry sector ratios from pypsaeur
+    industry_sector_ratios = pd.read_csv(
+        "run-pypsa-eur/pypsa-eur/resources/industry_sector_ratios_2045.csv", index_col=0)
+    industry_sector_ratios = industry_sector_ratios.loc[:, 
+        industry_sector_ratios.columns.str.contains("DE")]
+    industry_sector_ratios.columns = industry_sector_ratios.iloc[0]
+    industry_sector_ratios.drop([np.nan, "MWh/tMaterial"], axis="index", inplace=True)
+    industry_sector_ratios = industry_sector_ratios.astype(float)
+
+    # Steel production
+    total_steel_production = industrial_production.loc[["DRI + Electric arc", "Electric arc"]].sum()
+
+    # Scale steel production primary and secondary share to todays value in DE
+    share_primary_steel = 0.6
+    industrial_production.loc["DRI + Electric arc"] = share_primary_steel * total_steel_production
+    industrial_production.loc["Electric arc"] = (1 - share_primary_steel) * total_steel_production
+
+    # Calculate demands per sector with adjusted production
+    demand_per_sector = industry_sector_ratios.mul(industrial_production, axis=1)
+
+    target_demand = demand_steel_2045 * factor_h2 * 1e-3
+
+    # Scale primary steel production to meet target hydrogen demand
+    print("Primary steel production multiplied by factor " + str(
+        target_demand/demand_per_sector.loc["hydrogen", "DRI + Electric arc"])
+        )
+    demand_per_sector.loc[:, "DRI + Electric arc"] *= (
+        target_demand/demand_per_sector.loc["hydrogen", "DRI + Electric arc"])
+
+    # Adjust demands in pypsa-eur (only for carries with updated numbers)
+    network.loads.loc[
+        (network.loads.carrier=="H2 for industry")
+        &(network.loads.index.str.contains("DE")), 
+        "p_set"] = demand_per_sector.loc["hydrogen", :].sum() / 8760 * 1e3
+
+    network.loads.loc[
+        (network.loads.carrier=="industry electricity")
+        &(network.loads.index.str.contains("DE")), 
+        "p_set"] = demand_per_sector.loc["elec", :].sum() / 8760 * 1e3
+
+    network.loads.loc[
+        (network.loads.carrier=="gas for industry")
+        &(network.loads.index.str.contains("DE")), 
+        "p_set"] = demand_per_sector.loc["methane", :].sum() / 8760 * 1e3
+
+    # Chemical industry
+    carriers = ['Ammonia', 'HVC', 'Chlorine', 'Methanol',
+    'HVC (mechanical recycling)', 'HVC (chemical recycling)']
+
+    # Wirkunggrad Fischer-Tropsch (H2 -> oil) : 79.9%
+    # Wirkungsgrad naphtha (oil -> naphtha for industry): 100%
+    # Wirkungsgrad Sabatiern (H2 -> CH4): 80%
+
+    demand_chemical_2045 * factor_h2 
+    (demand_per_sector.loc["hydrogen", carriers].sum() +
+    demand_per_sector.loc["methane", carriers].sum() * 0.8 +
+    demand_per_sector.loc["naphtha", carriers].sum() * 0.799 * 1)
+
+    # -> Resultierender Bedarf (mit CH4 und naphtha) höher als beim DWV
+    # -> naphtha evtl. auch beim DWV Teil der Raffinerien 
+    # => Ich würde hier erst mal nichts ändern wollen
+
+    return network
+
 def execute():
     if egon.data.config.settings()["egon-data"]["--run-pypsa-eur"]:
         with open(
@@ -1743,6 +1832,7 @@ def execute():
                 #h2_overground_stores,
                 #drop_new_gas_pipelines,
                 drop_fossil_gas,
+                industrial_demands,
                 # rual_heat_technologies, #To be defined
             ]
 
