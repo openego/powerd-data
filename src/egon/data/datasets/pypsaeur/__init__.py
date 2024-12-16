@@ -822,7 +822,8 @@ def neighbor_reduction():
             "s_nom_opt",
             "i_nom",
         ]:
-            neighbor_lines = neighbor_lines.drop(i, axis=1)
+            if i in neighbor_lines.columns:
+                neighbor_lines = neighbor_lines.drop(i, axis=1)
 
         # Define geometry and add to lines dataframe as 'topo'
         gdf = gpd.GeoDataFrame(index=neighbor_lines.index)
