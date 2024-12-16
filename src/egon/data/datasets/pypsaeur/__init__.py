@@ -1296,7 +1296,7 @@ def prepared_network():
         except Exception:
             target_file = (
                 Path(".")
-                / "data_bundle_powerd_data"
+                / "data_bundle_egon_data"
                 / "pypsa_eur_sec"
                 / "2022-07-26-egondata-integration"
                 / "postnetworks"
@@ -1319,7 +1319,7 @@ def prepared_network():
         except Exception:
             target_file = (
                 Path(".")
-                / "data_bundle_powerd_data"
+                / "data_bundle_egon_data"
                 / "pypsa_eur_sec"
                 / "2022-07-26-egondata-integration"
                 / "postnetworks"
