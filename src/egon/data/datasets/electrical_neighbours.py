@@ -355,8 +355,7 @@ def lines_between_foreign_countries(scenario, sorces, targets, central_buses):
         gdf.drop(["geom_bus0", "geom_bus1"], inplace=True, axis="columns")
         if "link_id" in df.columns:
             table_name = "link"
-            gdf.drop(
-                [
+            cols_to_drop = [
                     "tags",
                     "under_construction",
                     "underground",
@@ -372,7 +371,10 @@ def lines_between_foreign_countries(scenario, sorces, targets, central_buses):
                     "p_nom_opt",
                     "bus3",
                     "efficiency3",
-                ],
+                ]
+            cols_to_drop = [c for c in cols_to_drop if c in gdf.columns]
+            gdf.drop(
+                cols_to_drop,
                 axis="columns",
                 inplace=True,
             )
