@@ -378,8 +378,7 @@ def lines_between_foreign_countries(scenario, sorces, targets, central_buses):
             )
         else:
             table_name = "line"
-            gdf.drop(
-                [
+            cols_to_drop = [
                     "i_nom",
                     "sub_network",
                     "x_pu",
@@ -389,7 +388,10 @@ def lines_between_foreign_countries(scenario, sorces, targets, central_buses):
                     "x_pu_eff",
                     "r_pu_eff",
                     "s_nom_opt",
-                ],
+                ]
+            cols_to_drop = [c for c in cols_to_drop if c in gdf.columns]
+            gdf.drop(
+                cols_to_drop,
                 axis="columns",
                 inplace=True,
             )
