@@ -1293,15 +1293,25 @@ def prepared_network():
         )
 
     else:
-        target_file = (
-            Path(".")
-            / "data_bundle_powerd_data"
-            / "pypsa_eur"
-            / "2024-08-02-egondata-integration"
-            / "results"
-            / "postnetworks"
-            / "elec_s_37_lv1.5__Co2L0-1H-T-H-B-I-A-solar+p3_2050.nc"
-        )
+        try:
+            target_file = (
+                Path(".")
+                / "data_bundle_powerd_data"
+                / "pypsa_eur"
+                / "2024-08-02-egondata-integration"
+                / "results"
+                / "postnetworks"
+                / "elec_s_37_lv1.5__Co2L0-1H-T-H-B-I-A-solar+p3_2050.nc"
+            )
+        except Exception:
+            target_file = (
+                Path(".")
+                / "data_bundle_powerd_data"
+                / "pypsa_eur_sec"
+                / "2022-07-26-egondata-integration"
+                / "postnetworks"
+                / "elec_s_37_lv2.0__Co2L0-1H-T-H-B-I-dist1_2050.nc"
+            )
 
     return pypsa.Network(target_file.absolute().as_posix())
 
