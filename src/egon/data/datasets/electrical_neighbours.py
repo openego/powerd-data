@@ -399,6 +399,14 @@ def lines_between_foreign_countries(scenario, sorces, targets, central_buses):
             )
 
         gdf = gdf.set_index(f"{table_name}_id")
+        print(f"0, gdf.columns: {gdf.columns}")
+        if "pipe_retrofit" in gdf.columns:
+            gdf.drop(
+                ["pipe_retrofit"],
+                axis="columns",
+                inplace=True,
+            )
+        print(f"1, gdf.columns: {gdf.columns}")
         gdf.to_postgis(
             f"egon_etrago_{table_name}",
             db.engine(),
