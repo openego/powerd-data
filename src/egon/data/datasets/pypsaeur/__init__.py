@@ -1278,19 +1278,31 @@ def prepared_network():
         ) as stream:
             data_config = yaml.safe_load(stream)
 
-        target_file = (
-            Path(".")
-            / "run-pypsa-eur"
-            / "pypsa-eur"
-            / "results"
-            / data_config["run"]["name"]
-            / "prenetworks"
-            / f"elec_s_{data_config['scenario']['clusters'][0]}"
-            f"_l{data_config['scenario']['ll'][0]}"
-            f"_{data_config['scenario']['opts'][0]}"
-            f"_{data_config['scenario']['sector_opts'][0]}"
-            f"_{data_config['scenario']['planning_horizons'][0]}.nc"
-        )
+        try:
+            target_file = (
+                Path(".")
+                / "run-pypsa-eur"
+                / "pypsa-eur"
+                / "results"
+                / data_config["run"]["name"]
+                / "prenetworks"
+                / f"elec_s_{data_config['scenario']['clusters'][0]}"
+                f"_l{data_config['scenario']['ll'][0]}"
+                f"_{data_config['scenario']['opts'][0]}"
+                f"_{data_config['scenario']['sector_opts'][0]}"
+                f"_{data_config['scenario']['planning_horizons'][0]}.nc"
+            )
+            return pypsa.Network(target_file.absolute().as_posix())
+        except Exception:
+            target_file = (
+                Path(".")
+                / "data_bundle_powerd_data"
+                / "pypsa_eur_sec"
+                / "2022-07-26-egondata-integration"
+                / "postnetworks"
+                / "elec_s_37_lv2.0__Co2L0-1H-T-H-B-I-dist1_2050.nc"
+            )
+            return pypsa.Network(target_file.absolute().as_posix())
 
     else:
         try:
@@ -1303,6 +1315,7 @@ def prepared_network():
                 / "postnetworks"
                 / "elec_s_37_lv1.5__Co2L0-1H-T-H-B-I-A-solar+p3_2050.nc"
             )
+            return pypsa.Network(target_file.absolute().as_posix())
         except Exception:
             target_file = (
                 Path(".")
@@ -1312,6 +1325,7 @@ def prepared_network():
                 / "postnetworks"
                 / "elec_s_37_lv2.0__Co2L0-1H-T-H-B-I-dist1_2050.nc"
             )
+            return pypsa.Network(target_file.absolute().as_posix())
 
     return pypsa.Network(target_file.absolute().as_posix())
 
