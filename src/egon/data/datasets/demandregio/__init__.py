@@ -686,9 +686,20 @@ def insert_cts_ind(scenario, year, engine, target_values):
 
     for sector in ["CTS", "industry"]:
         # get demands per nuts3 and wz of demandregio
+        print(f"INFO: Going to ec_cts_ind = spatial.disagg_CTS_industry for target year: {year}.")
+        print(f"INFO: Input is year {year} but spatial disagg can process not all the years"
+              " due to demandregio api reqeust outdated due to demandregio database structure changed. "
+              f"Using year 2019 instead. Furthermore, theres a scaling based on 2019.")
         ec_cts_ind = spatial.disagg_CTS_industry(
-            use_nuts3code=True, source="power", sector=sector, year=year
+            use_nuts3code=True, source="power", sector=sector, year=2019
         ).transpose()
+        # except Exception:
+        #    print(f"Input is year {year} but spatial disagg can process not all the years"
+        #          " due to demandregio api reqeust outdated due to demandregio database structure changed. "
+        #          f"Using year 2019 instead. Furthermore, theres a scaling based on 2019.")
+        #    ec_cts_ind = spatial.disagg_CTS_industry(
+        #        use_nuts3code=True, source="power", sector=sector, year=2019
+        #    ).transpose()
 
         ec_cts_ind.index = ec_cts_ind.index.rename("nuts3")
 
