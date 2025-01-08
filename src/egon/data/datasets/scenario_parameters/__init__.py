@@ -126,25 +126,31 @@ def insert_scenarios():
 
     session.commit()
 
-    # Scenario status2019
-    status2019 = EgonScenario(name="status2019")
+    # Scenario status_quo
+    try:
+        status_names = egon.data.config.settings()["egon-data"]["--scenarios"]
+    except Exception:
+        status_names = ["status2019"]
 
-    status2019.description = """
-        Status quo ante scenario for 2019 for validation use within the project PoWerD.
-        """
-    status2019.global_parameters = parameters.global_settings(status2019.name)
+    for status_name in status_names:
+        status_quo = EgonScenario(name=status_name)
 
-    status2019.electricity_parameters = parameters.electricity(status2019.name)
+        status_quo.description = f"""
+            Status quo ante scenario for status quo: {status_name} for validation use within the project PoWerD.
+            """
+        status_quo.global_parameters = parameters.global_settings(status_quo.name)
 
-    status2019.gas_parameters = parameters.gas(status2019.name)
+        status_quo.electricity_parameters = parameters.electricity(status_quo.name)
 
-    status2019.heat_parameters = parameters.heat(status2019.name)
+        status_quo.gas_parameters = parameters.gas(status_quo.name)
 
-    status2019.mobility_parameters = parameters.mobility(status2019.name)
+        status_quo.heat_parameters = parameters.heat(status_quo.name)
 
-    session.add(status2019)
+        status_quo.mobility_parameters = parameters.mobility(status_quo.name)
 
-    session.commit()
+        session.add(status_quo)
+
+        session.commit()
 
 
 def get_sector_parameters(sector, scenario=None):
