@@ -1033,7 +1033,7 @@ def gas(scenario):
     elif scenario.startswith("status"):
 
         year = int(scenario.split("status")[-1])
-        costs = read_csv(year + 1)  # consider end of target year
+        costs = read_csv(_get_costs_year(year))
         parameters = {"main_gas_carrier": "CH4", "marginal_cost": {
             "CH4": global_settings(scenario)["fuel_costs"]["gas"]
                    + global_settings(scenario)["co2_costs"]
@@ -1359,7 +1359,7 @@ def heat(scenario):
                 sum(heating_lookup_TJ[year]["residential"].values()) + sum(heating_lookup_TJ[year]["service"].values()))
         }
 
-        costs = read_csv(year + 1)
+        costs = read_csv(_get_costs_year(year))
 
         # Insert marginal_costs in EUR/MWh
         # marginal cost can include fuel, C02 and operation and maintenance costs
