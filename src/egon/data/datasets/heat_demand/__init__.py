@@ -347,7 +347,7 @@ def future_heat_demand_germany(scenario_name):
         res_hd_reduction = 1
         ser_hd_reduction = 1
 
-    elif scenario_name == "status2019":
+    elif "status" in scenario_name:
         heat_parameters = get_sector_parameters("heat", scenario=scenario_name)
 
         # Calculate reduction share based on final energy demand and overall demand from Peta for 2015
