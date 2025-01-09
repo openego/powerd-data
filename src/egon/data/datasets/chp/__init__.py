@@ -405,9 +405,9 @@ def insert_chp_statusquo():
         ].Nettonennleistung.sum()
 
     print(
-        f"""          
-          CHPs with a total installed electrical capacity of {dropped_capacity} kW are dropped 
-          because of missing or wrong location data          
+        f"""
+          CHPs with a total installed electrical capacity of {dropped_capacity} kW are dropped
+          because of missing or wrong location data
           """
     )
 
@@ -648,14 +648,16 @@ tasks = (create_tables,)
 
 insert_per_scenario = set()
 
-if "status2019" in config.settings()["egon-data"]["--scenarios"]:
-    insert_per_scenario.add(insert_chp_statusquo)
+for scenario in config.settings()["egon-data"]["--scenarios"]:
 
-if "eGon2035" in config.settings()["egon-data"]["--scenarios"]:
-    insert_per_scenario.add(insert_chp_egon2035)
+    if "status" in scenario:
+        insert_per_scenario.add(insert_chp_statusquo)
 
-if "eGon100RE" in config.settings()["egon-data"]["--scenarios"]:
-    insert_per_scenario.add(insert_chp_egon100re)
+    if scenario == "eGon2035":
+        insert_per_scenario.add(insert_chp_egon2035)
+
+    if scenario == "eGon100RE":
+        insert_per_scenario.add(insert_chp_egon100re)
 
 tasks = tasks + (insert_per_scenario, assign_heat_bus)
 
