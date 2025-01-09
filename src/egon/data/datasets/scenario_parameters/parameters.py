@@ -646,7 +646,7 @@ def electricity(scenario):
     elif scenario.startswith("status"):
 
         year = int(scenario.split("status")[-1])
-        costs = read_csv(year + 1)  # consider end of target year
+        costs = read_csv(_get_costs_year(year))
 
         parameters = {"grid_topology": "Status Quo"}
         # Insert effciencies in p.u.
