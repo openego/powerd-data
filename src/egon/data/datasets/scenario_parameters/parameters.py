@@ -1329,34 +1329,48 @@ def heat(scenario):
             2022: {"residential": {"space heating": 1637800, "hot water": 381000},
                    "service": {"space heating": 578900, "hot water": 39700}}
         }
-        base_year_max = max(heating_lookup_TJ.keys())
-        if year < 2015:
-            ydelta = min(int(2015 - year), 1)
-            growth_rate = 1.01
-            factor = growth_rate ** ydelta
-            _add_to_lookup = True
-        elif year > 2024:
-            ydelta = min(int(year - base_year_max), 1)
-            growth_rate = 0.99
-            factor = growth_rate ** ydelta
-            _add_to_lookup = True
+        scaling = False
+        most_actual = True
+        if scaling:
+            heating_year = year
+            base_year_max = max(heating_lookup_TJ.keys())
+            if year < 2015:
+                ydelta = min(int(2015 - year), 1)
+                growth_rate = 1.01
+                factor = growth_rate ** ydelta
+                _add_to_lookup = True
+            elif year > 2022:
+                ydelta = min(int(year - base_year_max), 1)
+                growth_rate = 0.99
+                factor = growth_rate ** ydelta
+                _add_to_lookup = True
+            else:
+                factor = 1.0
+                _add_to_lookup = False
+            if _add_to_lookup:
+                # using most actual as base to extrapolate
+                heating_lookup_TJ[year] = {
+                    "residential": {
+                        "space heating": heating_lookup_TJ[base_year_max]["residential"]["space heating"] * factor,
+                        "hot water": heating_lookup_TJ[base_year_max]["hot water"] * factor},
+                    "service": {
+                        "space heating": heating_lookup_TJ[base_year_max]["residential"]["space heating"] * factor,
+                        "hot water": heating_lookup_TJ[base_year_max]["hot water"] * factor}}
+        elif most_actual:
+            if year < min(heating_lookup_TJ.keys()):
+                heating_year = min(heating_lookup_TJ.keys())
+            elif year > max(heating_lookup_TJ.keys()):
+                heating_year = max(heating_lookup_TJ.keys())
+            else:
+                heating_year = year
         else:
-            factor = 1.0
-            _add_to_lookup = False
-        if _add_to_lookup:
-            # using most actual as base to extrapolate
-            heating_lookup_TJ[year] = {
-                "residential": {
-                    "space heating": heating_lookup_TJ[base_year_max]["residential"]["space heating"] * factor,
-                    "hot water": heating_lookup_TJ[base_year_max]["hot water"] * factor},
-                "service": {
-                    "space heating": heating_lookup_TJ[base_year_max]["residential"]["space heating"] * factor,
-                    "hot water": heating_lookup_TJ[base_year_max]["hot water"] * factor}}
+            raise KeyError("To set heating in TJ, you need to choose a scaling approach or a most_actual data approach")
         parameters = {
-            "DE_demand_residential_TJ": sum(heating_lookup_TJ[year]["residential"].values()),
-            "DE_demand_service_TJ": sum(heating_lookup_TJ[year]["service"].values()),
+            "DE_demand_residential_TJ": sum(heating_lookup_TJ[heating_year]["residential"].values()),
+            "DE_demand_service_TJ": sum(heating_lookup_TJ[heating_year]["service"].values()),
             "DE_district_heating_share": (189760 + 38248) * factor / (
-                sum(heating_lookup_TJ[year]["residential"].values()) + sum(heating_lookup_TJ[year]["service"].values()))
+                sum(heating_lookup_TJ[heating_year]["residential"].values()
+                    ) + sum(heating_lookup_TJ[heating_year]["service"].values()))
         }
 
         costs = read_csv(_get_costs_year(year))
