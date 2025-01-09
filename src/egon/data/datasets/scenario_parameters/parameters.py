@@ -1357,6 +1357,7 @@ def heat(scenario):
                         "space heating": heating_lookup_TJ[base_year_max]["residential"]["space heating"] * factor,
                         "hot water": heating_lookup_TJ[base_year_max]["hot water"] * factor}}
         elif most_actual:
+            factor = 1
             if year < min(heating_lookup_TJ.keys()):
                 heating_year = min(heating_lookup_TJ.keys())
             elif year > max(heating_lookup_TJ.keys()):
