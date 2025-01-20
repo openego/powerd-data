@@ -827,12 +827,6 @@ def insert_power_to_h2_to_power():
             schema=targets["links"]["schema"]
             table_name=targets["links"]["table"]
 
-            with engine.connect() as conn:
-                conn.execute(
-                    text(
-                        f"DELETE FROM {schema}.{table_name} WHERE carrier IN ('{carrier}')"
-                    )
-                )
             gdf = gpd.GeoDataFrame(df, geometry="geom").set_crs(METRIC_CRS)
             gdf = gdf.to_crs(epsg=DATA_CRS)
             gdf.p_nom = 0
