@@ -283,7 +283,11 @@ def insert_power_to_h2_to_power():
                         text(
                             f"""DELETE FROM {targets["links"]["schema"]}.{targets["links"]["table"]}
                             WHERE carrier IN ('power_to_H2', 'H2_to_power', 'PtH2_waste_heat', 'PtH2_O2') 
-                            AND scn_name = '{SCENARIO_NAME}'
+                            AND scn_name = '{SCENARIO_NAME}' AND bus0 IN (
+                              SELECT bus_id
+                              FROM {targets["buses"]["schema"]}.{targets["buses"]["table"]}
+                              WHERE country = 'DE'
+                            )
                             """
                         )
                     )   
