@@ -137,6 +137,7 @@ def import_cutout(boundary="Europe"):
                 years=slice(weather_year, weather_year),
             )
             success = True
+            print(f"Could run cutout = atlite.Cutout for weather_year {weather_year} with success: {success}")
             break
         except Exception as E:
             print(f"Could not fetch atlite.Cutout for weather_year: {weather_year} due to {E}")
@@ -171,22 +172,26 @@ def download_era5():
         ]["path"]
     )
 
+    print("0")
     if not os.path.exists(directory):
 
         os.mkdir(directory)
 
+    print("1, empty")
     cutout = import_cutout()
 
     if not cutout.prepared:
 
         cutout.prepare()
 
+    print("2, Germany")
     cutout = import_cutout("Germany")
 
     if not cutout.prepared:
 
         cutout.prepare()
 
+    print("3, Germany-offshore")
     cutout = import_cutout("Germany-offshore")
 
     if not cutout.prepared:
