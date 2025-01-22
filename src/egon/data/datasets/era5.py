@@ -69,7 +69,18 @@ def import_cutout(boundary="Europe"):
         Weather data stored in cutout
 
     """
-    weather_year = get_sector_parameters("global", "status2019")["weather_year"]
+    # Scenario status_quo
+    try:
+        status_names = egon.data.config.settings()["egon-data"]["--scenarios"]
+    except Exception:
+        status_names = ["status2019"]
+
+    for status_name in status_names:
+        print("for import_cutout, weather_year = get_sector_parameters, "
+              f"using scenario: {status_name} of total {status_names}")
+        break
+
+    weather_year = get_sector_parameters("global", status_name)["weather_year"]
 
     if boundary == "Europe":
         xs = slice(-12.0, 35.1)
@@ -106,6 +117,8 @@ def import_cutout(boundary="Europe"):
         )
         / f"{boundary.lower()}-{str(weather_year)}-era5.nc"
     )
+
+    print(f"directory for era5 is {str(directory)}")
 
     cutout = atlite.Cutout(
         path=directory.absolute(),
