@@ -120,13 +120,38 @@ def import_cutout(boundary="Europe"):
 
     print(f"directory for era5 is {str(directory)}")
 
-    cutout = atlite.Cutout(
-        path=directory.absolute(),
-        module="era5",
-        x=xs,
-        y=ys,
-        years=slice(weather_year, weather_year),
-    )
+    weather_year_BU = weather_year
+    success = False
+    max_fetch_retries = 6
+    for i in range(max_fetch_retries):  # try actual + last 5 years
+
+        try:
+            weather_year = weather_year_BU - i
+            print(f"trying to fetch data for weather_year {weather_year}")
+
+            cutout = atlite.Cutout(
+                path=directory.absolute(),
+                module="era5",
+                x=xs,
+                y=ys,
+                years=slice(weather_year, weather_year),
+            )
+            success = True
+            break
+        except Exception as E:
+            print(f"Could not fetch atlite.Cutout for weather_year: {weather_year} due to {E}")
+
+    if not success:
+        weather_year = 2019  # thath should be working
+        print(f"all given tries for weather years from {weather_year_BU - max_fetch_retries - 1} "
+              f"to {weather_year_BU} did not work. Trying to make use of weather_year: {weather_year}.")
+        cutout = atlite.Cutout(
+            path=directory.absolute(),
+            module="era5",
+            x=xs,
+            y=ys,
+            years=slice(weather_year, weather_year),
+        )
 
     return cutout
 
