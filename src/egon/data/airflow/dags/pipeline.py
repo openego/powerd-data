@@ -53,6 +53,7 @@ from egon.data.datasets.heat_supply import (
     HeatSupply,
 )
 from egon.data.datasets.heat_supply.individual_heating import (
+    HeatPumps2019,
     HeatPumps2035,
     HeatPumps2050,
     HeatPumpsPypsaEur,
@@ -98,6 +99,7 @@ from egon.data.datasets.vg250_mv_grid_districts import Vg250MvGridDistricts
 from egon.data.datasets.zensus import ZensusMiscellaneous, ZensusPopulation
 from egon.data.datasets.zensus_mv_grid_districts import ZensusMvGridDistricts
 from egon.data.datasets.zensus_vg250 import ZensusVg250
+from egon.data.datasets.scenario_path import CreateIntermediateScenarios
 
 # Set number of threads used by numpy and pandas
 set_numexpr_threads()
@@ -443,16 +445,6 @@ with airflow.DAG(
     # H2 steel tanks and saltcavern storage
     insert_H2_storage = HydrogenStoreEtrago(dependencies=h2_infrastructure)
 
-    # Power-to-gas-to-power chain installations
-    insert_power_to_h2_installations = HydrogenPowerLinkEtrago(
-        dependencies=h2_infrastructure
-    )
-
-    # Link between methane grid and respective hydrogen buses
-    insert_h2_to_ch4_grid_links = HydrogenMethaneLinkEtrago(
-        dependencies=[h2_infrastructure, insert_power_to_h2_installations]
-    )
-
     # Gas abroad
     gas_abroad_insert_data = GasNeighbours(
         dependencies=[
@@ -570,9 +562,10 @@ with airflow.DAG(
             heat_time_series,
         ]
     )
-
+    
     # CHP to eTraGo
     chp_etrago = ChpEtrago(dependencies=[chp, heat_etrago])
+       
 
     # Storages to eTraGo
     storage_etrago = StorageEtrago(
@@ -586,6 +579,17 @@ with airflow.DAG(
     # eMobility: heavy duty transport
     heavy_duty_transport = HeavyDutyTransport(
         dependencies=[vg250, setup_etrago, create_gas_polygons]
+    )
+
+    # Heat pump disaggregation for status2019
+    heat_pumps_2019 = HeatPumps2019(
+        dependencies=[
+            cts_demand_buildings,
+            DistrictHeatingAreas,
+            heat_supply,
+            heat_time_series,
+            power_plants,
+        ]
     )
 
     # Heat pump disaggregation for eGon2035
@@ -610,6 +614,17 @@ with airflow.DAG(
             heat_pumps_2035,
         ]
     )
+    
+    # Power-to-H2-to-power chain installations with oxygen and waste_heat usage
+    insert_power_to_h2_installations = HydrogenPowerLinkEtrago(
+        dependencies= [h2_infrastructure, mv_grid_districts, heat_etrago, substation_extraction, hts_etrago_table] 
+    )
+    
+    # Link between methane grid and respective hydrogen buses
+    insert_h2_to_ch4_grid_links = HydrogenMethaneLinkEtrago(
+        dependencies=[h2_infrastructure, insert_power_to_h2_installations]
+    )
+
 
     # Heat pump disaggregation for eGon100RE
     heat_pumps_2050 = HeatPumps2050(
@@ -662,6 +677,18 @@ with airflow.DAG(
 
     # Include low flex scenario(s)
     low_flex_scenario = LowFlexScenario(
+        dependencies=[
+            storage_etrago,
+            hts_etrago_table,
+            fill_etrago_generators,
+            household_electricity_demand_annual,
+            cts_demand_buildings,
+            emobility_mit,
+        ]
+    )
+
+    # Create intermediate scenarios based on status2019 and eGon100RE
+    create_intemediate_scenarios = CreateIntermediateScenarios(
         dependencies=[
             storage_etrago,
             hts_etrago_table,

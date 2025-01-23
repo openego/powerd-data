@@ -372,6 +372,10 @@ def lines_between_foreign_countries(scenario, sorces, targets, central_buses):
                     "p_nom_opt",
                     "bus3",
                     "efficiency3",
+                    "location",
+                    "project_status",
+                    "dc",
+                    "voltage",
                 ],
                 axis="columns",
                 inplace=True,
@@ -389,6 +393,7 @@ def lines_between_foreign_countries(scenario, sorces, targets, central_buses):
                     "x_pu_eff",
                     "r_pu_eff",
                     "s_nom_opt",
+                    "dc",
                 ],
                 axis="columns",
                 inplace=True,
@@ -538,6 +543,7 @@ def cross_border_lines(scenario, sources, targets, central_buses):
 
     new_lines = new_lines[new_lines.bus0 != new_lines.bus1]
 
+    new_lines["cables"] = new_lines["cables"].apply(int)
 
     # Insert lines to the database
     new_lines.to_postgis(
@@ -1581,7 +1587,7 @@ def insert_storage_units_sq(scn_name="status2019"):
     None.
 
     """
-    year = int(get_sector_parameters("global", scn_name)["weather_year"])
+    year = int(get_sector_parameters("global", scn_name)["population_year"])
     try:
         sto_sq = entsoe_historic_generation_capacities()
     except:
@@ -1683,7 +1689,8 @@ def insert_storage_units_sq(scn_name="status2019"):
     )
 
     # Select year of interest
-    bat_sq = bat_sq[[year]].rename(columns={year: "p_nom"})
+    bat_sq = bat_sq[[str(year)]]
+    bat_sq.rename(columns={str(year): "p_nom"}, inplace= True)
 
     # Add missing information suitable for eTraGo selected from scenario_parameter table
     parameters_batteries = get_sector_parameters(
@@ -2020,7 +2027,7 @@ class ElectricalNeighbours(Dataset):
     def __init__(self, dependencies):
         super().__init__(
             name="ElectricalNeighbours",
-            version="0.0.10",
+            version="0.0.11",
             dependencies=dependencies,
             tasks=tasks,
         )
