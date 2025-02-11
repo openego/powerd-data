@@ -314,7 +314,14 @@ def insert_biomass_chp(scenario):
     session.commit()
 
 
-def insert_chp_statusquo():
+def insert_chp_statusquo(scn_name=None):
+
+    if not scn_name:
+        for scn_name in config.settings()["egon-data"]["--scenarios"]:
+            print(f'Assuming insert_chp_statusquo for scn_name: {scn_name} of all '
+                  f'possible scenarios {config.settings()["egon-data"]["--scenarios"]}')
+            break
+
     cfg = config.datasets()["chp_location"]
 
     # import data for MaStR
@@ -429,6 +436,7 @@ def insert_chp_statusquo():
     mastr = assign_use_case(mastr, cfg["sources"], "status2019")
 
     # Insert entries with location
+    print(f"Going to Insert entries with location for scn_name {scn_name}")
     session = sessionmaker(bind=db.engine())()
     for i, row in mastr.iterrows():
         if row.ThermischeNutzleistung > 0:
@@ -442,7 +450,7 @@ def insert_chp_statusquo():
                 carrier=map_carrier().loc[row.Energietraeger],
                 el_capacity=row.Nettonennleistung / 1000,
                 th_capacity=row.ThermischeNutzleistung / 1000,
-                scenario="status2019",
+                scenario=scn_name,
                 district_heating=row.district_heating,
                 electrical_bus_id=row.bus_id,
                 ch4_bus_id=row.gas_bus_id,
@@ -649,6 +657,8 @@ tasks = (create_tables,)
 insert_per_scenario = set()
 
 for scenario in config.settings()["egon-data"]["--scenarios"]:
+
+    print(f"CHP: insert_per_scenario: for scenario {scenario}")
 
     if "status" in scenario:
         insert_per_scenario.add(insert_chp_statusquo)
