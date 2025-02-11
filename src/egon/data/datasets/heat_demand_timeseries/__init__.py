@@ -321,9 +321,9 @@ def create_district_heating_profile_python_like(scenario="eGon2035"):
                 WHERE scenario = '{scenario}'
                 AND area_id = '{area}'
             ) b ON a.zensus_population_id = b.zensus_population_id        ,
-    
+
             UNNEST (selected_idp_profiles) WITH ORDINALITY as selected_idp
-    
+
             """
         )
 
@@ -342,16 +342,23 @@ def create_district_heating_profile_python_like(scenario="eGon2035"):
             )
 
             for hour in range(24):
-                slice_df[hour] = (
-                    slice_df.idp.str[hour]
-                    .mul(slice_df.daily_demand_share)
-                    .mul(
-                        annual_demand.loc[
-                            slice_df.zensus_population_id.values,
-                            "per_building",
-                        ].values
-                    )
-                )
+                print(f"hour {hour} / of range(24)")
+
+                a = slice_df.idp.str[hour]
+
+                print("a", a)
+
+                b = slice_df.daily_demand_share
+
+                print("b", b)
+
+                c = slice_df.daily_demand_share
+
+                print("c", c)
+
+                slice_df[hour] = a.mul(b).mul(c.values)
+
+                print(f"slice_df[hour]: {hour}", slice_df[hour])
 
             diff = (
                 slice_df[range(24)].sum().sum()
@@ -364,7 +371,7 @@ def create_district_heating_profile_python_like(scenario="eGon2035"):
 
             assert (
                 abs(diff) < 0.11
-            ), f"""Deviation of residential heat demand time 
+            ), f"""Deviation of residential heat demand time
             series for district heating grid {str(area)} is {diff}"""
 
             if abs(diff) > 0.03:
@@ -753,7 +760,7 @@ def create_individual_heating_profile_python_like(scenario="eGon2035"):
 
         assert (
             abs(diff) < 0.03
-        ), f"""Deviation of residential heat demand time 
+        ), f"""Deviation of residential heat demand time
         series for mv grid {str(grid)} is {diff}"""
 
         if not (slice_df[hour].empty or cts.empty):
@@ -796,6 +803,7 @@ def district_heating(method="python"):
         for scenario in egon.data.config.settings()["egon-data"][
             "--scenarios"
         ]:
+            print(f"going to create_district_heating_profile_python_like(scenario) for scenario {scenario}")
             create_district_heating_profile_python_like(scenario)
 
     else:

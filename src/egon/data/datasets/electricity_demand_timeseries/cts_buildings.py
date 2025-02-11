@@ -423,7 +423,7 @@ def create_synthetic_buildings(df, points=None, crs="EPSG:3035"):
     return df
 
 
-def buildings_with_amenities():
+def buildings_with_amenities(scn_name="status2019"):
     """
     Amenities which are assigned to buildings are determined and grouped per
     building and zensus cell. Buildings covering multiple cells therefore
@@ -461,7 +461,7 @@ def buildings_with_amenities():
             )
             .filter(
                 EgonDemandRegioZensusElectricity.sector == "service",
-                EgonDemandRegioZensusElectricity.scenario == "status2019",
+                EgonDemandRegioZensusElectricity.scenario == scn_name,
             )
         )
         df_amenities_in_buildings = pd.read_sql(
@@ -1210,7 +1210,16 @@ def cts_buildings():
 
     log.info("Start logging!")
     # Buildings with amenities
-    df_buildings_with_amenities, df_lost_cells = buildings_with_amenities()
+    try:
+        all_scenarios = config.settings()["egon-data"]["--scenarios"]
+        for scn_name in all_scenarios:
+            print(f"fetching scn_name {scn_name} of all_scenarios. {all_scenarios}")
+            print(f"Goint to call buildings_with_amenities(scn_name) with scn_name: {scn_name}")
+            df_buildings_with_amenities, df_lost_cells = buildings_with_amenities(scn_name)
+            break
+    except Exception as E:
+        print(f"Cannot df_buildings_with_amenities for a specific scenario name due to {E}")
+        df_buildings_with_amenities, df_lost_cells = buildings_with_amenities()
     log.info("Buildings with amenities selected!")
 
     # Median number of amenities per cell
