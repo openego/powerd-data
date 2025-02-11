@@ -427,13 +427,19 @@ def insert_chp_statusquo(scn_name=None):
             mastr, cfg, WORKING_DIR_MASTR_NEW
         )
 
-        gas_bus_id = db.assign_gas_bus_id(mastr, "status2019", "CH4").bus
+        try:
+            gas_bus_id = db.assign_gas_bus_id(mastr, scn_name, "CH4").bus
+        except Exception:
+            gas_bus_id = db.assign_gas_bus_id(mastr, "status2019", "CH4").bus
 
         mastr = assign_bus_id(mastr, cfg, drop_missing=True)
 
         mastr["gas_bus_id"] = gas_bus_id
 
-    mastr = assign_use_case(mastr, cfg["sources"], "status2019")
+    try:
+        mastr = assign_use_case(mastr, cfg["sources"], scn_name)
+    except Exception:
+        mastr = assign_use_case(mastr, cfg["sources"], "status2019")
 
     # Insert entries with location
     print(f"Going to Insert entries with location for scn_name {scn_name}")

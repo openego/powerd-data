@@ -309,8 +309,8 @@ def create_district_heating_profile_python_like(scenario="eGon2035"):
 
     start_time = datetime.now()
     for area in district_heating_grids.area_id.unique():
-        selected_profiles = db.select_dataframe(
-            f"""
+
+        q = f"""
             SELECT a.zensus_population_id, building_id, c.climate_zone,
             selected_idp, ordinality as day, b.area_id
             FROM demand.egon_heat_timeseries_selected_profiles a
@@ -325,14 +325,22 @@ def create_district_heating_profile_python_like(scenario="eGon2035"):
             UNNEST (selected_idp_profiles) WITH ORDINALITY as selected_idp
 
             """
-        )
+
+        print(f"qqqq {q}")
+
+        selected_profiles = db.select_dataframe(q)
 
         if not selected_profiles.empty:
+
+            print(f"area {area}")
+
             df = pd.merge(
                 selected_profiles,
                 daily_demand_shares,
                 on=["day", "climate_zone"],
             )
+
+            print("df", df)
 
             slice_df = pd.merge(
                 df[df.area_id == area],
@@ -340,6 +348,8 @@ def create_district_heating_profile_python_like(scenario="eGon2035"):
                 left_on="selected_idp",
                 right_on="index",
             )
+
+            print("slice_df", slice_df)
 
             for hour in range(24):
                 print(f"hour {hour} / of range(24)")
@@ -352,7 +362,10 @@ def create_district_heating_profile_python_like(scenario="eGon2035"):
 
                 print("b", b)
 
-                c = slice_df.daily_demand_share
+                c = annual_demand.loc[
+                    slice_df.zensus_population_id.values,
+                    "per_building",
+                ]
 
                 print("c", c)
 

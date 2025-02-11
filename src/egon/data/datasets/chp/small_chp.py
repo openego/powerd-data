@@ -695,15 +695,24 @@ def assign_use_case(chp, sources, scenario):
     chp["district_heating"] = False
     # chp.loc[chp[chp.Nettonennleistung <= 0.15].index, 'use_case'] = 'individual'
     # Select district heating areas with buffer of 1 km
-    district_heating = db.select_geodataframe(
-        f"""
+    q = f"""
         SELECT area_id, ST_Buffer(geom_polygon, 1000) as geom
         FROM {sources['district_heating_areas']['schema']}.
         {sources['district_heating_areas']['table']}
         WHERE scenario = '{scenario}'
-        """,
-        epsg=4326,
-    )
+        """
+    print(f"assign_use_case: query: {q}")
+    district_heating = db.select_geodataframe(q, epsg=4326,)
+    # replace due to logging
+    # district_heating = db.select_geodataframe(
+    #     f"""
+    #     SELECT area_id, ST_Buffer(geom_polygon, 1000) as geom
+    #     FROM {sources['district_heating_areas']['schema']}.
+    #     {sources['district_heating_areas']['table']}
+    #     WHERE scenario = '{scenario}'
+    #     """,
+    #     epsg=4326,
+    # )
 
     # Select all CHP closer than 1km to a district heating area
     # these are possible district heating chp
