@@ -137,7 +137,8 @@ def import_cutout(boundary="Europe"):
             module="era5",
             x=xs,
             y=ys,
-            time=str(weather_year),
+            # time=str(weather_year),
+            time=slice(str(weather_year), str(weather_year)),
         )
         print(f"Could run cutout = atlite.Cutout for weather_year {weather_year} with success.")
 
