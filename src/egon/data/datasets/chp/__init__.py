@@ -321,6 +321,8 @@ def insert_chp_statusquo(scn_name=None):
             print(f'Assuming insert_chp_statusquo for scn_name: {scn_name} of all '
                   f'possible scenarios {config.settings()["egon-data"]["--scenarios"]}')
             break
+    else:
+        print(f"For insert_chp_statusquo: got as param scn_name: {scn_name}")
 
     cfg = config.datasets()["chp_location"]
 
