@@ -132,7 +132,7 @@ def insert_capacities_status2019():
         (component, carrier, capacity, nuts, scenario_name)
         VALUES (
             'link',
-            'residential_rural_heat_pump',
+            'rural_heat_pump',
             {rural_heat_capacity},
             'DE',
             'status2019'            
@@ -739,11 +739,18 @@ def eGon100_capacities():
     df.index = df.index.str.replace(" ", "_")
 
     # Aggregate offshore wind
-    df.loc["wind_offshore"] = df[df.index.str.startswith("offwind")].sum(numeric_only=True)
+    df.loc["wind_offshore"] = df[df.index.str.startswith(
+        "offwind")].sum(numeric_only=True)
     df.loc["wind_offshore", "component"] = "generators"
     df = df.drop(df.index[df.index.str.startswith("offwind")])
 
     # Aggregate OCGT and CCGT
+    df.loc["OCGT", df.columns != "component"] = (
+        df.loc["OCGT", df.columns != "component"] * 0.425
+    )
+    df.loc["CCGT", df.columns != "component"] = (
+        df.loc["CCGT", df.columns != "component"] * 0.570
+    )
     df.loc["gas"] = df[df.index.str.endswith("CGT")].sum(numeric_only=True)
     df.loc["gas", "component"] = "links"
     df = df.drop(df.index[df.index.str.endswith("CGT")])
@@ -812,7 +819,8 @@ def eGon100_capacities():
         df_year = df.rename(
             {f"p_nom_{year}": "capacity", "index": "carrier"}, axis="columns"
         )
-        df_year.drop(df_year.columns[~df_year.columns.isin(["carrier", 'component', "capacity"])], axis="columns", inplace=True)
+        df_year.drop(df_year.columns[~df_year.columns.isin(
+            ["carrier", 'component', "capacity"])], axis="columns", inplace=True)
 
         if year == "2045":
             df_year["scenario_name"] = "eGon100RE"
@@ -838,17 +846,10 @@ def eGon100_capacities():
         )
 
 
-tasks = (create_table,)
+tasks = (create_table, insert_data_nep,)
 
 if "status2019" in egon.data.config.settings()["egon-data"]["--scenarios"]:
-    tasks = tasks + (insert_capacities_status2019, insert_data_nep)
-
-if (
-    "eGon2035" in egon.data.config.settings()["egon-data"]["--scenarios"]
-) and not (
-    "status2019" in egon.data.config.settings()["egon-data"]["--scenarios"]
-):
-    tasks = tasks + (insert_data_nep,)
+    tasks = tasks + (insert_capacities_status2019,)
 
 if "eGon100RE" in egon.data.config.settings()["egon-data"]["--scenarios"]:
     tasks = tasks + (eGon100_capacities,)
@@ -858,7 +859,7 @@ class ScenarioCapacities(Dataset):
     def __init__(self, dependencies):
         super().__init__(
             name="ScenarioCapacities",
-            version="0.0.16",
+            version="0.0.18",
             dependencies=dependencies,
             tasks=tasks,
         )

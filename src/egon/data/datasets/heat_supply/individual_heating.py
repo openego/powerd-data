@@ -563,7 +563,7 @@ def cascade_per_technology(
                     FROM {sources['scenario_capacities']['schema']}.
                     {sources['scenario_capacities']['table']} a
                     WHERE scenario_name = '{scenario}'
-                    AND carrier IN ('rural_air_heat_pump', 'rural_ground_heat_pump')
+                    AND carrier = 'rural_heat_pump'
                     """
             )
 
@@ -1831,8 +1831,6 @@ def catch_missing_buidings(buildings_decentral_heating, peak_load):
     # should only happen within cutout SH
     if (
         not all(buildings_decentral_heating.isin(peak_load.index))
-        and config.settings()["egon-data"]["--dataset-boundary"]
-        == "Schleswig-Holstein"
     ):
         diff = buildings_decentral_heating.difference(peak_load.index)
         logger.warning(
