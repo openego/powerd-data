@@ -46,6 +46,69 @@ def clean_existing_scn_path_data():
     return
 
 
+def import_network_structure(scn=str):
+    scn = "powerd2025"
+
+    # Import buses
+    bus = pd.read_sql(
+        sql="""
+                      SELECT * from grid.egon_etrago_bus
+                      WHERE scn_name = 'eGon100RE'
+                      """,
+        con=con,
+    )
+
+    bus["scn_name"] = scn
+
+    bus.to_sql(
+        name="egon_etrago_bus",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
+
+    # Import lines
+    line = pd.read_sql(
+        sql="""
+                      SELECT * from grid.egon_etrago_line
+                      WHERE scn_name = 'eGon100RE'
+                      """,
+        con=con,
+    )
+
+    line["scn_name"] = scn
+
+    line.to_sql(
+        name="egon_etrago_line",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
+
+    # Import transformers
+    transformer = pd.read_sql(
+        sql="""
+                      SELECT * from grid.egon_etrago_transformer
+                      WHERE scn_name = 'eGon100RE'
+                      """,
+        con=con,
+    )
+
+    transformer["scn_name"] = scn
+
+    transformer.to_sql(
+        name="egon_etrago_transformer",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
+
+    return
+
+
 # load scenarios
 def load_scn_no_time_no_foreign(scn_name):
     # load scenario data without timeseries and foreign countries data
