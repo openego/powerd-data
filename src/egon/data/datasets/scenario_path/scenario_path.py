@@ -11,13 +11,11 @@ import egon.data.config
 
 sources = egon.data.config.datasets()["scenario_path"]["sources"]
 
-scn_path = ["powerd2025", "powerd2030", "powerd2035"]
-
 con = db.engine()
 
 
-# load scenarios
-def clean_existing_scn_path_data(scn_path):
+def clean_existing_scn_path_data():
+    scn_path = ["powerd2025", "powerd2030", "powerd2035"]
     # Clean existing data from previous executions
     tables = pd.read_sql(
         """
@@ -48,6 +46,7 @@ def clean_existing_scn_path_data(scn_path):
     return
 
 
+# load scenarios
 def load_scn_no_time_no_foreign(scn_name):
     # load scenario data without timeseries and foreign countries data
 
@@ -221,9 +220,9 @@ def load_scn_capacies(scn1: dict, scn2: dict):
         + list(carriers_links_from_supply)
         + list(carriers_storage_from_supply)
     )
-    
+
     assert set(used_carriers) == set(scn_capacities.carrier.unique())
-    
+
     return gen_capacities, link_capacities, storage_capacities
 
 
