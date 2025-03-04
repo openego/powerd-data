@@ -19,9 +19,9 @@ def clean_existing_scn_path_data():
     # Clean existing data from previous executions
     tables = pd.read_sql(
         """
-        SELECT tablename FROM pg_catalog.pg_tables
-        WHERE schemaname = 'grid'
-        """,
+    SELECT tablename FROM pg_catalog.pg_tables
+    WHERE schemaname = 'grid'
+    """,
         con,
     )
 
@@ -46,15 +46,15 @@ def clean_existing_scn_path_data():
     return
 
 
-def import_network_structure(scn=str):
+def import_network_structure(scn="powerd2025"):
     scn = "powerd2025"
 
     # Import buses
     bus = pd.read_sql(
         sql="""
-                      SELECT * from grid.egon_etrago_bus
-                      WHERE scn_name = 'eGon100RE'
-                      """,
+    SELECT * from grid.egon_etrago_bus
+    WHERE scn_name = 'eGon100RE'
+    """,
         con=con,
     )
 
@@ -71,9 +71,9 @@ def import_network_structure(scn=str):
     # Import lines
     line = pd.read_sql(
         sql="""
-                      SELECT * from grid.egon_etrago_line
-                      WHERE scn_name = 'eGon100RE'
-                      """,
+    SELECT * from grid.egon_etrago_line
+    WHERE scn_name = 'eGon100RE'
+    """,
         con=con,
     )
 
@@ -90,9 +90,9 @@ def import_network_structure(scn=str):
     # Import transformers
     transformer = pd.read_sql(
         sql="""
-                      SELECT * from grid.egon_etrago_transformer
-                      WHERE scn_name = 'eGon100RE'
-                      """,
+    SELECT * from grid.egon_etrago_transformer
+    WHERE scn_name = 'eGon100RE'
+    """,
         con=con,
     )
 
@@ -131,7 +131,7 @@ def load_scn_capacies_link(
             )
         """,
         con,
-        )
+    )
 
     scn2_link = pd.read_sql(
         f"""
@@ -149,7 +149,7 @@ def load_scn_capacies_link(
             )
         """,
         con,
-        )
+    )
 
     scn_capacities = pd.read_sql(
         """
