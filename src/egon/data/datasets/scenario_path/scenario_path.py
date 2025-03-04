@@ -109,6 +109,103 @@ def import_network_structure(scn=str):
     return
 
 
+def load_scn_capacies_link(
+    scn1="status2019",
+    scn2="eGon100RE",
+    scn_path=["powerd2025", "powerd2030", "powerd2035"],
+):
+
+    scn1_link = pd.read_sql(
+        f"""
+        SELECT * FROM grid.egon_etrago_link
+        WHERE scn_name = '{scn1}'
+        AND bus0 IN (
+            SELECT bus_id FROM grid.egon_etrago_bus
+            WHERE country = 'DE'
+            AND scn_name = '{scn1}'
+            )
+        AND bus1 IN (
+            SELECT bus_id FROM grid.egon_etrago_bus
+            WHERE country = 'DE'
+            AND scn_name = '{scn1}'
+            )
+        """,
+        con,
+        )
+
+    scn2_link = pd.read_sql(
+        f"""
+        SELECT * FROM grid.egon_etrago_link
+        WHERE scn_name = '{scn2}'
+        AND bus0 IN (
+            SELECT bus_id FROM grid.egon_etrago_bus
+            WHERE country = 'DE'
+            AND scn_name = '{scn2}'
+            )
+        AND bus1 IN (
+            SELECT bus_id FROM grid.egon_etrago_bus
+            WHERE country = 'DE'
+            AND scn_name = '{scn2}'
+            )
+        """,
+        con,
+        )
+
+    scn_capacities = pd.read_sql(
+        """
+        SELECT * FROM supply.egon_scenario_capacities
+        """,
+        con,
+        index_col="index",
+    )
+
+    map_carrier = {
+        "urban_central_solar_thermal_collector": "solar_thermal_collector",
+        "urban_central_geo_thermal": "geo_thermal",
+        "urban_central_gas_boiler": "central_gas_boiler",
+        "urban_central_heat_pump": "central_heat_pump",
+        "urban_central_resistive_heater": "central_resistive_heater",
+        "gas": "OCGT",
+    }
+
+    scn_capacities["carrier"] = scn_capacities["carrier"].apply(
+        lambda x: map_carrier[x] if x in map_carrier.keys() else x
+    )
+
+    carriers_links_from_supply = [
+        "central_gas_boiler",
+        "central_heat_pump",
+        "central_resistive_heater",
+        "gas",
+        "rural_biomass_boiler",
+        "rural_gas_boiler",
+        "rural_heat_pump",
+        "rural_oil_boiler",
+        "rural_resistive_heater",
+    ]
+
+    carriers_links = set(
+        carriers_links_from_supply
+        + list(scn1_link["carrier"])
+        + list(scn2_link["carrier"])
+    )
+
+    all_scn = [scn1] + scn_path + [scn2]
+    link_capacities = pd.DataFrame(index=list(carriers_links), columns=all_scn)
+    link_capacities[scn1] = scn1_link.groupby("carrier").p_nom.sum()
+    link_capacities[scn2] = scn2_link.groupby("carrier").p_nom.sum()
+
+    for scn in scn_path:
+        cap = scn_capacities[scn_capacities["scenario_name"] == scn]
+        cap = cap.set_index("carrier")
+        link_capacities[scn] = cap["capacity"]
+
+    return link_capacities
+
+
+
+
+
 # load scenarios
 def load_scn_no_time_no_foreign(scn_name):
     # load scenario data without timeseries and foreign countries data
