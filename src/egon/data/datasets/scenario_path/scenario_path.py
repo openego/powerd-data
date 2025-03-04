@@ -203,7 +203,90 @@ def load_scn_capacies_link(
     return link_capacities
 
 
+def load_scn_capacies_gen(
+    scn1="status2019",
+    scn2="eGon100RE",
+    scn_path=["powerd2025", "powerd2030", "powerd2035"],
+):
 
+    scn1_gen = pd.read_sql(
+        f"""
+        SELECT * FROM grid.egon_etrago_generator
+        WHERE scn_name = '{scn1}'
+        AND bus IN (
+            SELECT bus_id FROM grid.egon_etrago_bus
+            WHERE country = 'DE'
+            AND scn_name = '{scn1}')
+            """,
+        con,
+    )
+
+    scn2_gen = pd.read_sql(
+        f"""
+        SELECT * FROM grid.egon_etrago_generator
+        WHERE scn_name = '{scn2}'
+        AND bus IN (
+            SELECT bus_id FROM grid.egon_etrago_bus
+            WHERE country = 'DE'
+            AND scn_name = '{scn2}')
+        """,
+        con,
+    )
+
+    scn_capacities = pd.read_sql(
+        """
+        SELECT * FROM supply.egon_scenario_capacities
+        """,
+        con,
+        index_col="index",
+    )
+
+    map_carrier = {
+        "urban_central_solar_thermal_collector": "solar_thermal_collector",
+        "urban_central_geo_thermal": "geo_thermal",
+        "urban_central_gas_boiler": "central_gas_boiler",
+        "urban_central_heat_pump": "central_heat_pump",
+        "urban_central_resistive_heater": "central_resistive_heater",
+        "gas": "OCGT",
+    }
+
+    scn_capacities["carrier"] = scn_capacities["carrier"].apply(
+        lambda x: map_carrier[x] if x in map_carrier.keys() else x
+    )
+
+    carriers_gen_from_supply = [
+        "oil",
+        "solar",
+        "solar_rooftop",
+        "wind_onshore",
+        "lignite",
+        "coal",
+        "wind_offshore",
+        "solar_thermal_collector",
+        "geo_thermal",
+        "run_of_river",
+        "rural_solar_thermal",
+        "urban_central_gas_CHP",
+        "urban_central_solid_biomass_CHP",
+    ]
+
+    carriers_gen = set(
+        carriers_gen_from_supply
+        + list(scn1_gen["carrier"])
+        + list(scn2_gen["carrier"])
+    )
+
+    all_scn = [scn1] + scn_path + [scn2]
+    gen_capacities = pd.DataFrame(index=list(carriers_gen), columns=all_scn)
+    gen_capacities[scn1] = scn1_gen.groupby("carrier").p_nom.sum()
+    gen_capacities[scn2] = scn2_gen.groupby("carrier").p_nom.sum()
+
+    for scn in scn_path:
+        cap = scn_capacities[scn_capacities["scenario_name"] == scn]
+        cap = cap.set_index("carrier")
+        gen_capacities[scn] = cap["capacity"]
+
+    return gen_capacities
 
 
 # load scenarios
