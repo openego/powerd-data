@@ -1,5 +1,5 @@
 from egon.data.datasets import Dataset
-from egon.data.datasets.scenario_path.import_status2019 import (
+from egon.data.datasets.scenario_path.scenario_path import (
     clean_existing_scn_path_data,
     import_network_structure,
     import_generators,
