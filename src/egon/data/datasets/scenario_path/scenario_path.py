@@ -13,6 +13,12 @@ sources = egon.data.config.datasets()["scenario_path"]["sources"]
 
 con = db.engine()
 
+scaling_factor = {
+    "powerd2025": (2025 - 2019) / (2040 - 2019),
+    "powerd2030": (2030 - 2019) / (2040 - 2019),
+    "powerd2035": (2035 - 2019) / (2040 - 2019),
+}
+
 
 def clean_existing_scn_path_data():
     scn_path = ["powerd2025", "powerd2030", "powerd2035"]
