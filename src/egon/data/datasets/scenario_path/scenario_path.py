@@ -427,6 +427,62 @@ def import_links(scn="powerd2025"):
         index=False,
     )
 
+    # dealing with OCGT
+    link_ocgt1 = (
+        scn1_link[scn1_link["carrier"].isin(["OCGT"])].copy().set_index("bus1")
+    )
+    link_ocgt2 = (
+        scn2_link[scn2_link["carrier"].isin(["OCGT"])].copy().set_index("bus1")
+    )
+    link_ocgt3 = link_ocgt2.copy().set_index("link_id")
+    link_ocgt3["scn_name"] = scn
+
+    not_in_ocgt2 = link_ocgt1[
+        ~link_ocgt1.index.isin(link_ocgt2.index.unique())
+    ]
+    ac_geo = gpd.read_postgis(
+        """
+            SELECT bus_id, geom FROM grid.egon_etrago_bus
+            WHERE scn_name = 'eGon100RE'
+            AND carrier = 'AC'
+            """,
+        con,
+        geom_col="geom",
+    ).set_index("bus_id")
+    ac_ocgt1_not_in_ocgt2 = ac_geo[ac_geo.index.isin(list(not_in_ocgt2.index))]
+    ac_ocgt2 = ac_geo[ac_geo.index.isin(list(link_ocgt2.index))]
+
+    ocgt1_to_ocgt2 = {}
+    for l in not_in_ocgt2.index.unique():
+        dist = ac_ocgt2.distance(ac_ocgt1_not_in_ocgt2["geom"][l])
+        dist.sort_values(inplace=True)
+        ocgt1_to_ocgt2[l] = dist.index[0]
+
+    link_ocgt1.reset_index(inplace=True)
+    link_ocgt1["bus1"] = link_ocgt1["bus1"].apply(
+        lambda x: x if x not in ocgt1_to_ocgt2.keys() else ocgt1_to_ocgt2[x]
+    )
+    link_ocgt2.reset_index(inplace=True)
+    for b, df in link_ocgt2.groupby("bus1"):
+        ids = df.link_id
+        ini = link_ocgt1[link_ocgt1["bus1"] == b]["p_nom"].sum()
+        fin = df["p_nom"].sum()
+        factor_bus = (ini + (fin - ini) * scaling_factor[scn]) / fin
+        link_ocgt3.loc[ids, "p_nom"] = (
+            link_ocgt3.loc[ids, "p_nom"] * factor_bus
+        )
+
+    factor_to_pypsaeur = cap_link.at["OCGT", scn] / link_ocgt3["p_nom"].sum()
+    link_ocgt3["p_nom"] *= factor_to_pypsaeur
+
+    link_ocgt3.reset_index(inplace=True)
+    link_ocgt3.to_sql(
+        name="egon_etrago_link",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
     return
 
 
