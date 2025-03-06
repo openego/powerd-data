@@ -489,6 +489,21 @@ def import_links(scn="powerd2025"):
         if_exists="append",
         index=False,
     )
+
+    # dealing with H2_grid
+    h2_grid2 = scn2_link[scn2_link["carrier"] == "H2_grid"].copy()
+    h2_grid3 = h2_grid2.copy()
+    h2_grid3["scn_name"] = scn
+    h2_grid3 = h2_grid3[h2_grid3["build_year"] <= year_scenario[scn]]
+
+    h2_grid3.to_sql(
+        name="egon_etrago_link",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
+
     return
 
 
