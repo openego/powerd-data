@@ -504,6 +504,32 @@ def import_links(scn="powerd2025"):
         index=False,
     )
 
+    # dealing with identical links as in eGon100RE
+    identical = [
+        "CH4",
+        "CH4_to_H2",
+        "H2_saltcavern",
+        "H2_to_CH4",
+        "H2_to_power",
+        "PtH2_O2",
+        "PtH2_waste_heat",
+        "rural_heat_store_charger",
+        "rural_heat_store_discharger",
+        "power_to_H2",
+        "rural_heat_store_charger",
+        "rural_heat_store_discharger",
+        "BEV_charger",
+    ]
+    identical3 = scn2_link[scn2_link["carrier"].isin(identical)].copy()
+    identical3["scn_name"] = scn
+
+    identical3.to_sql(
+        name="egon_etrago_link",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
     return
 
 
