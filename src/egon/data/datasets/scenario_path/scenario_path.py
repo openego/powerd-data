@@ -5,6 +5,7 @@ import subprocess
 
 import numpy as np
 import pandas as pd
+import geopandas as gpd
 
 from egon.data import config, db
 import egon.data.config
@@ -358,10 +359,78 @@ def import_links(scn="powerd2025"):
         index=False,
     )
 
+    # Dealing with central_gas_boiler
+    link_cgb1 = (
+        scn1_link[scn1_link["carrier"].isin(["central_gas_boiler"])]
+        .copy()
+        .set_index("bus1")
+    )
+    link_cgb2 = (
+        scn2_link[scn2_link["carrier"].isin(["central_gas_boiler"])]
+        .copy()
+        .set_index("bus1")
+    )
+    link_cgb3 = link_cgb2.copy()
+    link_cgb3["scn_name"] = scn
+
+    cgb1_geo = gpd.read_postgis(
+        """
+            SELECT bus_id, geom FROM grid.egon_etrago_bus
+            WHERE scn_name = 'status2019'
+            AND carrier = 'central_heat'
+            """,
+        con,
+        geom_col="geom",
+    ).set_index("bus_id")
+
+    cgb2_geo = gpd.read_postgis(
+        """
+            SELECT bus_id, geom FROM grid.egon_etrago_bus
+            WHERE scn_name = 'eGon100RE'
+            AND carrier = 'central_heat'
+            """,
+        con,
+        geom_col="geom",
+    ).set_index("bus_id")
+    cgb1_to_cgb2 = {}
+    for g in cgb1_geo.index:
+        dist = cgb2_geo.distance(cgb1_geo["geom"][g])
+        dist.sort_values(inplace=True)
+        for d in dist.index:
+            if d not in cgb1_to_cgb2.values():
+                cgb1_to_cgb2[g] = d
+                break
+
+    link_cgb1.index = link_cgb1.index.map(cgb1_to_cgb2)
+    missing_cgb = pd.DataFrame(
+        0,
+        index=link_cgb2.index[~link_cgb2.index.isin(link_cgb1.index)],
+        columns=["p_nom"],
+    )
+    link_cgb1 = pd.concat([link_cgb1, missing_cgb])
+
+    link_cgb3["p_nom"] = (
+        link_cgb1["p_nom"]
+        + (link_cgb2["p_nom"] - link_cgb1["p_nom"]) * scaling_factor[scn]
+    )
+    factor_to_pypsaeur = (
+        cap_link.at["central_gas_boiler", scn] / link_cgb3["p_nom"].sum()
+    )
+    link_cgb3["p_nom"] = link_cgb3["p_nom"] * factor_to_pypsaeur
+
+    link_cgb3.reset_index(inplace=True)
+    link_cgb3.to_sql(
+        name="egon_etrago_link",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
 
     return
 
 
+###############################################################################
 def load_scn_capacies_gen(
     scn1="status2019",
     scn2="eGon100RE",
