@@ -1,5 +1,5 @@
 from egon.data.datasets import Dataset
-from egon.data.datasets.scenario_path.import_status2019 import (
+from egon.data.datasets.scenario_path.scenario_path import (
     clean_existing_scn_path_data,
     import_network_structure,
     import_generators,
@@ -19,7 +19,7 @@ def create_powerd2025():
     import_links(scn)
     import_storage_units(scn)
     import_stores(scn)
-    import_foreign(scn)
+    import_foreign(scn, year=2025)
 
     return
 
@@ -32,7 +32,7 @@ def create_powerd2030():
     import_links(scn)
     import_storage_units(scn)
     import_stores(scn)
-    import_foreign(scn)
+    import_foreign(scn, year=2030)
 
     return
 
@@ -45,7 +45,7 @@ def create_powerd2035():
     import_links(scn)
     import_storage_units(scn)
     import_stores(scn)
-    import_foreign(scn)
+    import_foreign(scn, year=2035)
 
     return
 

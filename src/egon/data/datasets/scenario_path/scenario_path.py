@@ -9,6 +9,8 @@ import pandas as pd
 from egon.data import config, db
 import egon.data.config
 
+from egon.data.datasets.pypsaeur import neighbor_reduction
+
 sources = egon.data.config.datasets()["scenario_path"]["sources"]
 
 con = db.engine()
@@ -47,14 +49,13 @@ def clean_existing_scn_path_data():
 
 
 def import_network_structure(scn=str):
-    scn = "powerd2025"
 
     # Import buses
     bus = pd.read_sql(
         sql="""
-                      SELECT * from grid.egon_etrago_bus
-                      WHERE scn_name = 'eGon100RE'
-                      """,
+            SELECT * from grid.egon_etrago_bus
+            WHERE scn_name = 'eGon100RE' AND carrier = 'AC'
+            """,
         con=con,
     )
 
@@ -71,8 +72,10 @@ def import_network_structure(scn=str):
     # Import lines
     line = pd.read_sql(
         sql="""
-                      SELECT * from grid.egon_etrago_line
-                      WHERE scn_name = 'eGon100RE'
+                SELECT * from grid.egon_etrago_line
+                WHERE scn_name = 'eGon100RE' AND bus0 IN
+                (SElECT bus_id FROM grid.egon_etrago_bus 
+                 WHERE country ='DE')
                       """,
         con=con,
     )
@@ -105,7 +108,6 @@ def import_network_structure(scn=str):
         if_exists="append",
         index=False,
     )
-
     return
 
 
@@ -307,4 +309,9 @@ def adjust_generators(scn1: dict, scn2: dict, new_scn: dict, name: str):
 eGon100RE = load_scn_no_time_no_foreign(scn_name="eGon100RE")
 status2019 = load_scn_no_time_no_foreign(scn_name="status2019")
 
-cap_gen, cap_link, cap_storage = load_scn_capacies(status2019, eGon100RE)
+#cap_gen, cap_link, cap_storage = load_scn_capacies(status2019, eGon100RE)
+
+
+
+def import_foreign(scn_name, year):
+    neighbor_reduction(scn_name, year)
