@@ -209,6 +209,159 @@ def load_scn_capacies_link(
     return link_capacities
 
 
+def import_links(scn="powerd2025"):
+    scn = "powerd2025"
+    cap_link = load_scn_capacies_link()
+
+    scn1_link = pd.read_sql(
+        """
+        SELECT * FROM grid.egon_etrago_link
+        WHERE scn_name = 'status2019'
+        AND bus0 IN (
+            SELECT bus_id FROM grid.egon_etrago_bus
+            WHERE country = 'DE'
+            AND scn_name = 'status2019'
+            )
+        AND bus1 IN (
+            SELECT bus_id FROM grid.egon_etrago_bus
+            WHERE country = 'DE'
+            AND scn_name = 'status2019'
+            )
+        """,
+        con,
+    )
+
+    scn2_link = pd.read_sql(
+        """
+        SELECT * FROM grid.egon_etrago_link
+        WHERE scn_name = 'eGon100RE'
+        AND bus0 IN (
+            SELECT bus_id FROM grid.egon_etrago_bus
+            WHERE country = 'DE'
+            AND scn_name = 'eGon100RE'
+            )
+        AND bus1 IN (
+            SELECT bus_id FROM grid.egon_etrago_bus
+            WHERE country = 'DE'
+            AND scn_name = 'eGon100RE'
+            )
+        """,
+        con,
+    )
+
+    # Dealing with dsm
+    dsm1 = scn1_link[scn1_link["carrier"] == "dsm"].set_index("bus0").copy()
+    dsm2 = scn2_link[scn2_link["carrier"] == "dsm"].set_index("bus0").copy()
+    dsm3 = dsm2.copy()
+    dsm3["scn_name"] = scn
+    dsm3["p_nom"] = (
+        dsm1["p_nom"] + (dsm2["p_nom"] - dsm1["p_nom"]) * scaling_factor[scn]
+    )
+    dsm3.reset_index(inplace=True)
+    dsm3.to_sql(
+        name="egon_etrago_link",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
+
+    dsm3_t = pd.read_sql(
+        """
+        SELECT * FROM grid.egon_etrago_link_timeseries
+        WHERE link_id IN(
+        SELECT link_id FROM grid.egon_etrago_link
+        WHERE bus0 IN (
+            SELECT bus_id FROM grid.egon_etrago_bus
+            WHERE country = 'DE'
+            AND scn_name = 'eGon100RE'
+        )
+        AND bus1 IN (
+            SELECT bus_id FROM grid.egon_etrago_bus
+            WHERE country = 'DE'
+            AND scn_name = 'eGon100RE'
+        )
+        AND carrier = 'dsm')
+        """,
+        con,
+    )
+
+    dsm3_t["scn_name"] = scn
+
+    dsm3_t.to_sql(
+        name="egon_etrago_link_timeseries",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
+
+    # dealing with rural_heat_pump
+    link_rhp1 = (
+        scn1_link[scn1_link["carrier"].isin(["rural_heat_pump"])]
+        .copy()
+        .set_index("bus0")
+    )
+    link_rhp2 = (
+        scn2_link[scn2_link["carrier"].isin(["rural_heat_pump"])]
+        .copy()
+        .set_index("bus0")
+    )
+    link_rhp3 = link_rhp2.copy()
+    link_rhp3["scn_name"] = scn
+
+    link_rhp3["p_nom"] = (
+        link_rhp1["p_nom"]
+        + (link_rhp2["p_nom"] - link_rhp1["p_nom"]) * scaling_factor[scn]
+    )
+    factor_to_pypsaeur = (
+        cap_link.at["rural_heat_pump", scn] / link_rhp3["p_nom"].sum()
+    )
+    link_rhp3["p_nom"] = link_rhp3["p_nom"] * factor_to_pypsaeur
+
+    link_rhp3.reset_index(inplace=True)
+    link_rhp3.to_sql(
+        name="egon_etrago_link",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
+
+    link_rhp3_t = pd.read_sql(
+        """
+        SELECT * FROM grid.egon_etrago_link_timeseries
+        WHERE link_id IN(
+        SELECT link_id FROM grid.egon_etrago_link
+        WHERE bus0 IN (
+            SELECT bus_id FROM grid.egon_etrago_bus
+            WHERE country = 'DE'
+            AND scn_name = 'eGon100RE'
+        )
+        AND bus1 IN (
+            SELECT bus_id FROM grid.egon_etrago_bus
+            WHERE country = 'DE'
+            AND scn_name = 'eGon100RE'
+        )
+        AND carrier = 'rural_heat_pump')
+        """,
+        con,
+    )
+
+    link_rhp3_t["scn_name"] = scn
+
+    link_rhp3_t.to_sql(
+        name="egon_etrago_link_timeseries",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
+
+
+    return
+
+
 def load_scn_capacies_gen(
     scn1="status2019",
     scn2="eGon100RE",
