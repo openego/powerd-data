@@ -644,6 +644,85 @@ def load_scn_capacies_gen(
     return gen_capacities
 
 
+def import_generators(scn="powerd2025"):
+    scn = "powerd2025"
+    cap_gen = load_scn_capacies_gen()
+
+    scn1_gen = pd.read_sql(
+        """
+        SELECT * FROM grid.egon_etrago_generator
+        WHERE scn_name = 'status2019'
+        AND bus IN (
+            SELECT bus_id FROM grid.egon_etrago_bus
+            WHERE country = 'DE'
+            AND scn_name = 'status2019'
+            )
+        """,
+        con,
+    )
+
+    scn2_gen = pd.read_sql(
+        """
+        SELECT * FROM grid.egon_etrago_generator
+        WHERE scn_name = 'eGon100RE'
+        AND bus IN (
+            SELECT bus_id FROM grid.egon_etrago_bus
+            WHERE country = 'DE'
+            AND scn_name = 'eGon100RE'
+            )
+        """,
+        con,
+    )
+
+    # Dealing with geo_thermal
+    geo3 = scn2_gen[scn2_gen["carrier"] == "geo_thermal"].copy()
+    geo3["scn_name"] = scn
+
+    objective = cap_gen.at["geo_thermal", scn]
+    geo3["p_nom"] *= objective / geo3["p_nom"].sum()
+
+    geo3.to_sql(
+        name="egon_etrago_generator",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
+
+    # Dealing with oil, coal and lignite
+
+    fossil_carriers = [
+        "oil",
+        "coal",
+        "lignite",
+    ]
+
+    fossil_carriers = cap_gen.loc[fossil_carriers, scn][
+        ~cap_gen.loc[fossil_carriers, scn].isna()
+    ].index.values
+
+    if len(fossil_carriers) == 0:
+        return
+
+    fossil3 = scn1_gen[scn1_gen["carrier"].isin(fossil_carriers)].copy()
+    fossil3["scn_name"] = scn
+
+    for c, df in fossil3.groupby("carrier"):
+        id = df.index
+        objective = cap_gen.at[c, scn]
+        fossil3.loc[id, "p_nom"] *= objective / fossil3.loc[id, "p_nom"].sum()
+
+    fossil3.to_sql(
+        name="egon_etrago_gen",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
+
+    return
+
+
 # load scenarios
 def load_scn_no_time_no_foreign(scn_name):
     # load scenario data without timeseries and foreign countries data
