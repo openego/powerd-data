@@ -530,6 +530,30 @@ def import_links(scn="powerd2025"):
         if_exists="append",
         index=False,
     )
+
+    # dealing with carriers which are only present in eGon100RE and scn path.
+    # This links are only scaled
+    scale_carriers = [
+        "rural_resistive_heater",
+        "rural_gas_boiler",
+        "central_resistive_heater",
+    ]
+    scale3 = scn2_link[scn2_link["carrier"].isin(scale_carriers)].copy()
+    scale3["scn_name"] = scn
+
+    for c, df in scale3.groupby("carrier"):
+        id = df.index
+        objective = cap_link.at[c, scn]
+        scale3.loc[id, "p_nom"] *= objective / scale3.loc[id, "p_nom"].sum()
+
+    scale3.to_sql(
+        name="egon_etrago_link",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
+
     return
 
 
