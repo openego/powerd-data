@@ -812,6 +812,37 @@ def import_generators(scn="powerd2025"):
         index=False,
     )
 
+    # Dealing with O2
+    oxy3 = scn2_gen[scn2_gen["carrier"] == "O2"].copy()
+    oxy3["scn_name"] = scn
+
+    oxy3.to_sql(
+        name="egon_etrago_generator",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
+
+    # Dealing with CH4
+    gas1 = scn1_gen[scn1_gen["carrier"] == "CH4"].copy()
+    gas2 = scn2_gen[scn2_gen["carrier"] == "CH4"].copy()
+    gas3 = scn2_gen[scn2_gen["carrier"] == "CH4"].copy()
+    gas3["scn_name"] = scn
+
+    obj = (
+        gas1["p_nom"].sum()
+        + (gas2["p_nom"].sum() - gas1["p_nom"].sum()) * scaling_factor[scn]
+    )
+    gas3["p_nom"] *= obj / gas3["p_nom"].sum()
+
+    gas3.to_sql(
+        name="egon_etrago_generator",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
     return
 
 
