@@ -844,3 +844,106 @@ def import_generators(scn="powerd2025"):
         index=False,
     )
     return
+
+
+def import_loads(scn):
+    scn = "powerd2025"
+
+    scn1_load = pd.read_sql(
+        """
+        SELECT * FROM grid.egon_etrago_load
+        WHERE scn_name = 'status2019'
+        AND bus IN (
+            SELECT bus_id FROM grid.egon_etrago_bus
+            WHERE country = 'DE'
+            AND scn_name = 'status2019'
+            )
+        """,
+        con,
+        index_col="load_id",
+    )
+
+    scn2_load = pd.read_sql(
+        """
+        SELECT * FROM grid.egon_etrago_load
+        WHERE scn_name = 'eGon100RE'
+        AND bus IN (
+            SELECT bus_id FROM grid.egon_etrago_bus
+            WHERE country = 'DE'
+            AND scn_name = 'eGon100RE'
+            )
+        """,
+        con,
+        index_col="load_id",
+    )
+
+    scn3_load = scn2_load.copy()
+
+    scn1_load_t = pd.read_sql(
+        """
+        SELECT * FROM grid.egon_etrago_load_timeseries
+        WHERE scn_name = 'status2019'
+        AND load_id IN (
+            SELECT load_id from grid.egon_etrago_load
+            WHERE bus IN (
+                SELECT bus_id FROM grid.egon_etrago_bus
+                WHERE country = 'DE'
+                AND scn_name = 'status2019'
+                )
+            AND scn_name = 'status2019')
+        """,
+        con,
+        index_col="load_id",
+    )
+
+    scn2_load_t = pd.read_sql(
+        """
+        SELECT * FROM grid.egon_etrago_load_timeseries
+        WHERE scn_name = 'eGon100RE'
+        AND load_id IN (
+            SELECT load_id from grid.egon_etrago_load
+            WHERE bus IN (
+                SELECT bus_id FROM grid.egon_etrago_bus
+                WHERE country = 'DE'
+                AND scn_name = 'eGon100RE'
+                )
+            AND scn_name = 'eGon100RE')
+        """,
+        con,
+        index_col="load_id",
+    )
+
+    only100_carrier = [
+        "O2",
+        "H2_hgv_load",
+        "H2_for_industry",
+        "CH4_for_industry",
+    ]
+    only100 = scn2_load[scn2_load["carrier"].isin(only100_carrier)]
+
+    for c, df in only100.groupby("carrier"):
+        a = scn2_load_t.loc[df.index, "p_set"].apply(
+            lambda x: np.array(x).sum()
+        )
+        print(f"{c}:{a.sum()}")
+
+    for c, df in only100.groupby("carrier"):
+        scn2_load_t.loc[df.index, "p_set"] = scn2_load_t.loc[
+            df.index, "p_set"
+        ].apply(lambda x: np.array(x) * scaling_factor[scn])
+
+    for c, df in only100.groupby("carrier"):
+        a = scn2_load_t.loc[df.index, "p_set"].apply(
+            lambda x: np.array(x).sum()
+        )
+        print(f"{c}:{a.sum()}")
+
+    scn3_load["scn_year"] = scn
+    scn3_load.reset_index(inplace=True)
+    scn3_load.to_sql(
+        name="egon_etrago_generator",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
