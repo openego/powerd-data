@@ -960,6 +960,30 @@ def import_loads(scn):
     ].apply(lambda x: np.array(x) * objective / evl2_total)
 
     # Dealing with AC loads
+    ac_load = pd.concat(
+        [
+            scn1_load[scn1_load["carrier"] == "AC"],
+            scn2_load[scn2_load["carrier"] == "AC"],
+        ]
+    ).copy()
+
+    for b, df in ac_load.groupby("bus"):
+        df1 = df[df["scn_name"] == "status2019"]
+        df2 = df[df["scn_name"] == "eGon100RE"]
+        df1_total = (
+            scn1_load_t.loc[df1.index, "p_set"]
+            .apply(lambda x: np.array(x).sum())
+            .sum()
+        )
+        df2_total = (
+            scn2_load_t.loc[df2.index, "p_set"]
+            .apply(lambda x: np.array(x).sum())
+            .sum()
+        )
+        objective = df1_total + (df2_total - df1_total) * scaling_factor[scn]
+        scn2_load_t.loc[df2.index, "p_set"] = scn2_load_t.loc[
+            df2.index, "p_set"
+        ].apply(lambda x: np.array(x) * objective / df2_total)
 
     scn3_load["scn_year"] = scn
     scn3_load.reset_index(inplace=True)
