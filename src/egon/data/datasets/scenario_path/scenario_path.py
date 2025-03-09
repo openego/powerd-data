@@ -985,6 +985,26 @@ def import_loads(scn):
             df2.index, "p_set"
         ].apply(lambda x: np.array(x) * objective / df2_total)
 
+    # Dealing with rural_heat loads
+    rh1 = scn1_load[scn1_load["carrier"] == "rural_heat"].copy()
+    rh2 = scn2_load[scn2_load["carrier"] == "rural_heat"].copy()
+    rh1_total = (
+        scn1_load_t.loc[rh1.index, "p_set"]
+        .apply(lambda x: np.array(x).sum())
+        .sum()
+    )
+    rh2_total = (
+        scn2_load_t.loc[rh2.index, "p_set"]
+        .apply(lambda x: np.array(x).sum())
+        .sum()
+    )
+
+    objective = rh1_total + (rh2_total - rh1_total) * scaling_factor[scn]
+
+    scn2_load_t.loc[rh2.index, "p_set"] = scn2_load_t.loc[
+        rh2.index, "p_set"
+    ].apply(lambda x: np.array(x) * objective / rh2_total)
+
     scn3_load["scn_year"] = scn
     scn3_load.reset_index(inplace=True)
     scn3_load.to_sql(
