@@ -913,6 +913,7 @@ def import_loads(scn):
         index_col="load_id",
     )
 
+    # dealing with loads only present in eGon100RE
     only100_carrier = [
         "O2",
         "H2_hgv_load",
@@ -937,6 +938,28 @@ def import_loads(scn):
             lambda x: np.array(x).sum()
         )
         print(f"{c}:{a.sum()}")
+
+    # Dealing with land_transport_EV loads
+    evl1 = scn1_load[scn1_load["carrier"] == "land_transport_EV"].copy()
+    evl2 = scn2_load[scn2_load["carrier"] == "land_transport_EV"].copy()
+    evl1_total = (
+        scn1_load_t.loc[evl1.index, "p_set"]
+        .apply(lambda x: np.array(x).sum())
+        .sum()
+    )
+    evl2_total = (
+        scn2_load_t.loc[evl2.index, "p_set"]
+        .apply(lambda x: np.array(x).sum())
+        .sum()
+    )
+
+    objective = evl1_total + (evl2_total - evl1_total) * scaling_factor[scn]
+
+    scn2_load_t.loc[evl2.index, "p_set"] = scn2_load_t.loc[
+        evl2.index, "p_set"
+    ].apply(lambda x: np.array(x) * objective / evl2_total)
+
+    # Dealing with AC loads
 
     scn3_load["scn_year"] = scn
     scn3_load.reset_index(inplace=True)
