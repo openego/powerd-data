@@ -10,6 +10,8 @@ import geopandas as gpd
 from egon.data import config, db
 import egon.data.config
 
+from egon.data.datasets.pypsaeur import neighbor_reduction
+
 sources = egon.data.config.datasets()["scenario_path"]["sources"]
 
 con = db.engine()
@@ -59,15 +61,14 @@ def clean_existing_scn_path_data():
     return
 
 
-def import_network_structure(scn="powerd2025"):
-    scn = "powerd2025"
+def import_network_structure(scn:str):
 
     # Import buses
     bus = pd.read_sql(
         sql="""
-    SELECT * from grid.egon_etrago_bus
-    WHERE scn_name = 'eGon100RE'
-    """,
+            SELECT * from grid.egon_etrago_bus
+            WHERE scn_name = 'eGon100RE' AND carrier = 'AC'
+            """,
         con=con,
     )
 
@@ -84,9 +85,11 @@ def import_network_structure(scn="powerd2025"):
     # Import lines
     line = pd.read_sql(
         sql="""
-    SELECT * from grid.egon_etrago_line
-    WHERE scn_name = 'eGon100RE'
-    """,
+                SELECT * from grid.egon_etrago_line
+                WHERE scn_name = 'eGon100RE' AND bus0 IN
+                (SElECT bus_id FROM grid.egon_etrago_bus 
+                 WHERE country ='DE')
+                      """,
         con=con,
     )
 
@@ -103,9 +106,9 @@ def import_network_structure(scn="powerd2025"):
     # Import transformers
     transformer = pd.read_sql(
         sql="""
-    SELECT * from grid.egon_etrago_transformer
-    WHERE scn_name = 'eGon100RE'
-    """,
+                      SELECT * from grid.egon_etrago_transformer
+                      WHERE scn_name = 'eGon100RE'
+                      """,
         con=con,
     )
 
@@ -118,7 +121,6 @@ def import_network_structure(scn="powerd2025"):
         if_exists="append",
         index=False,
     )
-
     return
 
 
@@ -216,8 +218,8 @@ def load_scn_capacies_link(
     return link_capacities
 
 
-def import_links(scn="powerd2025"):
-    scn = "powerd2025"
+def import_links(scn:str):
+
     cap_link = load_scn_capacies_link()
 
     scn1_link = pd.read_sql(
@@ -557,7 +559,6 @@ def import_links(scn="powerd2025"):
     return
 
 
-###############################################################################
 def load_scn_capacies_gen(
     scn1="status2019",
     scn2="eGon100RE",
@@ -644,8 +645,8 @@ def load_scn_capacies_gen(
     return gen_capacities
 
 
-def import_generators(scn="powerd2025"):
-    scn = "powerd2025"
+def import_generators(scn:str):
+
     cap_gen = load_scn_capacies_gen()
 
     scn1_gen = pd.read_sql(
@@ -846,8 +847,7 @@ def import_generators(scn="powerd2025"):
     return
 
 
-def import_loads(scn):
-    scn = "powerd2025"
+def import_loads(scn:str):
 
     scn1_load = pd.read_sql(
         """
@@ -1049,5 +1049,10 @@ def import_loads(scn):
 def import_storage_units(scn):
     return
 
+
 def import_stores(scn):
     return
+
+
+def import_foreign(scn_name, year):
+    neighbor_reduction(scn_name, year)

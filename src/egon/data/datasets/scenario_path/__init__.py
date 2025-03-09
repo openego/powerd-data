@@ -19,7 +19,7 @@ def create_powerd2025():
     import_links(scn)
     import_storage_units(scn)
     import_stores(scn)
-    import_foreign(scn)
+    import_foreign(scn, year=2025)
 
     return
 
@@ -32,7 +32,7 @@ def create_powerd2030():
     import_links(scn)
     import_storage_units(scn)
     import_stores(scn)
-    import_foreign(scn)
+    import_foreign(scn, year=2030)
 
     return
 
@@ -45,7 +45,7 @@ def create_powerd2035():
     import_links(scn)
     import_storage_units(scn)
     import_stores(scn)
-    import_foreign(scn)
+    import_foreign(scn, year=2035)
 
     return
 
