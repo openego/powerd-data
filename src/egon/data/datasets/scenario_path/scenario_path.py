@@ -1044,3 +1044,10 @@ def import_loads(scn):
         if_exists="append",
         index=False,
     )
+
+
+def import_storage_units(scn):
+    return
+
+def import_stores(scn):
+    return
