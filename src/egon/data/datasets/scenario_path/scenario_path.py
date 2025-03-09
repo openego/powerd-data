@@ -1005,10 +1005,40 @@ def import_loads(scn):
         rh2.index, "p_set"
     ].apply(lambda x: np.array(x) * objective / rh2_total)
 
-    scn3_load["scn_year"] = scn
+    # Dealing with central_heat loads
+    ch1 = scn1_load[scn1_load["carrier"] == "central_heat"].copy()
+    ch2 = scn2_load[scn2_load["carrier"] == "central_heat"].copy()
+    ch1_total = (
+        scn1_load_t.loc[ch1.index, "p_set"]
+        .apply(lambda x: np.array(x).sum())
+        .sum()
+    )
+    ch2_total = (
+        scn2_load_t.loc[ch2.index, "p_set"]
+        .apply(lambda x: np.array(x).sum())
+        .sum()
+    )
+
+    objective = ch1_total + (ch2_total - ch1_total) * scaling_factor[scn]
+
+    scn2_load_t.loc[ch2.index, "p_set"] = scn2_load_t.loc[
+        ch2.index, "p_set"
+    ].apply(lambda x: np.array(x) * objective / ch2_total)
+
+    scn3_load["scn_name"] = scn
     scn3_load.reset_index(inplace=True)
     scn3_load.to_sql(
-        name="egon_etrago_generator",
+        name="egon_etrago_load",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
+    scn2_load_t["p_set"] = scn2_load_t["p_set"].apply(list)
+    scn2_load_t["scn_name"] = scn
+    scn2_load_t.reset_index(inplace=True)
+    scn2_load_t.to_sql(
+        name="egon_etrago_load_timeseries",
         con=con,
         schema="grid",
         if_exists="append",
