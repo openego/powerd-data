@@ -720,6 +720,98 @@ def import_generators(scn="powerd2025"):
         index=False,
     )
 
+    # Dialing with run_of_river, solar_rooftop, wind_offshore, wind_onshore
+    # and solar
+    var_carriers = [
+        "run_of_river",
+        "solar_rooftop",
+        "wind_offshore",
+        "wind_onshore",
+        "solar",
+    ]
+    gen_var1 = (
+        scn1_gen[scn1_gen["carrier"].isin(var_carriers)]
+        .copy()
+        .set_index("generator_id")
+    )
+    gen_var2 = (
+        scn2_gen[scn2_gen["carrier"].isin(var_carriers)]
+        .copy()
+        .set_index("generator_id")
+    )
+    gen_var3 = gen_var2.copy()
+    gen_var3["scn_name"] = scn
+
+    total_gen_var = pd.concat([gen_var1, gen_var2]).copy()
+
+    new_gen_from_2019 = []
+    for c, df in total_gen_var.groupby(["carrier", "bus"]):
+        df1 = df[df["scn_name"] == "status2019"]
+        df2 = df[df["scn_name"] == "eGon100RE"]
+        init = df1.p_nom.sum()
+        final = df2.p_nom.sum()
+
+        if (init != 0) & (final != 0):
+            ids = df2.index
+            gen_var3.loc[ids, "p_nom"] = gen_var3.loc[ids, "p_nom"] - (
+                (final - init) * scaling_factor[scn]
+            )
+
+        elif final == 0:
+            new_gen = df1.copy()
+            [new_gen_from_2019.append(x) for x in list(new_gen.index)]
+            new_gen["scn_name"] = scn
+            new_gen["p_nom"] *= scaling_factor[scn]
+            gen_var3 = pd.concat([gen_var3, new_gen])
+
+    for c, df in gen_var3.groupby("carrier"):
+        factor_to_pypsaeur = cap_gen.at[c, scn] / df["p_nom"].sum()
+        gen_var3.loc[df.index, "p_nom"] *= factor_to_pypsaeur
+
+    gen_var3.reset_index(inplace=True)
+    gen_var3.to_sql(
+        name="egon_etrago_generator",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
+
+    gen_var3_t_2019 = pd.read_sql(
+        f"""
+        SELECT * FROM grid.egon_etrago_generator_timeseries
+        WHERE generator_id IN {tuple(new_gen_from_2019)}
+        AND scn_name = 'status2019'
+        """,
+        con,
+    )
+
+    gen_var3_t_100RE = pd.read_sql(
+        """
+        SELECT * FROM grid.egon_etrago_generator_timeseries
+        WHERE generator_id IN(
+        SELECT generator_id FROM grid.egon_etrago_generator
+        WHERE bus IN (
+            SELECT bus_id FROM grid.egon_etrago_bus
+            WHERE country = 'DE'
+            AND scn_name = 'eGon100RE'
+        )
+        AND scn_name = 'eGon100RE')
+        """,
+        con,
+    )
+
+    gen_var3_t = pd.concat([gen_var3_t_2019, gen_var3_t_100RE])
+    gen_var3_t["scn_name"] = scn
+
+    gen_var3_t.to_sql(
+        name="egon_etrago_generator_timeseries",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
+
     return
 
 
