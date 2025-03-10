@@ -452,7 +452,7 @@ def import_links(scn: str):
     link_ocgt2 = (
         scn2_link[scn2_link["carrier"].isin(["OCGT"])].copy().set_index("bus1")
     )
-    link_ocgt3 = link_ocgt2.copy().set_index("link_id")
+    link_ocgt3 = link_ocgt2.copy().reset_index().set_index("link_id")
     link_ocgt3["scn_name"] = scn
 
     not_in_ocgt2 = link_ocgt1[
