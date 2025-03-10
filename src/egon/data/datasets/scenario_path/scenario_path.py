@@ -1056,7 +1056,7 @@ def import_loads(scn: str):
     )
 
 
-def import_storage_units(scn):
+def import_storage_units(scn: str):
 
     scn1_su = pd.read_sql(
         """
@@ -1123,7 +1123,114 @@ def import_storage_units(scn):
     return
 
 
-def import_stores(scn):
+def import_stores(scn: str):
+    scn1_store = pd.read_sql(
+        """
+        SELECT * FROM grid.egon_etrago_store
+        WHERE scn_name = 'status2019'
+        AND bus IN (
+            SELECT bus_id FROM grid.egon_etrago_bus
+            WHERE country = 'DE'
+            AND scn_name = 'status2019'
+            )
+        """,
+        con,
+    )
+
+    scn2_store = pd.read_sql(
+        """
+        SELECT * FROM grid.egon_etrago_store
+        WHERE scn_name = 'eGon100RE'
+        AND bus IN (
+            SELECT bus_id FROM grid.egon_etrago_bus
+            WHERE country = 'DE'
+            AND scn_name = 'eGon100RE'
+            )
+        """,
+        con,
+    )
+
+    scn3_store = scn2_store.copy()
+
+    scn2_store_t = pd.read_sql(
+        """
+        SELECT * FROM grid.egon_etrago_store_timeseries
+        WHERE scn_name = 'eGon100RE'
+        AND store_id IN (
+            SELECT store_id from grid.egon_etrago_store
+            WHERE bus IN (
+                SELECT bus_id FROM grid.egon_etrago_bus
+                WHERE country = 'DE'
+                AND scn_name = 'eGon100RE'
+                )
+            AND scn_name = 'eGon100RE')
+        """,
+        con,
+        index_col="store_id",
+    )
+
+    all_stores = pd.concat([scn1_store, scn2_store]).copy()
+
+    # dealing with stores only present in eGon100RE
+    only100_carrier = [
+        "central_heat_store",
+        "rural_heat_store",
+        "battery_storage",
+        "H2_overground",
+        "CH4",
+        "H2_underground",
+    ]
+    only100_store = scn2_store[scn2_store["carrier"].isin(only100_carrier)]
+    for c, df in only100_store.groupby("carrier"):
+        scn3_store.loc[df.index, "e_nom"] *= scaling_factor[scn]
+
+    # Dealing with DSM
+    dsm = all_stores[all_stores["carrier"] == "dsm"].copy()
+    dsm_buses = pd.read_sql(
+        """
+        SELECT * FROM grid.egon_etrago_bus
+        WHERE scn_name IN ('eGon100RE', 'status2019')
+        AND carrier = 'dsm'
+        """,
+        con,
+        index_col="bus_id",
+    )
+    map_scn1_to_scn2 = {}
+    for b, df in dsm_buses.groupby(["x", "y"]):
+        bus1 = df.index[df["scn_name"] == "status2019"][0]
+        bus2 = df.index[df["scn_name"] == "eGon100RE"][0]
+        map_scn1_to_scn2[bus1] = bus2
+
+    dsm["bus"] = dsm["bus"].apply(
+        lambda x: map_scn1_to_scn2[x] if x in map_scn1_to_scn2.keys() else x
+    )
+
+    for b, df in dsm.groupby("bus"):
+        init = df["e_nom"][df["scn_name"] == "status2019"].sum()
+        final = df["e_nom"][df["scn_name"] == "eGon100RE"].sum()
+        objective = init + (final - init) * scaling_factor[scn]
+        scn3_store.loc[df.index, "e_nom"] *= (
+            objective / scn3_store.loc[df.index, "e_nom"].sum()
+        )
+
+    scn3_store["scn_name"] = scn
+    scn3_store.to_sql(
+        name="egon_etrago_store",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
+
+    scn2_store_t["scn_name"] = scn
+    scn2_store_t.reset_index(inplace=True)
+    scn2_store_t.to_sql(
+        name="egon_etrago_store_timeseries",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
     return
 
 
