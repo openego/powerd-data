@@ -61,16 +61,26 @@ def clean_existing_scn_path_data():
     return
 
 
-def import_network_structure(scn:str):
+def import_network_structure(scn: str):
 
     # Import buses
-    bus = pd.read_sql(
+    bus_ac = pd.read_sql(
         sql="""
             SELECT * from grid.egon_etrago_bus
             WHERE scn_name = 'eGon100RE' AND carrier = 'AC'
             """,
         con=con,
     )
+
+    other_buses = pd.read_sql(
+        sql="""
+            SELECT * from grid.egon_etrago_bus
+            WHERE scn_name = 'eGon100RE' AND carrier <> 'AC' AND country = 'DE'
+            """,
+        con=con,
+    )
+
+    bus = pd.concat([bus_ac, other_buses])
 
     bus["scn_name"] = scn
 
@@ -218,7 +228,7 @@ def load_scn_capacies_link(
     return link_capacities
 
 
-def import_links(scn:str):
+def import_links(scn: str):
 
     cap_link = load_scn_capacies_link()
 
@@ -645,7 +655,7 @@ def load_scn_capacies_gen(
     return gen_capacities
 
 
-def import_generators(scn:str):
+def import_generators(scn: str):
 
     cap_gen = load_scn_capacies_gen()
 
@@ -847,7 +857,7 @@ def import_generators(scn:str):
     return
 
 
-def import_loads(scn:str):
+def import_loads(scn: str):
 
     scn1_load = pd.read_sql(
         """
