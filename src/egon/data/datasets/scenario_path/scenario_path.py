@@ -798,16 +798,18 @@ def import_generators(scn: str):
     )
 
     gen_var3_t_100RE = pd.read_sql(
-        """
+        f"""
         SELECT * FROM grid.egon_etrago_generator_timeseries
         WHERE generator_id IN(
-        SELECT generator_id FROM grid.egon_etrago_generator
-        WHERE bus IN (
-            SELECT bus_id FROM grid.egon_etrago_bus
-            WHERE country = 'DE'
-            AND scn_name = 'eGon100RE'
-        )
-        AND scn_name = 'eGon100RE')
+            SELECT generator_id FROM grid.egon_etrago_generator
+                WHERE scn_name = 'eGon100RE'
+                AND carrier IN {tuple(var_carriers)}
+                AND bus IN (
+                    SELECT bus_id FROM grid.egon_etrago_bus
+                    WHERE country = 'DE'
+                    AND scn_name = 'eGon100RE'
+                ))
+        AND scn_name = 'eGon100RE'
         """,
         con,
     )
