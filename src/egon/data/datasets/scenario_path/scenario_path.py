@@ -1057,6 +1057,69 @@ def import_loads(scn: str):
 
 
 def import_storage_units(scn):
+
+    scn1_su = pd.read_sql(
+        """
+        SELECT * FROM grid.egon_etrago_storage
+        WHERE scn_name = 'status2019'
+        AND bus IN (
+            SELECT bus_id FROM grid.egon_etrago_bus
+            WHERE country = 'DE'
+            AND scn_name = 'status2019'
+            )
+        """,
+        con,
+    )
+
+    scn2_su = pd.read_sql(
+        """
+        SELECT * FROM grid.egon_etrago_storage
+        WHERE scn_name = 'eGon100RE'
+        AND bus IN (
+            SELECT bus_id FROM grid.egon_etrago_bus
+            WHERE country = 'DE'
+            AND scn_name = 'eGon100RE'
+            )
+        """,
+        con,
+    )
+
+    # Dealing with battery
+    battery3 = scn2_su[scn2_su["carrier"] == "battery"].copy()
+    battery3["scn_name"] = scn
+
+    battery3.to_sql(
+        name="egon_etrago_storage",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
+
+    # Dealing with pumped_hydro
+    capacity_ph = pd.read_sql(
+        f"""
+            SELECT capacity FROM supply.egon_scenario_capacities
+            WHERE carrier = 'pumped_hydro' AND scenario_name = '{scn}'
+            """,
+        con,
+    ).iat[0, 0]
+
+    ph1 = scn1_su[scn1_su["carrier"] == "pumped_hydro"]
+    ph2 = scn2_su[scn2_su["carrier"] == "pumped_hydro"]
+    ph3 = ph2.copy()
+
+    ph3["p_nom"] *= capacity_ph / ph3["p_nom"].sum()
+
+    ph3["scn_name"] = scn
+    ph3.to_sql(
+        name="egon_etrago_storage",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
+
     return
 
 
