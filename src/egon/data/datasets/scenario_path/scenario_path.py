@@ -1260,3 +1260,60 @@ def import_stores(scn: str):
 
 def import_foreign(scn_name, year):
     neighbor_reduction(scn_name, year)
+
+    # import links joining DE and foreign countries
+    link_foreign = pd.read_sql(
+        sql="""
+                SELECT * from grid.egon_etrago_link
+                WHERE scn_name = 'eGon100RE'
+                AND ((bus0 IN (SELECT bus_id FROM grid.egon_etrago_bus
+                             WHERE country = 'DE'
+                             AND scn_name = 'eGon100RE'))
+                     AND (bus1 IN (SELECT bus_id FROM grid.egon_etrago_bus
+                                  WHERE country <> 'DE'
+                                  AND scn_name = 'eGon100RE')))
+                OR ((bus0 IN (SELECT bus_id FROM grid.egon_etrago_bus
+                             WHERE country <> 'DE'
+                             AND scn_name = 'eGon100RE'))
+                     AND (bus1 IN (SELECT bus_id FROM grid.egon_etrago_bus
+                                  WHERE country = 'DE'
+                                  AND scn_name = 'eGon100RE')))
+            """,
+        con=con,
+        index_col="link_id",
+    )
+
+    bus_ch4_h2 = pd.read_sql(
+        sql=f"""
+                SELECT * from grid.egon_etrago_bus
+                WHERE scn_name IN ('eGon100RE', '{scn_name}')
+                AND carrier IN ('CH4', 'H2')
+                AND country <> 'DE'
+            """,
+        con=con,
+        index_col="bus_id",
+    )
+
+    map_scn1_to_scn2 = {}
+    for b, df in bus_ch4_h2.groupby(["x", "y", "carrier"]):
+        bus1 = df.index[df["scn_name"] == "eGon100RE"][0]
+        bus2 = df.index[df["scn_name"] == scn_name][0]
+        map_scn1_to_scn2[bus1] = bus2
+
+    link_foreign["bus0"] = link_foreign["bus0"].apply(
+        lambda x: map_scn1_to_scn2[x] if x in map_scn1_to_scn2.keys() else x
+    )
+
+    link_foreign["bus1"] = link_foreign["bus1"].apply(
+        lambda x: map_scn1_to_scn2[x] if x in map_scn1_to_scn2.keys() else x
+    )
+
+    link_foreign["scn_name"] = scn_name
+    link_foreign.reset_index(inplace=True)
+    link_foreign.to_sql(
+        name="egon_etrago_link",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
