@@ -93,16 +93,38 @@ def import_network_structure(scn: str):
     )
 
     # Import lines
-    line = pd.read_sql(
+    line_de = pd.read_sql(
         sql="""
                 SELECT * from grid.egon_etrago_line
-                WHERE scn_name = 'eGon100RE' AND bus0 IN
-                (SElECT bus_id FROM grid.egon_etrago_bus 
-                 WHERE country ='DE')
-                      """,
+                WHERE scn_name = 'eGon100RE'
+                AND ((bus0 IN (SELECT bus_id FROM grid.egon_etrago_bus
+                             WHERE country = 'DE'
+                             AND scn_name = 'eGon100RE'))
+                     OR (bus1 IN (SELECT bus_id FROM grid.egon_etrago_bus
+                                  WHERE country = 'DE'
+                                  AND scn_name = 'eGon100RE')))
+            """,
         con=con,
+        index_col="line_id",
+    )
+    line_foreign = pd.read_sql(
+        sql="""
+                SELECT * FROM grid.egon_etrago_line
+                WHERE line_id IN (SELECT l.line_id FROM grid.egon_etrago_line l
+                JOIN grid.egon_etrago_bus b1 ON l.bus0 = b1.bus_id
+                JOIN grid.egon_etrago_bus b2 ON l.bus1 = b2.bus_id
+                WHERE b1.country = b2.country
+                AND l.scn_name = 'eGon100RE'
+                AND b1.country <> 'DE'
+                AND b2.country <> 'DE')
+                AND scn_name = 'eGon100RE'
+            """,
+        con=con,
+        index_col="line_id",
     )
 
+    line = pd.concat([line_de, line_foreign])
+    line.reset_index(inplace=True)
     line["scn_name"] = scn
 
     line.to_sql(
