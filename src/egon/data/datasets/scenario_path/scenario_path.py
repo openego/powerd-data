@@ -528,6 +528,7 @@ def import_links(scn: str):
     h2_grid2 = scn2_link[scn2_link["carrier"] == "H2_grid"].copy()
     h2_grid3 = h2_grid2.copy()
     h2_grid3["scn_name"] = scn
+    h2_grid3.loc[h2_grid3["build_year"].isna(), "build_year"] = 0
     h2_grid3 = h2_grid3[h2_grid3["build_year"] <= year_scenario[scn]]
 
     h2_grid3.to_sql(
