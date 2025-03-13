@@ -5,6 +5,7 @@ import subprocess
 
 import numpy as np
 import pandas as pd
+import pypsa
 import geopandas as gpd
 
 from egon.data import config, db
@@ -154,6 +155,54 @@ def import_network_structure(scn: str):
         index=False,
     )
     return
+
+
+def import_efficiency_and_costs_gen(scn):
+    target_file = (
+        Path(".")
+        / "data_bundle_powerd_data"
+        / "pypsa_eur"
+        / "21122024_3h_clean_run"
+        / "results"
+        / "postnetworks"
+        / f"base_s_39_lc1.25__cb40ex0-T-H-I-B-solar+p3-dist1_{year_scenario[scn]}.nc"
+    )
+    n = pypsa.Network(target_file)
+
+    buses_de = n.buses[n.buses.country == "DE"]
+
+    gen_de = n.generators[n.generators.bus.isin(buses_de.index)].copy()
+    gen_de.carrier.replace(
+        {
+            "onwind": "wind_onshore",
+            "ror": "run_of_river",
+            "offwind-ac": "wind_offshore",
+            "offwind-dc": "wind_offshore",
+            "offwind-float": "wind_offshore",
+            "urban_central_solar_thermal": "urban_central_solar_thermal_collector",
+            "residential_rural_solar_thermal": "residential_rural_solar_thermal_collector",
+            "services_rural_solar_thermal": "services_rural_solar_thermal_collector",
+            "solar-hsat": "solar",
+        },
+        inplace=True,
+    )
+
+    gen_cap = pd.DataFrame(
+        columns=["p_nom_opt", "marginal_cost", "capital_cost", "efficiency"]
+    )
+    for g, df in gen_de.groupby("carrier"):
+        gen_cap.loc[g, "p_nom_opt"] = df["p_nom_opt"].sum()
+        gen_cap.loc[g, "marginal_cost"] = (
+            (df["p_nom_opt"] * df["marginal_cost"]) / df["p_nom_opt"].sum()
+        ).sum()
+        gen_cap.loc[g, "capital_cost"] = (
+            (df["p_nom_opt"] * df["capital_cost"]) / df["p_nom_opt"].sum()
+        ).sum()
+        gen_cap.loc[g, "efficiency"] = (
+            (df["p_nom_opt"] * df["efficiency"]) / df["p_nom_opt"].sum()
+        ).sum()
+
+    return gen_cap
 
 
 def load_scn_capacies_link(
