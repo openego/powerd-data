@@ -381,13 +381,11 @@ def assign_gas_bus_id(dataframe, scn_name, carrier):
         Dataframe including bus_id
     """
 
-    voronoi = select_geodataframe(
-        f"""
-        SELECT bus_id, geom FROM grid.egon_gas_voronoi
-        WHERE scn_name = '{scn_name}' AND carrier = '{carrier}';
-        """,
-        epsg=4326,
-    )
+    assign_gas_bus_id_sql = f"""
+    SELECT bus_id, geom FROM grid.egon_gas_voronoi
+    WHERE scn_name = '{scn_name}' AND carrier = '{carrier}';
+    """
+    voronoi = select_geodataframe(assign_gas_bus_id_sql, epsg=4326,)
 
     res = gpd.sjoin(dataframe, voronoi)
     res["bus"] = res["bus_id"]
