@@ -157,7 +157,7 @@ def import_network_structure(scn: str):
     return
 
 
-def import_efficiency_and_costs_gen(scn):
+def import_efficiency_and_costs(scn):
     target_file = (
         Path(".")
         / "data_bundle_powerd_data"
@@ -172,6 +172,7 @@ def import_efficiency_and_costs_gen(scn):
     buses_de = n.buses[n.buses.country == "DE"]
 
     gen_de = n.generators[n.generators.bus.isin(buses_de.index)].copy()
+    gen_de.carrier = gen_de.carrier.str.replace(" ", "_")
     gen_de.carrier.replace(
         {
             "onwind": "wind_onshore",
@@ -183,6 +184,7 @@ def import_efficiency_and_costs_gen(scn):
             "residential_rural_solar_thermal": "residential_rural_solar_thermal_collector",
             "services_rural_solar_thermal": "services_rural_solar_thermal_collector",
             "solar-hsat": "solar",
+            "urban_central_geo_thermal": "geo_thermal",
         },
         inplace=True,
     )
@@ -201,23 +203,6 @@ def import_efficiency_and_costs_gen(scn):
         gen_cap.loc[g, "efficiency"] = (
             (df["p_nom_opt"] * df["efficiency"]) / df["p_nom_opt"].sum()
         ).sum()
-
-    return gen_cap
-
-
-def import_efficiency_and_costs_link(scn):
-    target_file = (
-        Path(".")
-        / "data_bundle_powerd_data"
-        / "pypsa_eur"
-        / "21122024_3h_clean_run"
-        / "results"
-        / "postnetworks"
-        / f"base_s_39_lc1.25__cb40ex0-T-H-I-B-solar+p3-dist1_{year_scenario[scn]}.nc"
-    )
-    n = pypsa.Network(target_file)
-
-    buses_de = n.buses[n.buses.country == "DE"]
 
     link_de = n.links[
         (n.links.bus0.isin(buses_de.index))
@@ -274,7 +259,7 @@ def import_efficiency_and_costs_link(scn):
             (df["p_nom_opt"] * df["efficiency2"]) / df["p_nom_opt"].sum()
         ).sum()
 
-    return link_cap
+    return pd.concat([gen_cap, link_cap])
 
 
 def load_scn_capacies_link(
