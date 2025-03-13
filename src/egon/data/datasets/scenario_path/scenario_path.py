@@ -205,6 +205,78 @@ def import_efficiency_and_costs_gen(scn):
     return gen_cap
 
 
+def import_efficiency_and_costs_link(scn):
+    target_file = (
+        Path(".")
+        / "data_bundle_powerd_data"
+        / "pypsa_eur"
+        / "21122024_3h_clean_run"
+        / "results"
+        / "postnetworks"
+        / f"base_s_39_lc1.25__cb40ex0-T-H-I-B-solar+p3-dist1_{year_scenario[scn]}.nc"
+    )
+    n = pypsa.Network(target_file)
+
+    buses_de = n.buses[n.buses.country == "DE"]
+
+    link_de = n.links[
+        (n.links.bus0.isin(buses_de.index))
+        | (n.links.bus1.isin(buses_de.index))
+    ].copy()
+
+    link_de.carrier = link_de.carrier.str.replace(" ", "_")
+
+    link_de.carrier.replace(
+        {
+            "H2_Electrolysis": "power_to_H2",
+            "H2_Fuel_Cell": "H2_to_power",
+            "H2_pipeline_retrofitted": "H2_retrofit",
+            "SMR": "CH4_to_H2",
+            "Sabatier": "H2_to_CH4",
+            "gas_for_industry": "CH4_for_industry",
+            "gas_pipeline": "CH4",
+            "urban_central_gas_boiler": "central_gas_boiler",
+            "urban_central_resistive_heater": "central_resistive_heater",
+            "urban_central_water_tanks_charger": "central_heat_store_charger",
+            "urban_central_water_tanks_discharger": "central_heat_store_discharger",
+            "rural_water_tanks_charger": "rural_heat_store_charger",
+            "rural_water_tanks_discharger": "rural_heat_store_discharger",
+            "urban_central_gas_CHP": "central_gas_CHP",
+            "urban_central_air_heat_pump": "central_heat_pump",
+            "rural_ground_heat_pump": "rural_heat_pump",
+            "CCGT": "OCGT",
+        },
+        inplace=True,
+    )
+
+    link_cap = pd.DataFrame(
+        columns=[
+            "p_nom_opt",
+            "marginal_cost",
+            "capital_cost",
+            "efficiency",
+            "efficiency2",
+        ]
+    )
+
+    for l, df in link_de.groupby("carrier"):
+        link_cap.loc[l, "p_nom_opt"] = df["p_nom_opt"].sum()
+        link_cap.loc[l, "marginal_cost"] = (
+            (df["p_nom_opt"] * df["marginal_cost"]) / df["p_nom_opt"].sum()
+        ).sum()
+        link_cap.loc[l, "capital_cost"] = (
+            (df["p_nom_opt"] * df["capital_cost"]) / df["p_nom_opt"].sum()
+        ).sum()
+        link_cap.loc[l, "efficiency"] = (
+            (df["p_nom_opt"] * df["efficiency"]) / df["p_nom_opt"].sum()
+        ).sum()
+        link_cap.loc[l, "efficiency2"] = (
+            (df["p_nom_opt"] * df["efficiency2"]) / df["p_nom_opt"].sum()
+        ).sum()
+
+    return link_cap
+
+
 def load_scn_capacies_link(
     scn1="status2019",
     scn2="eGon100RE",
