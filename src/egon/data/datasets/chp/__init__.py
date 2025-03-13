@@ -357,15 +357,18 @@ def insert_chp_statusquo(scn_name=None):
     mastr.DatumEndgueltigeStilllegung = pd.to_datetime(
         mastr.DatumEndgueltigeStilllegung
     )
+
+    mastr_max_date_key = scn_name + "_date_max"
+    print(f"mastr_max_date_key_ {mastr_max_date_key}")
     mastr = mastr.loc[
         mastr.Inbetriebnahmedatum
-        <= config.datasets()["mastr_new"]["status2019_date_max"]
+        <= config.datasets()["mastr_new"][mastr_max_date_key]
     ]
 
     mastr = mastr.loc[
         (
             mastr.DatumEndgueltigeStilllegung
-            >= config.datasets()["mastr_new"]["status2019_date_max"]
+            >= config.datasets()["mastr_new"][mastr_max_date_key]
         )
         | (mastr.DatumEndgueltigeStilllegung.isnull())
     ]
@@ -429,10 +432,7 @@ def insert_chp_statusquo(scn_name=None):
             mastr, cfg, WORKING_DIR_MASTR_NEW
         )
 
-        try:
-            gas_bus_id = db.assign_gas_bus_id(mastr, scn_name, "CH4").bus
-        except Exception:
-            gas_bus_id = db.assign_gas_bus_id(mastr, "status2019", "CH4").bus
+        gas_bus_id = db.assign_gas_bus_id(mastr, scn_name, "CH4").bus
 
         mastr = assign_bus_id(mastr, cfg, drop_missing=True)
 
@@ -446,7 +446,7 @@ def insert_chp_statusquo(scn_name=None):
     # Insert entries with location
     print(f"Going to Insert entries with location for scn_name {scn_name}")
     print("len(mastr)", len(mastr))
-    for c in mastr.columns:
+    for c in []:
         try:
             print(f"{c}, {mastr[c].max() / 1000}")
         except Exception:
@@ -472,6 +472,7 @@ def insert_chp_statusquo(scn_name=None):
                 voltage_level=row.voltage_level,
                 geom=f"SRID=4326;POINT({row.Laengengrad} {row.Breitengrad})",
             )
+            print(entry)
             session.add(entry)
             try:
                 session.commit()
