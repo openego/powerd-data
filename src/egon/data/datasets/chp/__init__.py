@@ -445,9 +445,16 @@ def insert_chp_statusquo(scn_name=None):
 
     # Insert entries with location
     print(f"Going to Insert entries with location for scn_name {scn_name}")
+    print("len(mastr)", len(mastr))
+    for c in mastr.columns:
+        try:
+            print(f"{c}, {mastr[c].max() / 1000}")
+        except Exception:
+            print(f"cannot / 1000 {c}")
     session = sessionmaker(bind=db.engine())()
     for i, row in mastr.iterrows():
         if row.ThermischeNutzleistung > 0:
+            print(i, row)
             entry = EgonChp(
                 sources={
                     "chp": "MaStR",
@@ -466,7 +473,12 @@ def insert_chp_statusquo(scn_name=None):
                 geom=f"SRID=4326;POINT({row.Laengengrad} {row.Breitengrad})",
             )
             session.add(entry)
-    session.commit()
+            try:
+                session.commit()
+            except Exception as E:
+                print(f"Could not commit due to {E}")
+                print(f"Failing at i {i} with row \n{row}")
+                break
 
 
 def insert_chp_egon2035():
