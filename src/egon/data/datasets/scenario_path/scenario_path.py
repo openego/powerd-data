@@ -12,15 +12,16 @@ from egon.data import config, db
 import egon.data.config
 
 from egon.data.datasets.pypsaeur import neighbor_reduction
+from egon.data.datasets.scenario_parameters import get_sector_parameters
 
 sources = egon.data.config.datasets()["scenario_path"]["sources"]
 
 con = db.engine()
 
 scaling_factor = {
-    "powerd2025": (2025 - 2019) / (2040 - 2019),
-    "powerd2030": (2030 - 2019) / (2040 - 2019),
-    "powerd2035": (2035 - 2019) / (2040 - 2019),
+    "powerd2025": (2025 - 2019) / (2045 - 2019),
+    "powerd2030": (2030 - 2019) / (2045 - 2019),
+    "powerd2035": (2035 - 2019) / (2045 - 2019),
 }
 
 year_scenario = {
@@ -784,9 +785,31 @@ def load_scn_capacies_gen(
     return gen_capacities
 
 
-def import_generators(scn: str):
+def interpolate_marginal_costs(scn):
+    marg_cost1 = get_sector_parameters(
+        sector="electricity", scenario="status2019"
+    )["marginal_cost"]
+    marg_cost2 = get_sector_parameters(
+        sector="electricity", scenario="eGon100RE"
+    )["marginal_cost"]
+    marg_cost3 = {}
+    for f in marg_cost2.keys():
+        marg_cost3[f] = (
+            marg_cost1[f]
+            + (marg_cost2[f] - marg_cost1[f]) * scaling_factor[scn]
+        )
 
+    marg_cost3["run_of_river"] = 0
+    marg_cost3["solar_rooftop"] = 0
+
+    return marg_cost3
+
+
+def import_generators(scn: str):
+    scn = "powerd2025"
     cap_gen = load_scn_capacies_gen()
+    eff_and_costs = import_efficiency_and_costs(scn)
+    marg_cost3 = interpolate_marginal_costs(scn)
 
     scn1_gen = pd.read_sql(
         """
@@ -817,6 +840,9 @@ def import_generators(scn: str):
     # Dealing with geo_thermal
     geo3 = scn2_gen[scn2_gen["carrier"] == "geo_thermal"].copy()
     geo3["scn_name"] = scn
+    geo3["marginal_cost"] = eff_and_costs.loc["geo_thermal", "marginal_cost"]
+    geo3["capital_cost"] = eff_and_costs.loc["geo_thermal", "capital_cost"]
+    geo3["efficiency"] = eff_and_costs.loc["geo_thermal", "efficiency"]
 
     objective = cap_gen.at["geo_thermal", scn]
     geo3["p_nom"] *= objective / geo3["p_nom"].sum()
@@ -830,7 +856,6 @@ def import_generators(scn: str):
     )
 
     # Dealing with oil, coal and lignite
-
     fossil_carriers = [
         "oil",
         "coal",
@@ -841,24 +866,32 @@ def import_generators(scn: str):
         ~cap_gen.loc[fossil_carriers, scn].isna()
     ].index.values
 
-    if len(fossil_carriers) == 0:
-        return
+    if len(fossil_carriers) > 0:
+        fossil3 = scn1_gen[scn1_gen["carrier"].isin(fossil_carriers)].copy()
+        fossil3["scn_name"] = scn
 
-    fossil3 = scn1_gen[scn1_gen["carrier"].isin(fossil_carriers)].copy()
-    fossil3["scn_name"] = scn
+        for fc in fossil_carriers:
+            fossil3.loc[fossil3["carrier"] == fc, "marginal_cost"] = (
+                marg_cost3[fc]
+            )
+            fossil3.loc[fossil3["carrier"] == fc, "capital_cost"] = (
+                eff_and_costs.loc[fc, "capital_cost"]
+            )
 
-    for c, df in fossil3.groupby("carrier"):
-        id = df.index
-        objective = cap_gen.at[c, scn]
-        fossil3.loc[id, "p_nom"] *= objective / fossil3.loc[id, "p_nom"].sum()
+        for c, df in fossil3.groupby("carrier"):
+            id = df.index
+            objective = cap_gen.at[c, scn]
+            fossil3.loc[id, "p_nom"] *= (
+                objective / fossil3.loc[id, "p_nom"].sum()
+            )
 
-    fossil3.to_sql(
-        name="egon_etrago_gen",
-        con=con,
-        schema="grid",
-        if_exists="append",
-        index=False,
-    )
+        fossil3.to_sql(
+            name="egon_etrago_gen",
+            con=con,
+            schema="grid",
+            if_exists="append",
+            index=False,
+        )
 
     # Dialing with run_of_river, solar_rooftop, wind_offshore, wind_onshore
     # and solar
@@ -907,6 +940,10 @@ def import_generators(scn: str):
     for c, df in gen_var3.groupby("carrier"):
         factor_to_pypsaeur = cap_gen.at[c, scn] / df["p_nom"].sum()
         gen_var3.loc[df.index, "p_nom"] *= factor_to_pypsaeur
+        gen_var3.loc[df.index, "marginal_cost"] = marg_cost3[c]
+        gen_var3.loc[df.index, "capital_cost"] = eff_and_costs.loc[
+            c, "capital_cost"
+        ]
 
     gen_var3.reset_index(inplace=True)
     gen_var3.to_sql(
@@ -977,6 +1014,12 @@ def import_generators(scn: str):
         + (gas2["p_nom"].sum() - gas1["p_nom"].sum()) * scaling_factor[scn]
     )
     gas3["p_nom"] *= obj / gas3["p_nom"].sum()
+
+    gas3["marginal_cost"] = (
+        gas1["marginal_cost"].mean()
+        + (gas2["marginal_cost"].mean() - gas1["marginal_cost"].mean())
+        * scaling_factor[scn]
+    )
 
     gas3.to_sql(
         name="egon_etrago_generator",
