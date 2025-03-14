@@ -520,6 +520,15 @@ def import_links(scn: str):
     link_cgb3 = link_cgb2.copy()
     link_cgb3["scn_name"] = scn
 
+    cgb_marg_cost = (
+        link_cgb1["marginal_cost"].mean()
+        + (
+            link_cgb2["marginal_cost"].mean()
+            - link_cgb1["marginal_cost"].mean()
+        )
+        * scaling_factor[scn]
+    )
+
     cgb1_geo = gpd.read_postgis(
         """
             SELECT bus_id, geom FROM grid.egon_etrago_bus
@@ -566,6 +575,7 @@ def import_links(scn: str):
     link_cgb3["p_nom"] = link_cgb3["p_nom"] * factor_to_pypsaeur
 
     link_cgb3.reset_index(inplace=True)
+    link_cgb3["marginal_cost"] = cgb_marg_cost
     link_cgb3.to_sql(
         name="egon_etrago_link",
         con=con,
@@ -583,6 +593,14 @@ def import_links(scn: str):
     )
     link_ocgt3 = link_ocgt2.copy().reset_index().set_index("link_id")
     link_ocgt3["scn_name"] = scn
+    ocgt_marg_cost = (
+        link_ocgt1["marginal_cost"].mean()
+        + (
+            link_ocgt2["marginal_cost"].mean()
+            - link_ocgt1["marginal_cost"].mean()
+        )
+        * scaling_factor[scn]
+    )
 
     not_in_ocgt2 = link_ocgt1[
         ~link_ocgt1.index.isin(link_ocgt2.index.unique())
@@ -623,6 +641,7 @@ def import_links(scn: str):
     link_ocgt3["p_nom"] *= factor_to_pypsaeur
 
     link_ocgt3.reset_index(inplace=True)
+    link_ocgt3["marginal_cost"] = ocgt_marg_cost
     link_ocgt3.to_sql(
         name="egon_etrago_link",
         con=con,
@@ -806,7 +825,7 @@ def interpolate_marginal_costs(scn):
 
 
 def import_generators(scn: str):
-    scn = "powerd2025"
+
     cap_gen = load_scn_capacies_gen()
     eff_and_costs = import_efficiency_and_costs(scn)
     marg_cost3 = interpolate_marginal_costs(scn)
