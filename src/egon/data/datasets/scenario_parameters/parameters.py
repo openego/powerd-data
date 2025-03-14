@@ -99,14 +99,15 @@ def global_settings(scenario):
         parameters = {
             "weather_year": 2011,
             "population_year": 2050,
-            "fuel_costs": {  # Netzentwicklungsplan Strom 2035, Version 2021, 1. Entwurf, p. 39, table 6
-                "oil": 73.8,  # [EUR/MWh]
-                "gas": 25.6,  # [EUR/MWh]
-                "coal": 20.2,  # [EUR/MWh]
-                "lignite": 4.0,  # [EUR/MWh]
+            "fuel_costs": {  # Netzentwicklungsplan Strom 2035, Version 2021, 2. Entwurf, p. 47, table 7 https://www.netzentwicklungsplan.de/sites/default/files/2023-03/NEP_2037_2045_V2023_1_Entwurf_Kap2.pdf
+                "oil": 33.7,  # [EUR/MWh]
+                "gas": 19.4,  # [EUR/MWh]
+                "coal": 6.7,  # [EUR/MWh]
+                "lignite": 6.5,  # [EUR/MWh]
                 "nuclear": 1.7,  # [EUR/MWh]
+                "biomass": 40,  # Dummyvalue, ToDo: Find a suitable source
             },
-            "co2_costs": 76.5,  # [EUR/t_CO2]
+            "co2_costs": 100,  # [EUR/t_CO2]
             "co2_emissions": {  # Netzentwicklungsplan Strom 2035, Version 2021, 1. Entwurf, p. 40, table 8
                 "waste": 0.165,  # [t_CO2/MW_th]
                 "lignite": 0.393,  # [t_CO2/MW_th]
@@ -492,6 +493,37 @@ def electricity(scenario):
         # Insert marginal_costs in EUR/MWh
         # marginal cost can include fuel, C02 and operation and maintenance costs
         parameters["marginal_cost"] = {
+            "oil": global_settings(scenario)["fuel_costs"]["oil"]
+            / read_costs(costs, "oil", "efficiency")
+            + read_costs(costs, "oil", "VOM")
+            + global_settings(scenario)["co2_costs"]
+            * global_settings(scenario)["co2_emissions"]["oil"]
+            / read_costs(costs, "oil", "efficiency"),
+            "other_non_renewable": global_settings(scenario)["fuel_costs"][
+                "gas"
+            ] / read_costs(costs, "OCGT", "efficiency")
+            + global_settings(scenario)["co2_costs"]
+            * global_settings(scenario)["co2_emissions"][
+                "other_non_renewable"
+            ] / read_costs(costs, "OCGT", "efficiency"),
+            "lignite": global_settings(scenario)["fuel_costs"]["lignite"]
+            / read_costs(costs, "lignite", "efficiency")
+            + read_costs(costs, "lignite", "VOM")
+            + global_settings(scenario)["co2_costs"]
+            * global_settings(scenario)["co2_emissions"]["lignite"]
+            / read_costs(costs, "lignite", "efficiency"),
+            "coal": global_settings(scenario)["fuel_costs"]["coal"]
+            / read_costs(costs, "coal", "efficiency")
+            + read_costs(costs, "coal", "VOM")
+            + global_settings(scenario)["co2_costs"]
+            * global_settings(scenario)["co2_emissions"]["coal"]
+            / read_costs(costs, "coal", "efficiency"),
+            "nuclear": global_settings(scenario)["fuel_costs"]["nuclear"]
+            / read_costs(costs, "nuclear", "efficiency")
+            + read_costs(costs, "nuclear", "VOM"),
+            "biomass": global_settings(scenario)["fuel_costs"]["biomass"]
+            / read_costs(costs, "biomass", "efficiency")
+            + read_costs(costs, "biomass CHP", "VOM"),
             "wind_offshore": read_costs(costs, "offwind", "VOM"),
             "wind_onshore": read_costs(costs, "onwind", "VOM"),
             "solar": read_costs(costs, "solar", "VOM"),
