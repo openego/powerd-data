@@ -916,7 +916,7 @@ def interpolate_marginal_costs(scn):
 
 
 def import_generators(scn: str):
-    scn = "powerd2025"
+
     cap_gen = load_scn_capacies_gen()
     eff_and_costs = import_efficiency_and_costs(scn)
     marg_cost3 = interpolate_marginal_costs(scn)
