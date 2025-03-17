@@ -851,6 +851,7 @@ def load_scn_capacies_gen(
         "urban_central_heat_pump": "central_heat_pump",
         "urban_central_resistive_heater": "central_resistive_heater",
         "gas": "OCGT",
+        "urban_central_solid_biomass_CHP":"central_biomass_CHP"
     }
 
     scn_capacities["carrier"] = scn_capacities["carrier"].apply(
@@ -1213,6 +1214,79 @@ def import_generators(scn: str):
         if_exists="append",
         index=False,
     )
+    
+    # deal with urban_central_biomass
+    ucbe3 = scn1_gen[scn1_gen["carrier"] == "central_biomass_CHP"].copy()
+    ucbe3["scn_name"] = scn
+
+    obj = cap_gen.at["central_biomass_CHP", scn] * 0.3
+    ucbe3["p_nom"] *= obj / ucbe3["p_nom"].sum()
+
+    ucbe3.to_sql(
+        name="egon_etrago_generator",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
+    
+    # deal with urban_central_biomass_heat
+    ucbh3 = scn1_gen[scn1_gen["carrier"] == "central_biomass_CHP_heat"].copy()
+    ucbh3["scn_name"] = scn
+
+    obj = cap_gen.at["central_biomass_CHP", scn] * 0.7
+    ucbh3["p_nom"] *= obj / ucbe3["p_nom"].sum()
+    
+    chb1_geo = gpd.read_postgis(
+        """
+            SELECT bus_id, geom FROM grid.egon_etrago_bus
+            WHERE scn_name = 'status2019'
+            AND carrier = 'central_heat'
+            """,
+        con,
+        geom_col="geom",
+    ).set_index("bus_id")
+
+    chb2_geo = gpd.read_postgis(
+        f"""
+            SELECT bus_id, geom FROM grid.egon_etrago_bus
+            WHERE scn_name = '{scn}'
+            AND carrier = 'central_heat'
+            """,
+        con,
+        geom_col="geom",
+    ).set_index("bus_id")
+
+    chb1_to_chb2 = {}
+    for l in chb1_geo.index:
+        dist = chb2_geo.distance(chb1_geo["geom"][l])
+        dist.sort_values(inplace=True)
+        chb1_to_chb2[l] = dist.index[0]
+    
+    ucbh3["bus"] = ucbh3["bus"].map(chb1_to_chb2)
+    
+    next_gen_id = (
+        pd.read_sql(
+            """
+        SELECT MAX(generator_id) FROM grid.egon_etrago_generator
+            """,
+            con,
+        ).iat[0, 0]
+        + 1
+    )
+
+    ucbh3["generator_id"] = range(
+        next_gen_id, next_gen_id + len(ucbh3)
+    )
+    
+    ucbh3.to_sql(
+        name="egon_etrago_generator",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
+    
     return
 
 
