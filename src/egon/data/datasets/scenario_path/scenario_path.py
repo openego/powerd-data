@@ -332,10 +332,8 @@ def load_scn_capacies_link(
         "central_heat_pump",
         "central_resistive_heater",
         "gas",
-        "rural_biomass_boiler",
         "rural_gas_boiler",
         "rural_heat_pump",
-        "rural_oil_boiler",
         "rural_resistive_heater",
     ]
 
@@ -873,6 +871,8 @@ def load_scn_capacies_gen(
         "rural_solar_thermal",
         "urban_central_gas_CHP",
         "urban_central_solid_biomass_CHP",
+        "rural_biomass_boiler",
+        "rural_oil_boiler",
     ]
 
     carriers_gen = set(
@@ -915,7 +915,7 @@ def interpolate_marginal_costs(scn):
 
 
 def import_generators(scn: str):
-
+    scn = "powerd2025"
     cap_gen = load_scn_capacies_gen()
     eff_and_costs = import_efficiency_and_costs(scn)
     marg_cost3 = interpolate_marginal_costs(scn)
@@ -1131,6 +1131,82 @@ def import_generators(scn: str):
     )
 
     gas3.to_sql(
+        name="egon_etrago_generator",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
+
+    # dealing with rural_biomass_boiler and rural_oil_boiler
+    load_rh = pd.read_sql(
+        f"""
+        SELECT * FROM grid.egon_etrago_load
+        WHERE scn_name = '{scn}'
+        AND carrier = 'rural_heat'
+        AND bus in (SELECT bus_id FROM grid.egon_etrago_bus
+        WHERE country = 'DE'
+        AND scn_name = '{scn}')
+        """,
+        con,
+        index_col="load_id",
+    )
+
+    refference_oil = scn1_gen[scn1_gen["carrier"] == "oil"].head(1)
+    refference_oil["scn_name"] = scn
+    refference_oil["carrier"] = "rural_biomass_boiler"
+    refference_oil["marginal_cost"] = marg_cost3["oil"]
+    refference_biomass = scn1_gen[scn1_gen["carrier"] == "oil"].head(1)
+    refference_biomass["scn_name"] = scn
+    refference_biomass["carrier"] = "rural_oil_boiler"
+    refference_biomass["marginal_cost"] = marg_cost3["biomass"]
+
+    load_t_rh = pd.read_sql(
+        f"""
+        SELECT * FROM grid.egon_etrago_load_timeseries
+        WHERE load_id IN(
+            SELECT load_id FROM grid.egon_etrago_load
+            WHERE bus IN (
+                SELECT bus_id FROM grid.egon_etrago_bus
+                WHERE country = 'DE'
+                AND scn_name = '{scn}'
+                )
+            AND scn_name = '{scn}'
+            )
+        AND load_id IN (SELECT load_id FROM grid.egon_etrago_load
+        WHERE carrier = 'rural_heat'
+        AND scn_name = '{scn}')
+        AND scn_name = '{scn}'
+        """,
+        con,
+        index_col="load_id",
+    )
+
+    new_gen_boiler = pd.DataFrame(columns=scn2_gen.columns)
+    for load, df in load_t_rh.iterrows():
+        bus = int(load_rh.at[load, "bus"])
+        inst_capacity = float(np.array(df.at["p_set"]).max())
+        new_gen_boiler.loc[str(bus) + "bio", :] = refference_biomass.values
+        new_gen_boiler.loc[str(bus) + "bio", "bus"] = bus
+        new_gen_boiler.loc[str(bus) + "bio", "p_nom"] = inst_capacity
+        new_gen_boiler.loc[str(bus) + "oil", :] = refference_oil.values
+        new_gen_boiler.loc[str(bus) + "oil", "bus"] = bus
+        new_gen_boiler.loc[str(bus) + "oil", "p_nom"] = inst_capacity
+
+    next_gen_id = (
+        pd.read_sql(
+            """
+        SELECT MAX(generator_id) FROM grid.egon_etrago_generator
+            """,
+            con,
+        ).iat[0, 0]
+        + 1
+    )
+
+    new_gen_boiler["generator_id"] = range(
+        next_gen_id, next_gen_id + len(new_gen_boiler)
+    )
+    new_gen_boiler.to_sql(
         name="egon_etrago_generator",
         con=con,
         schema="grid",
