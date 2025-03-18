@@ -734,77 +734,81 @@ def import_links(scn: str):
         )
     ].copy()
 
-    h2_grid_to_h2["carrier"] = "H2"
-    h2_grid_to_h2["scn_name"] = scn
+    if len(h2_grid_to_h2) > 0:
+        h2_grid_to_h2["carrier"] = "H2"
+        h2_grid_to_h2["scn_name"] = scn
 
-    db.execute_sql(
-        f"""
-    DELETE FROM grid.egon_etrago_bus
-    WHERE scn_name = '{scn}'
-    AND bus_id IN {tuple(h2_grid_to_h2.index)}
-    """
-    )
-
-    ch4_b = gpd.read_postgis(
-        f"""
-            SELECT * FROM grid.egon_etrago_bus
-            WHERE scn_name = '{scn}'
-            AND carrier = 'CH4'
-            and country = 'DE'
-            """,
-        con,
-        geom_col="geom",
-    ).set_index("bus_id")
-
-    closest_ch4 = {}
-    for b in h2_grid_to_h2.index:
-        dist = ch4_b.distance(h2_grid_to_h2["geom"][b])
-        closest_ch4[b] = dist.idxmin()
-
-    refference = identical3[identical3["carrier"] == "CH4_to_H2"].head(1)
-
-    new_ch4_to_h2 = gpd.GeoDataFrame(columns=identical3.columns)
-    for bus in h2_grid_to_h2.index:
-        new_ch4_to_h2.loc[bus, :] = refference.values
-        new_ch4_to_h2.loc[bus, "bus0"] = closest_ch4[bus]
-        new_ch4_to_h2.loc[bus, "bus1"] = bus
-        new_ch4_to_h2.loc[bus, "geom"] = LineString(
-            [ch4_b.at[closest_ch4[bus], "geom"], h2_grid_to_h2.at[bus, "geom"]]
-        )
-    new_ch4_to_h2.set_geometry("geom", inplace=True)
-    new_ch4_to_h2.set_crs(crs=4326, inplace=True)
-
-    next_link_id = (
-        pd.read_sql(
+        db.execute_sql(
             f"""
-        SELECT MAX(link_id) FROM grid.egon_etrago_link
-            """,
+        DELETE FROM grid.egon_etrago_bus
+        WHERE scn_name = '{scn}'
+        AND bus_id IN {tuple(h2_grid_to_h2.index)}
+        """
+        )
+
+        ch4_b = gpd.read_postgis(
+            f"""
+                SELECT * FROM grid.egon_etrago_bus
+                WHERE scn_name = '{scn}'
+                AND carrier = 'CH4'
+                and country = 'DE'
+                """,
             con,
-        ).iat[0, 0]
-        + 1
-    )
+            geom_col="geom",
+        ).set_index("bus_id")
 
-    new_ch4_to_h2["link_id"] = range(
-        next_link_id, next_link_id + len(new_ch4_to_h2)
-    )
-    new_ch4_to_h2["build_year"] = new_ch4_to_h2["build_year"].apply(int)
+        closest_ch4 = {}
+        for b in h2_grid_to_h2.index:
+            dist = ch4_b.distance(h2_grid_to_h2["geom"][b])
+            closest_ch4[b] = dist.idxmin()
 
-    new_ch4_to_h2.to_postgis(
-        name="egon_etrago_link",
-        con=con,
-        schema="grid",
-        if_exists="append",
-        index=False,
-    )
+        refference = identical3[identical3["carrier"] == "CH4_to_H2"].head(1)
 
-    h2_grid_to_h2.reset_index(inplace=True)
-    h2_grid_to_h2.to_postgis(
-        name="egon_etrago_bus",
-        con=con,
-        schema="grid",
-        if_exists="append",
-        index=False,
-    )
+        new_ch4_to_h2 = gpd.GeoDataFrame(columns=identical3.columns)
+        for bus in h2_grid_to_h2.index:
+            new_ch4_to_h2.loc[bus, :] = refference.values
+            new_ch4_to_h2.loc[bus, "bus0"] = closest_ch4[bus]
+            new_ch4_to_h2.loc[bus, "bus1"] = bus
+            new_ch4_to_h2.loc[bus, "geom"] = LineString(
+                [
+                    ch4_b.at[closest_ch4[bus], "geom"],
+                    h2_grid_to_h2.at[bus, "geom"],
+                ]
+            )
+        new_ch4_to_h2.set_geometry("geom", inplace=True)
+        new_ch4_to_h2.set_crs(crs=4326, inplace=True)
+
+        next_link_id = (
+            pd.read_sql(
+                f"""
+            SELECT MAX(link_id) FROM grid.egon_etrago_link
+                """,
+                con,
+            ).iat[0, 0]
+            + 1
+        )
+
+        new_ch4_to_h2["link_id"] = range(
+            next_link_id, next_link_id + len(new_ch4_to_h2)
+        )
+        new_ch4_to_h2["build_year"] = new_ch4_to_h2["build_year"].apply(int)
+
+        new_ch4_to_h2.to_postgis(
+            name="egon_etrago_link",
+            con=con,
+            schema="grid",
+            if_exists="append",
+            index=False,
+        )
+
+        h2_grid_to_h2.reset_index(inplace=True)
+        h2_grid_to_h2.to_postgis(
+            name="egon_etrago_bus",
+            con=con,
+            schema="grid",
+            if_exists="append",
+            index=False,
+        )
     return
 
 
