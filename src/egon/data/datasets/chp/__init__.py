@@ -438,19 +438,11 @@ def insert_chp_statusquo(scn_name=None):
 
         mastr["gas_bus_id"] = gas_bus_id
 
-    try:
-        mastr = assign_use_case(mastr, cfg["sources"], scn_name)
-    except Exception:
-        mastr = assign_use_case(mastr, cfg["sources"], "status2019")
+    mastr = assign_use_case(mastr, cfg["sources"], scn_name)
 
     # Insert entries with location
     print(f"Going to Insert entries with location for scn_name {scn_name}")
     print("len(mastr)", len(mastr))
-    for c in []:
-        try:
-            print(f"{c}, {mastr[c].max() / 1000}")
-        except Exception:
-            print(f"cannot / 1000 {c}")
     session = sessionmaker(bind=db.engine())()
     for i, row in mastr.iterrows():
         if row.ThermischeNutzleistung > 0:
@@ -472,14 +464,8 @@ def insert_chp_statusquo(scn_name=None):
                 voltage_level=row.voltage_level,
                 geom=f"SRID=4326;POINT({row.Laengengrad} {row.Breitengrad})",
             )
-            print(entry)
             session.add(entry)
-            try:
-                session.commit()
-            except Exception as E:
-                print(f"Could not commit due to {E}")
-                print(f"Failing at i {i} with row \n{row}")
-                break
+    session.commit()
 
 
 def insert_chp_egon2035():
