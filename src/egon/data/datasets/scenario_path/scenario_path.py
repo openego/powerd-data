@@ -1844,8 +1844,8 @@ def import_stores(scn: str):
     return
 
 
-def import_foreign(scn_name, year):
-    neighbor_reduction(scn_name, year)
+def import_foreign(scn: str, year):
+    neighbor_reduction(scn, year)
 
     # import links joining DE and foreign countries
     link_foreign = pd.read_sql(
@@ -1872,7 +1872,7 @@ def import_foreign(scn_name, year):
     bus_ch4_h2 = pd.read_sql(
         sql=f"""
                 SELECT * from grid.egon_etrago_bus
-                WHERE scn_name IN ('eGon100RE', '{scn_name}')
+                WHERE scn_name IN ('eGon100RE', '{scn}')
                 AND carrier IN ('CH4', 'H2')
                 AND country <> 'DE'
             """,
@@ -1883,7 +1883,7 @@ def import_foreign(scn_name, year):
     map_scn1_to_scn2 = {}
     for b, df in bus_ch4_h2.groupby(["x", "y", "carrier"]):
         bus1 = df.index[df["scn_name"] == "eGon100RE"][0]
-        bus2 = df.index[df["scn_name"] == scn_name][0]
+        bus2 = df.index[df["scn_name"] == scn][0]
         map_scn1_to_scn2[bus1] = bus2
 
     link_foreign["bus0"] = link_foreign["bus0"].apply(
@@ -1894,7 +1894,7 @@ def import_foreign(scn_name, year):
         lambda x: map_scn1_to_scn2[x] if x in map_scn1_to_scn2.keys() else x
     )
 
-    link_foreign["scn_name"] = scn_name
+    link_foreign["scn_name"] = scn
     link_foreign.reset_index(inplace=True)
     link_foreign.to_sql(
         name="egon_etrago_link",
