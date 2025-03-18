@@ -577,7 +577,7 @@ def combine_decentral_and_rural_heat(network_solved, network_prepared):
 
 
 def combine_residenial_services_heat_load(network_prepared):
-    
+    ###combining loads
     residential_rural_loads = network_prepared.loads[
         network_prepared.loads.carrier.str.contains("residential rural heat")
     ]
@@ -618,6 +618,11 @@ def combine_residenial_services_heat_load(network_prepared):
         network_prepared.loads_t.p_set.columns.str.replace("services rural heat", "rural heat")
                                           .str.replace("residential rural heat", "rural heat")
                                           )
+    
+    ####combining heat_pumps
+    network_prepared.links_t.efficiency.columns = (network_prepared.links_t.efficiency.columns.str.replace("services rural", "rural heat")
+                                      .str.replace("residential rural", "rural")
+                                      )
     
     return network_prepared
 
