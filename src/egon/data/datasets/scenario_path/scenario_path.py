@@ -853,7 +853,7 @@ def load_scn_capacies_gen(
         "urban_central_heat_pump": "central_heat_pump",
         "urban_central_resistive_heater": "central_resistive_heater",
         "gas": "OCGT",
-        "urban_central_solid_biomass_CHP":"central_biomass_CHP"
+        "urban_central_solid_biomass_CHP": "central_biomass_CHP",
     }
 
     scn_capacities["carrier"] = scn_capacities["carrier"].apply(
@@ -1150,16 +1150,14 @@ def import_generators(scn: str):
 
     obj = (
         biogas1["p_nom"].sum()
-        + (biogas2["p_nom"].sum() - biogas1["p_nom"].sum()) * scaling_factor[scn]
+        + (biogas2["p_nom"].sum() - biogas1["p_nom"].sum())
+        * scaling_factor[scn]
     )
     biogas3["p_nom"] *= obj / biogas3["p_nom"].sum()
 
     # Interpolate costs based on gas fuel costs from status2019 and eGon100RE
     # egon.data.scenario_parameters
-    biogas3["marginal_cost"] = (
-        20.16 + (19.4 - 20.16)
-        * scaling_factor[scn]
-    )
+    biogas3["marginal_cost"] = 20.16 + (19.4 - 20.16) * scaling_factor[scn]
 
     biogas3.to_sql(
         name="egon_etrago_generator",
@@ -1244,57 +1242,64 @@ def import_generators(scn: str):
         if_exists="append",
         index=False,
     )
-    
-    # deal with urban_central_biomass
-    ucbe3 = scn1_gen[scn1_gen["carrier"] == "central_biomass_CHP"].copy()
-    ucbe3["scn_name"] = scn
 
-    obj = cap_gen.at["central_biomass_CHP", scn] * 0.3
-    ucbe3["p_nom"] *= obj / ucbe3["p_nom"].sum()
-
-    ucbe3.to_sql(
-        name="egon_etrago_generator",
-        con=con,
-        schema="grid",
-        if_exists="append",
-        index=False,
-    )
-    
     # deal with urban_central_biomass_heat
-    ucbh3 = scn1_gen[scn1_gen["carrier"] == "central_biomass_CHP_heat"].copy()
-    ucbh3["scn_name"] = scn
+    new_bio_heat = pd.DataFrame(columns=scn1_gen.columns)
 
-    obj = cap_gen.at["central_biomass_CHP", scn] * 0.7
-    ucbh3["p_nom"] *= obj / ucbe3["p_nom"].sum()
-    
-    chb1_geo = gpd.read_postgis(
-        """
-            SELECT bus_id, geom FROM grid.egon_etrago_bus
-            WHERE scn_name = 'status2019'
-            AND carrier = 'central_heat'
-            """,
-        con,
-        geom_col="geom",
-    ).set_index("bus_id")
+    ref_bio_heat = scn1_gen[
+        scn1_gen["carrier"] == "central_biomass_CHP_heat"
+    ].head(1)
+    ref_bio_heat["scn_name"] = scn
+    ref_bio_heat["carrier"] = "central_biomass_CHP_heat"
 
-    chb2_geo = gpd.read_postgis(
+    central_heat_demand = pd.read_sql(
         f"""
-            SELECT bus_id, geom FROM grid.egon_etrago_bus
+        SELECT load_id, p_set FROM grid.egon_etrago_load_timeseries
+        WHERE load_id IN (SELECT load_id FROM grid.egon_etrago_load
+            WHERE carrier = 'central_heat'
+            AND scn_name = '{scn}'
+            AND bus IN (
+                SELECT bus_id FROM grid.egon_etrago_bus
+                WHERE country = 'DE'
+                AND scn_name = '{scn}'
+                )
+            )
+        AND scn_name = '{scn}'
+        """,
+        con,
+        index_col="load_id",
+    )
+
+    central_heat_demand["p_max"] = (
+        central_heat_demand["p_set"].apply(np.array).apply(max)
+    )
+    central_heat_demand = central_heat_demand[
+        central_heat_demand["p_max"] > 0.1
+    ]
+    obj = cap_gen.at["central_biomass_CHP", scn] * 0.825
+    central_heat_demand["p_nom"] = (
+        central_heat_demand["p_max"] * obj / central_heat_demand["p_max"].sum()
+    )
+    central_heat_demand.drop(columns="p_set", inplace=True)
+
+    load_chd = pd.read_sql(
+        f"""
+            SELECT load_id, bus FROM grid.egon_etrago_load
             WHERE scn_name = '{scn}'
             AND carrier = 'central_heat'
             """,
         con,
-        geom_col="geom",
-    ).set_index("bus_id")
+    ).set_index("load_id")
 
-    chb1_to_chb2 = {}
-    for l in chb1_geo.index:
-        dist = chb2_geo.distance(chb1_geo["geom"][l])
-        dist.sort_values(inplace=True)
-        chb1_to_chb2[l] = dist.index[0]
-    
-    ucbh3["bus"] = ucbh3["bus"].map(chb1_to_chb2)
-    
+    central_heat_demand["bus"] = central_heat_demand.index.map(load_chd["bus"])
+
+    for g, df in central_heat_demand.iterrows():
+        bus = int(central_heat_demand.at[g, "bus"])
+        inst_capacity = float(central_heat_demand.at[g, "p_nom"])
+        new_bio_heat.loc[str(bus) + "bio", :] = ref_bio_heat.values
+        new_bio_heat.loc[str(bus) + "bio", "bus"] = bus
+        new_bio_heat.loc[str(bus) + "bio", "p_nom"] = inst_capacity
+
     next_gen_id = (
         pd.read_sql(
             """
@@ -1305,18 +1310,91 @@ def import_generators(scn: str):
         + 1
     )
 
-    ucbh3["generator_id"] = range(
-        next_gen_id, next_gen_id + len(ucbh3)
+    new_bio_heat["generator_id"] = range(
+        next_gen_id, next_gen_id + len(new_bio_heat)
     )
-    
-    ucbh3.to_sql(
+
+    new_bio_heat.to_sql(
         name="egon_etrago_generator",
         con=con,
         schema="grid",
         if_exists="append",
         index=False,
     )
-    
+
+    # deal with urban_central_biomass elec
+    new_bio_elec = pd.DataFrame(columns=scn1_gen.columns)
+
+    ref_bio_elec = scn1_gen[scn1_gen["carrier"] == "central_biomass_CHP"].head(
+        1
+    )
+    ref_bio_elec["scn_name"] = scn
+    ref_bio_elec["carrier"] = "central_biomass_CHP"
+    ref_bio_elec["marginal_cost"] = marg_cost3["biomass"]
+
+    chb_geo = (
+        gpd.read_postgis(
+            f"""
+            SELECT bus_id, geom FROM grid.egon_etrago_bus
+            WHERE scn_name = '{scn}'
+            AND carrier = 'central_heat'
+            AND country = 'DE'
+            """,
+            con,
+            geom_col="geom",
+        )
+        .set_index("bus_id")
+        .to_crs(3035)
+    )
+
+    acb_geo = (
+        gpd.read_postgis(
+            f"""
+            SELECT bus_id, geom FROM grid.egon_etrago_bus
+            WHERE scn_name = '{scn}'
+            AND carrier = 'AC'
+            AND country = 'DE'
+            AND v_nom = '110'
+            """,
+            con,
+            geom_col="geom",
+        )
+        .set_index("bus_id")
+        .to_crs(3035)
+    )
+
+    new_bio_heat.set_index("bus", inplace=True)
+    for l in new_bio_heat.index:
+        dist = acb_geo.distance(chb_geo["geom"][l])
+        dist.sort_values(inplace=True)
+        bus = int(dist.index[0])
+        inst_capacity = float(new_bio_heat.at[l, "p_nom"]) / 0.825 * 0.2694
+        new_bio_elec.loc[str(l) + "bio_elec", :] = ref_bio_elec.values
+        new_bio_elec.loc[str(l) + "bio_elec", "bus"] = bus
+        new_bio_elec.loc[str(l) + "bio_elec", "p_nom"] = inst_capacity
+
+    next_gen_id = (
+        pd.read_sql(
+            """
+        SELECT MAX(generator_id) FROM grid.egon_etrago_generator
+            """,
+            con,
+        ).iat[0, 0]
+        + 1
+    )
+
+    new_bio_elec["generator_id"] = range(
+        next_gen_id, next_gen_id + len(new_bio_elec)
+    )
+
+    new_bio_elec.to_sql(
+        name="egon_etrago_generator",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
+
     return
 
 
