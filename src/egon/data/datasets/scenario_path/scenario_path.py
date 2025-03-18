@@ -1141,6 +1141,34 @@ def import_generators(scn: str):
         index=False,
     )
 
+    # Dealing with biogas in Germany
+    biogas1 = scn1_gen[scn1_gen["carrier"] == "CH4"].copy()
+    biogas2 = scn2_gen[scn2_gen["carrier"] == "CH4"].copy()
+    biogas3 = scn2_gen[scn2_gen["carrier"] == "CH4"].copy()
+    biogas3["scn_name"] = scn
+    biogas3["carrier"] = "biogas"
+
+    obj = (
+        biogas1["p_nom"].sum()
+        + (biogas2["p_nom"].sum() - biogas1["p_nom"].sum()) * scaling_factor[scn]
+    )
+    biogas3["p_nom"] *= obj / biogas3["p_nom"].sum()
+
+    # Interpolate costs based on gas fuel costs from status2019 and eGon100RE
+    # egon.data.scenario_parameters
+    biogas3["marginal_cost"] = (
+        20.16 + (19.4 - 20.16)
+        * scaling_factor[scn]
+    )
+
+    biogas3.to_sql(
+        name="egon_etrago_generator",
+        con=con,
+        schema="grid",
+        if_exists="append",
+        index=False,
+    )
+
     # dealing with rural_biomass_boiler and rural_oil_boiler
     load_rh = pd.read_sql(
         f"""
