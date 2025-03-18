@@ -510,18 +510,21 @@ def assign_bus_id(power_plants, cfg, drop_missing=False):
         Power plants including voltage level and bus_id
 
     """
-
-    mv_grid_districts = db.select_geodataframe(
-        f"""
+    q = f"""
         SELECT * FROM {cfg['sources']['egon_mv_grid_district']}
-        """,
+        """
+    print(f"mv_grid_districts q : \n {q}")
+    mv_grid_districts = db.select_geodataframe(
+        q,
         epsg=4326,
     )
 
-    ehv_grid_districts = db.select_geodataframe(
-        f"""
+    q = f"""
         SELECT * FROM {cfg['sources']['ehv_voronoi']}
-        """,
+        """
+    print(f"ehv_grid_districts q: \n{q}")
+    ehv_grid_districts = db.select_geodataframe(
+        q,
         epsg=4326,
     )
 
@@ -554,7 +557,9 @@ def assign_bus_id(power_plants, cfg, drop_missing=False):
                 ehv_grid_districts,
             ).bus_id
 
+    print(f"drop_missing: {drop_missing}")
     if drop_missing:
+        print(f"inner drop_missing: {drop_missing}")
         power_plants = power_plants[~power_plants.bus_id.isnull()]
 
     # Assert that all power plants have a bus_id

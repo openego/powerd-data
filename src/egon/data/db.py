@@ -385,6 +385,7 @@ def assign_gas_bus_id(dataframe, scn_name, carrier):
     SELECT bus_id, geom FROM grid.egon_gas_voronoi
     WHERE scn_name = '{scn_name}' AND carrier = '{carrier}';
     """
+    print(f"assign_gas_bus_id_sql \n{assign_gas_bus_id_sql}")
     voronoi = select_geodataframe(assign_gas_bus_id_sql, epsg=4326,)
 
     res = gpd.sjoin(dataframe, voronoi)

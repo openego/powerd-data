@@ -655,8 +655,7 @@ def assign_use_case(chp, sources, scenario):
     """
     # Select osm industrial areas which don't include power or heat supply
     # (name not includes 'Stadtwerke', 'Kraftwerk', 'Müllverbrennung'...)
-    landuse_industrial = db.select_geodataframe(
-        f"""
+    q = f"""
         SELECT ST_Buffer(geom, 100) as geom,
          tags::json->>'name' as name
          FROM {sources['osm_landuse']['schema']}.
@@ -668,14 +667,13 @@ def assign_use_case(chp, sources, scenario):
         OR name NOT LIKE '%%Abfall%%'
         OR name NOT LIKE '%%Kraftwerk%%'
         OR name NOT LIKE '%%Wertstoff%%')
-        """,
-        epsg=4326,
-    )
+        """
+    print(f"q landuse \n{q}")
+    landuse_industrial = db.select_geodataframe(q, epsg=4326,)
 
     # Select osm polygons where a district heating chp is likely
     # (name includes 'Stadtwerke', 'Kraftwerk', 'Müllverbrennung'...)
-    possible_dh_locations = db.select_geodataframe(
-        f"""
+    q = f"""
         SELECT ST_Buffer(geom, 100) as geom,
          tags::json->>'name' as name
          FROM {sources['osm_polygon']['schema']}.
@@ -687,9 +685,9 @@ def assign_use_case(chp, sources, scenario):
         OR name LIKE '%%Abfall%%'
         OR name LIKE '%%Kraftwerk%%'
         OR name LIKE '%%Wertstoff%%'
-        """,
-        epsg=4326,
-    )
+        """
+    print(f"q possible_dh_locations \n{q}")
+    possible_dh_locations = db.select_geodataframe(q, epsg=4326,)
 
     # Initilize district_heating argument
     chp["district_heating"] = False
@@ -701,7 +699,7 @@ def assign_use_case(chp, sources, scenario):
         {sources['district_heating_areas']['table']}
         WHERE scenario = '{scenario}'
         """
-    print(f"assign_use_case: query: {q}")
+    print(f"district heating query: \n{q}")
     district_heating = db.select_geodataframe(q, epsg=4326,)
     # replace due to logging
     # district_heating = db.select_geodataframe(

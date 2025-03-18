@@ -324,6 +324,9 @@ def insert_chp_statusquo(scn_name=None):
     else:
         print(f"For insert_chp_statusquo: got as param scn_name: {scn_name}")
 
+    print(f"For insert_chp_statusquo: using scn_name: {scn_name}")
+    print(f"For insert_chp_statusquo: using scn_name: {scn_name}")
+
     cfg = config.datasets()["chp_location"]
 
     # import data for MaStR
@@ -431,10 +434,12 @@ def insert_chp_statusquo(scn_name=None):
         mastr["voltage_level"] = assign_voltage_level(
             mastr, cfg, WORKING_DIR_MASTR_NEW
         )
-
+        print(f"assign gas bus id for scn_name {scn_name}")
         gas_bus_id = db.assign_gas_bus_id(mastr, scn_name, "CH4").bus
 
         mastr = assign_bus_id(mastr, cfg, drop_missing=True)
+
+        print(f"len(gas_bus_id): {gas_bus_id}")
 
         mastr["gas_bus_id"] = gas_bus_id
 
