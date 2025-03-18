@@ -11,6 +11,8 @@ from egon.data import db
 import egon.data.datasets.era5 as era
 
 from math import ceil
+import egon
+
 
 Base = declarative_base()
 
@@ -160,7 +162,18 @@ def daily_demand_shares_per_climate_zone(year: int = 2019):
     None.
 
     """
+    for scenario in egon.data.config.settings()["egon-data"][
+        "--scenarios"
+    ]:
+        if "status" in scenario:
+            year = int(scenario.split("status")[-1])
+            break
+        break
+
     assert year, f"year mandatory for daily_demand_shares_per_climate_zone but is given year={year}"
+
+    print(f"for daily_demand_shares_per_climate_zone, year: {year}")
+
     # Drop old table and create new one
     engine = db.engine()
     EgonDailyHeatDemandPerClimateZone.__table__.drop(
