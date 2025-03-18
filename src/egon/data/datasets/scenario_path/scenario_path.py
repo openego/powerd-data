@@ -1423,6 +1423,10 @@ def import_loads(scn: str):
             scn2_load_t.loc[df.index, "p_set"] = scn2_load_t.loc[
                 df.index, "p_set"
             ].apply(lambda x: np.array(x) * factor_gas)
+        elif c =="O2":
+            scn2_load_t.loc[df.index, "p_set"] = scn2_load_t.loc[
+                df.index, "p_set"
+            ]
         else:
             scn2_load_t.loc[df.index, "p_set"] = scn2_load_t.loc[
                 df.index, "p_set"
