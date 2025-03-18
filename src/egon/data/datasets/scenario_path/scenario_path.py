@@ -1163,6 +1163,20 @@ def import_generators(scn: str):
     # egon.data.scenario_parameters
     biogas3["marginal_cost"] = 20.16 + (19.4 - 20.16) * scaling_factor[scn]
 
+    next_gen_id = (
+        pd.read_sql(
+            """
+        SELECT MAX(generator_id) FROM grid.egon_etrago_generator
+            """,
+            con,
+        ).iat[0, 0]
+        + 1
+    )
+
+    biogas3["generator_id"] = range(
+        next_gen_id, next_gen_id + len(biogas3)
+    )
+
     biogas3.to_sql(
         name="egon_etrago_generator",
         con=con,
