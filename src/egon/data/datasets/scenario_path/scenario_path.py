@@ -429,6 +429,7 @@ def import_links(scn: str):
             AND scn_name = 'eGon100RE'
         )
         AND carrier = 'dsm')
+        AND scn_name = 'eGon100RE'
         """,
         con,
     )
@@ -491,6 +492,7 @@ def import_links(scn: str):
             AND scn_name = 'eGon100RE'
         )
         AND carrier = 'rural_heat_pump')
+        AND scn_name = 'eGon100RE'
         """,
         con,
     )
@@ -996,7 +998,7 @@ def import_generators(scn: str):
             )
 
         fossil3.to_sql(
-            name="egon_etrago_gen",
+            name="egon_etrago_generator",
             con=con,
             schema="grid",
             if_exists="append",

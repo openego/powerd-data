@@ -14,8 +14,8 @@ from egon.data.datasets.scenario_path.scenario_path import (
 def create_powerd2025():
     scn = "powerd2025"
     import_network_structure(scn)
-    import_generators(scn)
     import_loads(scn)
+    import_generators(scn)
     import_links(scn)
     import_storage_units(scn)
     import_stores(scn)
@@ -27,8 +27,8 @@ def create_powerd2025():
 def create_powerd2030():
     scn = "powerd2030"
     import_network_structure(scn)
-    import_generators(scn)
     import_loads(scn)
+    import_generators(scn)
     import_links(scn)
     import_storage_units(scn)
     import_stores(scn)
@@ -40,8 +40,8 @@ def create_powerd2030():
 def create_powerd2035():
     scn = "powerd2035"
     import_network_structure(scn)
-    import_generators(scn)
     import_loads(scn)
+    import_generators(scn)
     import_links(scn)
     import_storage_units(scn)
     import_stores(scn)
