@@ -982,6 +982,12 @@ def import_generators(scn: str):
         ~cap_gen.loc[fossil_carriers, scn].isna()
     ].index.values
 
+    efficiency = {
+        "oil": 0.35,
+        "coal": 0.33,
+        "lignite": 0.33,
+    }
+
     if len(fossil_carriers) > 0:
         fossil3 = scn1_gen[scn1_gen["carrier"].isin(fossil_carriers)].copy()
         fossil3["scn_name"] = scn
@@ -996,7 +1002,7 @@ def import_generators(scn: str):
 
         for c, df in fossil3.groupby("carrier"):
             id = df.index
-            objective = cap_gen.at[c, scn]
+            objective = cap_gen.at[c, scn] * efficiency[c]
             fossil3.loc[id, "p_nom"] *= (
                 objective / fossil3.loc[id, "p_nom"].sum()
             )
@@ -1173,9 +1179,7 @@ def import_generators(scn: str):
         + 1
     )
 
-    biogas3["generator_id"] = range(
-        next_gen_id, next_gen_id + len(biogas3)
-    )
+    biogas3["generator_id"] = range(next_gen_id, next_gen_id + len(biogas3))
 
     biogas3.to_sql(
         name="egon_etrago_generator",
@@ -1484,13 +1488,17 @@ def import_loads(scn: str):
 
     pre_network = prepared_network(year=scn.replace("powerd", ""))
 
-    annual_sum_gas = pre_network.loads.loc["DE0 0 gas for industry", "p_set"] * 8760
-    annual_sum_h2 = pre_network.loads.loc["DE0 0 H2 for industry", "p_set"] * 8760
+    annual_sum_gas = (
+        pre_network.loads.loc["DE0 0 gas for industry", "p_set"] * 8760
+    )
+    annual_sum_h2 = (
+        pre_network.loads.loc["DE0 0 H2 for industry", "p_set"] * 8760
+    )
     annual_sum_powerd_gas = 0
-    for gas_load in scn2_load[scn2_load.carrier=="CH4_for_industry"].index:
+    for gas_load in scn2_load[scn2_load.carrier == "CH4_for_industry"].index:
         annual_sum_powerd_gas += sum(scn2_load_t.p_set[gas_load])
     annual_sum_powerd_h2 = 0
-    for h2_load in scn2_load[scn2_load.carrier=="H2_for_industry"].index:
+    for h2_load in scn2_load[scn2_load.carrier == "H2_for_industry"].index:
         annual_sum_powerd_h2 += sum(scn2_load_t.p_set[h2_load])
 
     factor_h2 = annual_sum_h2 / annual_sum_powerd_h2
@@ -1514,12 +1522,12 @@ def import_loads(scn: str):
         if c == "H2_for_industry":
             scn2_load_t.loc[df.index, "p_set"] = scn2_load_t.loc[
                 df.index, "p_set"
-            ].apply(lambda x: np.array(x)* factor_h2)
+            ].apply(lambda x: np.array(x) * factor_h2)
         elif c == "CH4_for_industry":
             scn2_load_t.loc[df.index, "p_set"] = scn2_load_t.loc[
                 df.index, "p_set"
             ].apply(lambda x: np.array(x) * factor_gas)
-        elif c =="O2":
+        elif c == "O2":
             scn2_load_t.loc[df.index, "p_set"] = scn2_load_t.loc[
                 df.index, "p_set"
             ]
@@ -1559,7 +1567,8 @@ def import_loads(scn: str):
 
     total_ac_pypsaeur = (
         pre_network.loads_t.p_set["DE0 0"].sum()
-        + pre_network.loads_t.p_set["DE0 0 industry electricity"].sum())
+        + pre_network.loads_t.p_set["DE0 0 industry electricity"].sum()
+    )
 
     for b, df in ac_load.groupby("bus"):
         df1 = df[df["scn_name"] == "status2019"]
@@ -1579,13 +1588,17 @@ def import_loads(scn: str):
             df2.index, "p_set"
         ].apply(lambda x: np.array(x) * objective / df2_total)
 
-    total_ac_scn2 = scn2_load_t.loc[
-            scn2_load[scn2_load["carrier"] == "AC"].index, "p_set"
-        ].apply(lambda x: np.array(x).sum()).sum()
+    total_ac_scn2 = (
+        scn2_load_t.loc[scn2_load[scn2_load["carrier"] == "AC"].index, "p_set"]
+        .apply(lambda x: np.array(x).sum())
+        .sum()
+    )
 
-    scn2_load_t.loc[ scn2_load[scn2_load["carrier"] == "AC"].index, "p_set"] = scn2_load_t.loc[
-        scn2_load[scn2_load["carrier"] == "AC"].index, "p_set"
-    ].apply(lambda x: np.array(x) * total_ac_pypsaeur / total_ac_scn2)
+    scn2_load_t.loc[scn2_load[scn2_load["carrier"] == "AC"].index, "p_set"] = (
+        scn2_load_t.loc[
+            scn2_load[scn2_load["carrier"] == "AC"].index, "p_set"
+        ].apply(lambda x: np.array(x) * total_ac_pypsaeur / total_ac_scn2)
+    )
 
     # Dealing with rural_heat loads
     rh2 = scn2_load[scn2_load["carrier"] == "rural_heat"].copy()
@@ -1600,12 +1613,18 @@ def import_loads(scn: str):
         objective = (
             pre_network.loads_t.p_set["DE0 0 residential rural heat"].sum()
             + pre_network.loads_t.p_set["DE0 0 services rural heat"].sum()
-            + pre_network.loads_t.p_set["DE0 0 residential urban decentral heat"].sum()
-            + pre_network.loads_t.p_set["DE0 0 services urban decentral heat"].sum()
+            + pre_network.loads_t.p_set[
+                "DE0 0 residential urban decentral heat"
+            ].sum()
+            + pre_network.loads_t.p_set[
+                "DE0 0 services urban decentral heat"
+            ].sum()
         )
     else:
-        objective = (pre_network.loads_t.p_set["DE0 0 rural heat"].sum()
-                     +pre_network.loads_t.p_set["DE0 0 urban decentral heat"].sum())
+        objective = (
+            pre_network.loads_t.p_set["DE0 0 rural heat"].sum()
+            + pre_network.loads_t.p_set["DE0 0 urban decentral heat"].sum()
+        )
 
     scn2_load_t.loc[rh2.index, "p_set"] = scn2_load_t.loc[
         rh2.index, "p_set"
