@@ -12,7 +12,7 @@ from shapely.geometry import Point, LineString
 from egon.data import config, db
 import egon.data.config
 
-from egon.data.datasets.pypsaeur import neighbor_reduction
+from egon.data.datasets.pypsaeur import neighbor_reduction, prepared_network
 from egon.data.datasets.scenario_parameters import get_sector_parameters
 
 sources = egon.data.config.datasets()["scenario_path"]["sources"]
@@ -678,8 +678,8 @@ def import_links(scn: str):
         "rural_heat_store_charger",
         "rural_heat_store_discharger",
         "power_to_H2",
-        "rural_heat_store_charger",
-        "rural_heat_store_discharger",
+        "central_heat_store_charger",
+        "central_heat_store_discharger",
         "BEV_charger",
     ]
     identical3 = scn2_link[scn2_link["carrier"].isin(identical)].copy()
@@ -1482,6 +1482,19 @@ def import_loads(scn: str):
         index_col="load_id",
     )
 
+    pre_network = prepared_network(year=scn.replace("powerd", ""))
+
+    annual_sum_gas = pre_network.loads.loc["DE0 0 gas for industry", "p_set"] * 8760
+    annual_sum_h2 = pre_network.loads.loc["DE0 0 H2 for industry", "p_set"] * 8760
+    annual_sum_powerd_gas = 0
+    for gas_load in scn2_load[scn2_load.carrier=="CH4_for_industry"].index:
+        annual_sum_powerd_gas += sum(scn2_load_t.p_set[gas_load])
+    annual_sum_powerd_h2 = 0
+    for h2_load in scn2_load[scn2_load.carrier=="H2_for_industry"].index:
+        annual_sum_powerd_h2 += sum(scn2_load_t.p_set[h2_load])
+
+    factor_h2 = annual_sum_h2 / annual_sum_powerd_h2
+    factor_gas = annual_sum_gas / annual_sum_powerd_gas
     # dealing with loads only present in eGon100RE
     only100_carrier = [
         "O2",
@@ -1498,9 +1511,22 @@ def import_loads(scn: str):
         print(f"{c}:{a.sum()}")
 
     for c, df in only100.groupby("carrier"):
-        scn2_load_t.loc[df.index, "p_set"] = scn2_load_t.loc[
-            df.index, "p_set"
-        ].apply(lambda x: np.array(x) * scaling_factor[scn])
+        if c == "H2_for_industry":
+            scn2_load_t.loc[df.index, "p_set"] = scn2_load_t.loc[
+                df.index, "p_set"
+            ].apply(lambda x: np.array(x)* factor_h2)
+        elif c == "CH4_for_industry":
+            scn2_load_t.loc[df.index, "p_set"] = scn2_load_t.loc[
+                df.index, "p_set"
+            ].apply(lambda x: np.array(x) * factor_gas)
+        elif c =="O2":
+            scn2_load_t.loc[df.index, "p_set"] = scn2_load_t.loc[
+                df.index, "p_set"
+            ]
+        else:
+            scn2_load_t.loc[df.index, "p_set"] = scn2_load_t.loc[
+                df.index, "p_set"
+            ].apply(lambda x: np.array(x) * scaling_factor[scn])
 
     for c, df in only100.groupby("carrier"):
         a = scn2_load_t.loc[df.index, "p_set"].apply(
@@ -1509,20 +1535,15 @@ def import_loads(scn: str):
         print(f"{c}:{a.sum()}")
 
     # Dealing with land_transport_EV loads
-    evl1 = scn1_load[scn1_load["carrier"] == "land_transport_EV"].copy()
     evl2 = scn2_load[scn2_load["carrier"] == "land_transport_EV"].copy()
-    evl1_total = (
-        scn1_load_t.loc[evl1.index, "p_set"]
-        .apply(lambda x: np.array(x).sum())
-        .sum()
-    )
+
     evl2_total = (
         scn2_load_t.loc[evl2.index, "p_set"]
         .apply(lambda x: np.array(x).sum())
         .sum()
     )
 
-    objective = evl1_total + (evl2_total - evl1_total) * scaling_factor[scn]
+    objective = pre_network.loads_t.p_set["DE0 0 land transport EV"].sum()
 
     scn2_load_t.loc[evl2.index, "p_set"] = scn2_load_t.loc[
         evl2.index, "p_set"
@@ -1535,6 +1556,10 @@ def import_loads(scn: str):
             scn2_load[scn2_load["carrier"] == "AC"],
         ]
     ).copy()
+
+    total_ac_pypsaeur = (
+        pre_network.loads_t.p_set["DE0 0"].sum()
+        + pre_network.loads_t.p_set["DE0 0 industry electricity"].sum())
 
     for b, df in ac_load.groupby("bus"):
         df1 = df[df["scn_name"] == "status2019"]
@@ -1554,41 +1579,48 @@ def import_loads(scn: str):
             df2.index, "p_set"
         ].apply(lambda x: np.array(x) * objective / df2_total)
 
+    total_ac_scn2 = scn2_load_t.loc[
+            scn2_load[scn2_load["carrier"] == "AC"].index, "p_set"
+        ].apply(lambda x: np.array(x).sum()).sum()
+
+    scn2_load_t.loc[ scn2_load[scn2_load["carrier"] == "AC"].index, "p_set"] = scn2_load_t.loc[
+        scn2_load[scn2_load["carrier"] == "AC"].index, "p_set"
+    ].apply(lambda x: np.array(x) * total_ac_pypsaeur / total_ac_scn2)
+
     # Dealing with rural_heat loads
-    rh1 = scn1_load[scn1_load["carrier"] == "rural_heat"].copy()
     rh2 = scn2_load[scn2_load["carrier"] == "rural_heat"].copy()
-    rh1_total = (
-        scn1_load_t.loc[rh1.index, "p_set"]
-        .apply(lambda x: np.array(x).sum())
-        .sum()
-    )
+
     rh2_total = (
         scn2_load_t.loc[rh2.index, "p_set"]
         .apply(lambda x: np.array(x).sum())
         .sum()
     )
 
-    objective = rh1_total + (rh2_total - rh1_total) * scaling_factor[scn]
+    if scn == "powerd2025":
+        objective = (
+            pre_network.loads_t.p_set["DE0 0 residential rural heat"].sum()
+            + pre_network.loads_t.p_set["DE0 0 services rural heat"].sum()
+            + pre_network.loads_t.p_set["DE0 0 residential urban decentral heat"].sum()
+            + pre_network.loads_t.p_set["DE0 0 services urban decentral heat"].sum()
+        )
+    else:
+        objective = (pre_network.loads_t.p_set["DE0 0 rural heat"].sum()
+                     +pre_network.loads_t.p_set["DE0 0 urban decentral heat"].sum())
 
     scn2_load_t.loc[rh2.index, "p_set"] = scn2_load_t.loc[
         rh2.index, "p_set"
     ].apply(lambda x: np.array(x) * objective / rh2_total)
 
     # Dealing with central_heat loads
-    ch1 = scn1_load[scn1_load["carrier"] == "central_heat"].copy()
     ch2 = scn2_load[scn2_load["carrier"] == "central_heat"].copy()
-    ch1_total = (
-        scn1_load_t.loc[ch1.index, "p_set"]
-        .apply(lambda x: np.array(x).sum())
-        .sum()
-    )
+
     ch2_total = (
         scn2_load_t.loc[ch2.index, "p_set"]
         .apply(lambda x: np.array(x).sum())
         .sum()
     )
 
-    objective = ch1_total + (ch2_total - ch1_total) * scaling_factor[scn]
+    objective = pre_network.loads_t.p_set["DE0 0 urban central heat"].sum()
 
     scn2_load_t.loc[ch2.index, "p_set"] = scn2_load_t.loc[
         ch2.index, "p_set"
