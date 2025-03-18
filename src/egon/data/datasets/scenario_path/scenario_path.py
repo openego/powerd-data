@@ -1157,11 +1157,11 @@ def import_generators(scn: str):
 
     refference_oil = scn1_gen[scn1_gen["carrier"] == "oil"].head(1)
     refference_oil["scn_name"] = scn
-    refference_oil["carrier"] = "rural_biomass_boiler"
+    refference_oil["carrier"] = "rural_oil_boiler"
     refference_oil["marginal_cost"] = marg_cost3["oil"]
     refference_biomass = scn1_gen[scn1_gen["carrier"] == "oil"].head(1)
     refference_biomass["scn_name"] = scn
-    refference_biomass["carrier"] = "rural_oil_boiler"
+    refference_biomass["carrier"] = "rural_biomass_boiler"
     refference_biomass["marginal_cost"] = marg_cost3["biomass"]
 
     load_t_rh = pd.read_sql(
