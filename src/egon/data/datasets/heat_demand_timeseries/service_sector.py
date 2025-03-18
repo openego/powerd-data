@@ -256,6 +256,7 @@ def CTS_demand_scale(aggregation_level):
             print(f"WARNING: Cannot fetch year from scenario name {scenario} "
                   f"due to {E}. Using year {fallback_year} instead")
             year = fallback_year  # as default fallback due to it was 2019 hardcoded before
+        print(f"CTS demand scale year {year}")
         (
             CTS_per_district,
             CTS_per_grid,
@@ -265,24 +266,24 @@ def CTS_demand_scale(aggregation_level):
         CTS_per_grid = CTS_per_grid.transpose()
         CTS_per_zensus = CTS_per_zensus.transpose()
 
-        demand = db.select_dataframe(
-            f"""
+        q = f"""
             SELECT demand, zensus_population_id
             FROM demand.egon_peta_heat
             WHERE sector = 'service'
             AND scenario = '{scenario}'
             ORDER BY zensus_population_id
             """
-        )
+        print(f"q demand: \n{q}")
+        demand = db.select_dataframe(q)
 
         if aggregation_level == "district":
-            district_heating = db.select_dataframe(
-                f"""
+            q = f"""
                 SELECT area_id, zensus_population_id
                 FROM demand.egon_map_zensus_district_heating_areas
                 WHERE scenario = '{scenario}'
                 """
-            )
+            print(f"q district heating:\n{q}")
+            district_heating = db.select_dataframe(q)
 
             CTS_demands_district = pd.merge(
                 demand,
@@ -321,8 +322,7 @@ def CTS_demand_scale(aggregation_level):
             )
             CTS_district = CTS_district.sort_index()
 
-            mv_grid_ind = db.select_dataframe(
-                f"""
+            q = f"""
                 SELECT bus_id, a.zensus_population_id
                 FROM boundaries.egon_map_zensus_grid_districts a
 
@@ -332,7 +332,8 @@ def CTS_demand_scale(aggregation_level):
                 WHERE c.scenario = '{scenario}'
                 AND c.sector = 'service'
                 """
-            )
+            print(f"q mv grid ind:\n{q}")
+            mv_grid_ind = db.select_dataframe(q)
 
             mv_grid_ind = mv_grid_ind[
                 ~mv_grid_ind.zensus_population_id.isin(
