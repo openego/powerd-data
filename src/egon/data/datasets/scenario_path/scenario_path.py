@@ -71,9 +71,10 @@ def import_network_structure(scn: str):
         sql="""
             SELECT * from grid.egon_etrago_bus
             WHERE scn_name = 'eGon100RE' AND carrier = 'AC'
+            AND (x!=9.4506 AND y!=42.5288)
             """,
         con=con,
-    )
+    )   #exclude isolated FR bus with defined koordinates
 
     other_buses = pd.read_sql(
         sql="""
