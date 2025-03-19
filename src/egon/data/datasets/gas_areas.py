@@ -2,16 +2,106 @@
 The central module containing code to create CH4 and H2 voronoi polygons
 
 """
-
-import pandas as pd
-
 from geoalchemy2.types import Geometry
 from sqlalchemy import BigInteger, Column, Text
 from sqlalchemy.ext.declarative import declarative_base
 
 from egon.data import db, config
-from egon.data.datasets import Dataset
+from egon.data.datasets import Dataset, wrapped_partial
 from egon.data.datasets.generate_voronoi import get_voronoi_geodataframe
+
+
+class GasAreaseGon2035(Dataset):
+    """Create the gas voronoi table and the gas voronoi areas for eGon2035
+
+    *Dependencies*
+      * :py:class:`EtragoSetup <egon.data.datasets.etrago_setup.EtragoSetup>`
+      * :py:class:`HydrogenBusEtrago <egon.data.datasets.hydrogen_etrago.HydrogenBusEtrago>`
+      * :py:class:`Vg250 <egon.data.datasets.vg250.Vg250>`
+      * :py:class:`GasNodesAndPipes <egon.data.datasets.gas_grid.GasNodesAndPipes>`
+
+    *Resulting tables*
+      * :py:class:`EgonPfHvGasVoronoi <EgonPfHvGasVoronoi>`
+
+    """
+
+    #:
+    name: str = "GasAreaseGon2035"
+    #:
+    version: str = "0.0.2"
+
+    def __init__(self, dependencies):
+        super().__init__(
+            name=self.name,
+            version=self.version,
+            dependencies=dependencies,
+            tasks=(create_gas_voronoi_table, voronoi_egon2035),
+        )
+
+
+class GasAreaseGon100RE(Dataset):
+    """Create the gas voronoi table and the gas voronoi areas for eGon100RE
+
+    *Dependencies*
+      * :py:class:`EtragoSetup <egon.data.datasets.etrago_setup.EtragoSetup>`
+      * :py:class:`HydrogenBusEtrago <egon.data.datasets.hydrogen_etrago.HydrogenBusEtrago>`
+      * :py:class:`HydrogenGridEtrago <egon.data.datasets.hydrogen_etrago.HydrogenGridEtrago>`
+      * :py:class:`Vg250 <egon.data.datasets.vg250.Vg250>`
+      * :py:class:`GasNodesAndPipes <egon.data.datasets.gas_grid.GasNodesAndPipes>`
+      * :py:class:`GasAreaseGon2035 <GasAreaseGon2035>`
+
+    *Resulting tables*
+      * :py:class:`EgonPfHvGasVoronoi <EgonPfHvGasVoronoi>`
+
+    """
+
+    #:
+    name: str = "GasAreaseGon100RE"
+    #:
+    version: str = "0.0.1"
+
+    def __init__(self, dependencies):
+        super().__init__(
+            name=self.name,
+            version=self.version,
+            dependencies=dependencies,
+            tasks=(voronoi_egon100RE),
+        )
+
+
+class GasAreasStatusQuo(Dataset):
+    """Create the gas voronoi table and the gas voronoi areas for status2019
+
+    *Dependencies*
+      * :py:class:`EtragoSetup <egon.data.datasets.etrago_setup.EtragoSetup>`
+      * :py:class:`Vg250 <egon.data.datasets.vg250.Vg250>`
+      * :py:class:`GasNodesAndPipes <egon.data.datasets.gas_grid.GasNodesAndPipes>`
+
+    *Resulting tables*
+      * :py:class:`EgonPfHvGasVoronoi <EgonPfHvGasVoronoi>`
+
+    """
+
+    #:
+    name: str = "GasAreasStatusQuo"
+    #:
+    version: str = "0.0.2"
+
+    def __init__(self, dependencies):
+        tasks = (create_gas_voronoi_table,)
+
+        for scn_name in config.settings()["egon-data"]["--scenarios"]:
+            if "status" in scn_name:
+                tasks += (wrapped_partial(
+                    voronoi_status, scn_name=scn_name, postfix=f"_{scn_name[-4:]}"
+                ),)
+
+        super().__init__(
+            name=self.name,
+            version=self.version,
+            dependencies=dependencies,
+            tasks=tasks,
+        )
 
 
 Base = declarative_base()
@@ -29,7 +119,7 @@ class EgonPfHvGasVoronoi(Base):
     scn_name = Column(Text, primary_key=True, nullable=False)
     #: Bus of the corresponding area
     bus_id = Column(BigInteger, primary_key=True, nullable=False)
-    #: Gas carrier of the voronoi area ("CH4", "H2" or "H2_saltcavern")
+    #: Gas carrier of the voronoi area ("CH4", "H2_grid" or "H2_saltcavern")
     carrier = Column(Text)
     #: Geometry of the corresponding area
     geom = Column(Geometry("GEOMETRY", 4326))
@@ -48,7 +138,7 @@ def voronoi_egon2035():
     """
     Create voronoi polygons for all gas carriers in eGon2035 scenario
     """
-    for carrier in ["CH4", "H2", "H2_saltcavern"]:
+    for carrier in ["CH4", "H2_grid", "H2_saltcavern"]:
         create_voronoi("eGon2035", carrier)
 
 
@@ -56,16 +146,16 @@ def voronoi_egon100RE():
     """
     Create voronoi polygons for all gas carriers in eGon100RE scenario
     """
-    for carrier in ["CH4", "H2", "H2_saltcavern"]:
+    for carrier in ["CH4", "H2_grid", "H2_saltcavern"]:
         create_voronoi("eGon100RE", carrier)
 
 
-def voronoi_status2019():
+def voronoi_status(scn_name):
     """
-    Create voronoi polygons for all gas carriers in status2019 scenario
+    Create voronoi polygons for all gas carriers in status_x scenario
     """
     for carrier in ["CH4"]:
-        create_voronoi("status2019", carrier)
+        create_voronoi(scn_name, carrier)
 
 
 def create_voronoi(scn_name, carrier):
@@ -79,35 +169,15 @@ def create_voronoi(scn_name, carrier):
     carrier : str
         Name of the carrier
     """
-
-    engine = db.engine()
-
-    table_exist = (
-        len(
-            pd.read_sql(
-                """
-    SELECT *
-    FROM information_schema.tables
-    WHERE table_schema = 'grid'
-        AND table_name = 'egon_gas_voronoi'
-    LIMIT 1;
-        """,
-                engine,
-            )
-        )
-        > 0
-    )
-
-    if not table_exist:
-        create_gas_voronoi_table()
-
     boundary = db.select_geodataframe(
-        """
+        f"""
             SELECT id, geometry
             FROM boundaries.vg250_sta_union;
         """,
         geom_col="geometry",
     ).to_crs(epsg=4326)
+
+    engine = db.engine()
 
     db.execute_sql(
         f"""
@@ -156,44 +226,3 @@ def create_voronoi(scn_name, carrier):
         if_exists="append",
         dtype={"geom": Geometry},
     )
-
-
-class GasAreas(Dataset):
-    """Create the gas voronoi table and the gas voronoi areas
-
-    *Dependencies*
-      * :py:class:`EtragoSetup <egon.data.datasets.etrago_setup.EtragoSetup>`
-      * :py:class:`HydrogenBusEtrago <egon.data.datasets.hydrogen_etrago.HydrogenBusEtrago>`
-      * :py:class:`Vg250 <egon.data.datasets.vg250.Vg250>`
-      * :py:class:`GasNodesAndPipes <egon.data.datasets.gas_grid.GasNodesAndPipes>`
-
-    *Resulting tables*
-      * :py:class:`EgonPfHvGasVoronoi <EgonPfHvGasVoronoi>`
-
-    """
-
-    #:
-    name: str = "GasAreas"
-    #:
-    version: str = "0.0.3"
-
-    tasks = (create_gas_voronoi_table,)
-    extra_dependencies = ()
-
-    if "eGon2035" in config.settings()["egon-data"]["--scenarios"]:
-        tasks = tasks + (voronoi_egon2035,)
-
-    if "eGon100RE" in config.settings()["egon-data"]["--scenarios"]:
-        tasks = tasks + (voronoi_egon100RE,)
-        extra_dependencies = extra_dependencies + ("insert_h2_grid",)
-
-    if "status2019" in config.settings()["egon-data"]["--scenarios"]:
-        tasks = tasks + (voronoi_status2019,)
-
-    def __init__(self, dependencies):
-        super().__init__(
-            name=self.name,
-            version=self.version,
-            dependencies=dependencies,
-            tasks=self.tasks,
-        )
