@@ -738,11 +738,69 @@ def import_links(scn: str):
         h2_grid_to_h2["carrier"] = "H2"
         h2_grid_to_h2["scn_name"] = scn
 
+        # delete H2_grid isolated, associated H2_saltcaverns links,
+        # H2_saltcavern buses and H2_underground stores
         db.execute_sql(
             f"""
         DELETE FROM grid.egon_etrago_bus
         WHERE scn_name = '{scn}'
         AND bus_id IN {tuple(h2_grid_to_h2.index)}
+        """
+        )
+
+        del_h2_salcavern_link = pd.read_sql(
+            f"""
+        SELECT link_id, bus0, bus1, carrier FROM grid.egon_etrago_link
+        WHERE scn_name = '{scn}'
+        AND carrier = 'H2_saltcavern'
+        AND ((bus0 IN {tuple(h2_grid_to_h2.index)}) OR
+             (bus1 IN {tuple(h2_grid_to_h2.index)}))
+        """,
+            con,
+        )
+
+        del_h2_salcavern_bus = pd.read_sql(
+            f"""
+        SELECT bus_id, carrier FROM grid.egon_etrago_bus
+        WHERE scn_name = '{scn}'
+        AND carrier = 'H2_saltcavern'
+        AND ((bus_id IN {tuple(del_h2_salcavern_link.bus0)}) OR
+             (bus_id IN {tuple(del_h2_salcavern_link.bus1)}))
+        """,
+            con,
+        )
+
+        del_h2_underground_store = pd.read_sql(
+            f"""
+        SELECT store_id, carrier, bus FROM grid.egon_etrago_store
+        WHERE scn_name = '{scn}'
+        AND carrier = 'H2_underground'
+        AND bus IN {tuple(del_h2_salcavern_bus.bus_id)}
+        """,
+            con,
+        )
+
+        db.execute_sql(
+            f"""
+        DELETE FROM grid.egon_etrago_link
+        WHERE scn_name = '{scn}'
+        AND link_id IN {tuple(del_h2_salcavern_link.link_id)}
+        """
+        )
+
+        db.execute_sql(
+            f"""
+        DELETE FROM grid.egon_etrago_bus
+        WHERE scn_name = '{scn}'
+        AND bus_id IN {tuple(del_h2_salcavern_bus.bus_id)}
+        """
+        )
+
+        db.execute_sql(
+            f"""
+        DELETE FROM grid.egon_etrago_store
+        WHERE scn_name = '{scn}'
+        AND store_id IN {tuple(del_h2_underground_store.store_id)}
         """
         )
 

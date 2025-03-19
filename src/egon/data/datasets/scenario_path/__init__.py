@@ -16,9 +16,9 @@ def create_powerd2025():
     import_network_structure(scn)
     import_loads(scn)
     import_generators(scn)
-    import_links(scn)
     import_storage_units(scn)
     import_stores(scn)
+    import_links(scn)
     import_foreign(scn, year=2025)
 
     return
@@ -29,9 +29,9 @@ def create_powerd2030():
     import_network_structure(scn)
     import_loads(scn)
     import_generators(scn)
-    import_links(scn)
     import_storage_units(scn)
     import_stores(scn)
+    import_links(scn)
     import_foreign(scn, year=2030)
 
     return
@@ -42,9 +42,9 @@ def create_powerd2035():
     import_network_structure(scn)
     import_loads(scn)
     import_generators(scn)
-    import_links(scn)
     import_storage_units(scn)
     import_stores(scn)
+    import_links(scn)
     import_foreign(scn, year=2035)
 
     return
