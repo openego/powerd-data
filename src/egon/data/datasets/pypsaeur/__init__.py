@@ -575,6 +575,58 @@ def combine_decentral_and_rural_heat(network_solved, network_prepared):
     return network_prepared, network_solved
 
 
+
+def combine_residenial_services_heat_load(network_prepared):
+    ###combining loads
+    residential_rural_loads = network_prepared.loads[
+        network_prepared.loads.carrier.str.contains("residential rural heat")
+    ]
+    
+    for i, row in residential_rural_loads.iterrows():
+        if i in network_prepared.loads_t.p_set.columns:
+            network_prepared.loads_t.p_set[
+                i.replace("residential", "services")
+            ] += network_prepared.loads_t.p_set[i]
+    network_prepared.mremove("Load", residential_rural_loads.index)
+    
+    
+    target_carriers = ["services rural heat"]
+
+    rural_heat_loads = network_prepared.loads[
+        network_prepared.loads.carrier.isin(target_carriers)
+    ]
+    
+    #rename carrier
+    network_prepared.loads.loc[rural_heat_loads.index, "carrier"] = "rural heat"
+    
+    #rename bus
+    network_prepared.loads.loc[rural_heat_loads.index, "bus"] = (
+        network_prepared.loads.loc[rural_heat_loads.index, "bus"]
+        .str.replace("services rural heat", "rural heat")
+        .str.replace("residential rural heat", "rural heat")
+    )
+    
+    #rename index
+    network_prepared.loads.rename(
+        index=lambda x: x.replace("services rural heat", "rural heat")
+                          .replace("residential rural heat", "rural heat"),
+        inplace=True
+    )
+    
+    #rename timeseries columns
+    network_prepared.loads_t.p_set.columns = (
+        network_prepared.loads_t.p_set.columns.str.replace("services rural heat", "rural heat")
+                                          .str.replace("residential rural heat", "rural heat")
+                                          )
+    
+    ####combining heat_pumps
+    network_prepared.links_t.efficiency.columns = (network_prepared.links_t.efficiency.columns.str.replace("services rural", "rural heat")
+                                      .str.replace("residential rural", "rural")
+                                      )
+    
+    return network_prepared
+
+
 def neighbor_reduction(scn_name, year=2045):
     network_solved = read_network(year=year)
     network_prepared = prepared_network(year=year)
@@ -909,6 +961,11 @@ def neighbor_reduction(scn_name, year=2045):
 
     # loads
     # imported from prenetwork in 1h-resolution
+    
+    #adjusting index-, bus- and carrier-name for loads for powerd2025
+    if scn_name=='powerd2025':
+        network_prepared = combine_residenial_services_heat_load(network_prepared)
+        
     neighbor_loads = network_prepared.loads[
         network_prepared.loads.bus.isin(neighbors.index)
     ]
