@@ -35,7 +35,7 @@ from egon.data.datasets.era5 import WeatherData
 from egon.data.datasets.etrago_setup import EtragoSetup
 from egon.data.datasets.fill_etrago_gen import Egon_etrago_gen
 from egon.data.datasets.fix_ehv_subnetworks import FixEhvSubnetworks
-from egon.data.datasets.gas_areas import GasAreas
+from egon.data.datasets.gas_areas import GasAreasStatusQuo
 from egon.data.datasets.gas_grid import GasNodesAndPipes
 from egon.data.datasets.gas_neighbours import GasNeighbours
 from egon.data.datasets.heat_demand import HeatDemandImport
@@ -44,7 +44,7 @@ from egon.data.datasets.heat_demand_timeseries import HeatTimeSeries
 from egon.data.datasets.heat_etrago import HeatEtrago
 from egon.data.datasets.heat_etrago.hts_etrago import HtsEtragoTable
 from egon.data.datasets.heat_supply import HeatSupply
-from egon.data.datasets.heat_supply.individual_heating import HeatPumps2019
+from egon.data.datasets.heat_supply.individual_heating import HeatPumpsStatusQuo
 from egon.data.datasets.industrial_sites import MergeIndustrialSites
 from egon.data.datasets.industry import IndustrialDemandCurves
 from egon.data.datasets.loadarea import LoadArea, OsmLanduse
@@ -55,7 +55,7 @@ from egon.data.datasets.osm_buildings_streets import OsmBuildingsStreets
 from egon.data.datasets.osmtgmod import Osmtgmod
 from egon.data.datasets.power_etrago import OpenCycleGasTurbineEtrago
 from egon.data.datasets.power_plants import PowerPlants
-from egon.data.datasets.pypsaeur import PreparePypsaEur, RunPypsaEur
+from egon.data.datasets.pypsaeursec import PypsaEurSec
 from egon.data.datasets.renewable_feedin import RenewableFeedin
 from egon.data.datasets.scenario_capacities import ScenarioCapacities
 from egon.data.datasets.scenario_parameters import ScenarioParameters
@@ -108,7 +108,7 @@ with airflow.DAG(
     scenario_parameters = ScenarioParameters(dependencies=[setup])
 
     # Download TYNDP data
-    tyndp_data = Tyndp(dependencies=[setup])  # TODO: kick out or adjust
+    tyndp_data = Tyndp(dependencies=[setup]) #TODO: kick out or adjust
 
     # Import zensus population
     zensus_population = ZensusPopulation(dependencies=[setup, vg250])
@@ -285,7 +285,6 @@ with airflow.DAG(
             demand_curves_industry,
             hh_demand_buildings_setup,
             household_electricity_demand_annual,
-            hh_demand_profiles_setup,
         ]
     )
 
@@ -312,17 +311,9 @@ with airflow.DAG(
         ]
     )
 
-    prepare_pypsa_eur = PreparePypsaEur(
-        dependencies=[
-            weather_data,
-            data_bundle,
-        ]
-    )
-
     # run pypsa-eur-sec
-    run_pypsaeur = RunPypsaEur(
+    run_pypsaeursec = PypsaEurSec(
         dependencies=[
-            prepare_pypsa_eur,
             weather_data,
             hd_abroad,
             osmtgmod,
@@ -335,14 +326,14 @@ with airflow.DAG(
 
     # Deal with electrical neighbours
     foreign_lines = ElectricalNeighbours(
-        dependencies=[prepare_pypsa_eur, tyndp_data, osmtgmod, fix_subnetworks]
+        dependencies=[run_pypsaeursec, tyndp_data]
     )
 
     # Import NEP (Netzentwicklungsplan) data
     scenario_capacities = ScenarioCapacities(
         dependencies=[
             data_bundle,
-            run_pypsaeur,
+            run_pypsaeursec,
             setup,
             vg250,
             zensus_population,
@@ -359,8 +350,8 @@ with airflow.DAG(
             tasks["etrago_setup.create-tables"],
         ]
     )
-    # Create gas voronoi status2019
-    create_gas_polygons_status2019 = GasAreas(
+    # Create gas voronoi status quo
+    create_gas_polygons_statusquo = GasAreasStatusQuo(
         dependencies=[setup_etrago, vg250, gas_grid_insert_data, substation_voronoi]
     )
 
@@ -368,21 +359,26 @@ with airflow.DAG(
     gas_abroad_insert_data = GasNeighbours(
         dependencies=[
             gas_grid_insert_data,
-            run_pypsaeur,
+            run_pypsaeursec,
             foreign_lines,
-            create_gas_polygons_status2019,
+            create_gas_polygons_statusquo,
         ]
     )
 
     # Import gas production
     gas_production_insert_data = CH4Production(
-        dependencies=[create_gas_polygons_status2019]
+        dependencies=[create_gas_polygons_statusquo]
+    )
+
+    # Import CH4 storages
+    insert_data_ch4_storages = CH4Storages(
+        dependencies=[create_gas_polygons_statusquo]
     )
 
     # CHP locations
     chp = Chp(
         dependencies=[
-            create_gas_polygons_status2019,
+            create_gas_polygons_statusquo,
             demand_curves_industry,
             district_heating_areas,
             industrial_sites,
@@ -411,7 +407,7 @@ with airflow.DAG(
     )
 
     create_ocgt = OpenCycleGasTurbineEtrago(
-        dependencies=[create_gas_polygons_status2019, power_plants]
+        dependencies=[create_gas_polygons_statusquo, power_plants]
     )
 
     # Fill eTraGo generators tables
@@ -430,8 +426,9 @@ with airflow.DAG(
         ]
     )
 
-    # Pumped hydro units
-    pumped_hydro = Storages(
+
+    # Pumped hydro and home storage units
+    storage_units = Storages(
         dependencies=[
             mastr_data,
             mv_grid_districts,
@@ -439,6 +436,7 @@ with airflow.DAG(
             scenario_parameters,
             setup,
             vg250_mv_grid_districts,
+            fill_etrago_generators,
         ]
     )
 
@@ -456,8 +454,8 @@ with airflow.DAG(
     # CHP to eTraGo
     chp_etrago = ChpEtrago(dependencies=[chp, heat_etrago])
 
-    # Heat pump disaggregation for status2019
-    heat_pumps_2019 = HeatPumps2019(
+    # Heat pump disaggregation for status quo
+    heat_pumps_sq = HeatPumpsStatusQuo(
         dependencies=[
             cts_demand_buildings,
             DistrictHeatingAreas,
@@ -474,13 +472,13 @@ with airflow.DAG(
             heat_etrago,
             heat_time_series,
             mv_grid_districts,
-            heat_pumps_2019,
+            heat_pumps_sq,
         ]
     )
 
     # Storages to eTraGo
     storage_etrago = StorageEtrago(
-        dependencies=[pumped_hydro, scenario_parameters, setup_etrago]
+        dependencies=[storage_units, scenario_parameters, setup_etrago]
     )
 
     # eMobility: motorized individual travel TODO: adjust for SQ
@@ -499,6 +497,7 @@ with airflow.DAG(
             fill_etrago_generators,
             create_ocgt,
             gas_production_insert_data,
+            insert_data_ch4_storages,
         ]
     )
 

@@ -2,22 +2,22 @@
 
 """
 
-from geoalchemy2.types import Geometry
-from sqlalchemy import Column, Float, ForeignKey, Integer, String
-from sqlalchemy.ext.declarative import declarative_base
+from egon.data import db, config
 
-from egon.data import config, db
-from egon.data.datasets import Dataset
-from egon.data.datasets.district_heating_areas import EgonDistrictHeatingAreas
 from egon.data.datasets.heat_supply.district_heating import (
+    cascade_heat_supply,
     backup_gas_boilers,
     backup_resistive_heaters,
-    cascade_heat_supply,
 )
-from egon.data.datasets.heat_supply.geothermal import potential_germany
 from egon.data.datasets.heat_supply.individual_heating import (
     cascade_heat_supply_indiv,
 )
+from egon.data.datasets.heat_supply.geothermal import potential_germany
+from egon.data.datasets.district_heating_areas import EgonDistrictHeatingAreas
+from sqlalchemy import Column, String, Float, Integer, ForeignKey
+from sqlalchemy.ext.declarative import declarative_base
+from geoalchemy2.types import Geometry
+from egon.data.datasets import Dataset
 
 # Will later be imported from another file.
 Base = declarative_base()
@@ -94,8 +94,9 @@ def district_heating():
             if_exists="append",
         )
 
-        # Do not check data for status2019 as is it not listed in the table
-        if scenario != "status2019":
+
+        # Do not check data for status quo as is it not listed in the table
+        if "status" not in scenario:
             # Compare target value with sum of distributed heat supply
             df_check = db.select_dataframe(
                 f"""
@@ -128,8 +129,9 @@ def district_heating():
             if_exists="append",
         )
 
-        # Insert resistive heaters which are not available in status2019
-        if scenario != "status2019":
+
+        # Insert resistive heaters which are not available in status quo
+        if "status" not in scenario:
             backup_rh = backup_resistive_heaters(scenario)
 
             if not backup_rh.empty:
@@ -189,17 +191,7 @@ class HeatSupply(Dataset):
                 {
                     district_heating,
                     individual_heating,
+                    potential_germany,
                 },
-            ),
-        )
-
-class GeothermalPotentialGermany(Dataset):
-    def __init__(self, dependencies):
-        super().__init__(
-            name="GeothermalPotentialGermany",
-            version="0.0.1",
-            dependencies=dependencies,
-            tasks=(
-                potential_germany,
             ),
         )
