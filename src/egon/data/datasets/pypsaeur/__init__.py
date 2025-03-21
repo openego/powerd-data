@@ -627,6 +627,66 @@ def combine_residenial_services_heat_load(network_prepared):
     return network_prepared
 
 
+
+def import_missing_gens(neighbors, network_solved, scn_name):
+    carriers_to_keep=['oil', 'lignite', 'coal', 'urban central solid biomass CHP']
+    marg = margina_cost_missing_gens()
+    
+    for carrier in carriers_to_keep:    
+        links = network_solved.links[network_solved.links.carrier == carrier]
+        links_neighbor = links[
+            links['bus1'].isin(neighbors.index)
+        ]
+        marg_cost= marg[scn_name][carrier]
+        print(marg_cost)
+        for idx, link in links_neighbor.iterrows():
+            if carrier == 'urban central solid biomass CHP':
+                network_solved.add("Generator", f"gen_{idx}_electrical",
+                    bus=link.bus1, 
+                    p_nom= link.p_nom_opt*link.efficiency,
+                    carrier="central_biomass_CHP",
+                    marginal_cost=marg_cost
+                    )
+                network_solved.add("Generator", f"gen_{idx}_heat",
+                    bus=link.bus2,
+                    p_nom=link.p_nom_opt*link.efficiency2, 
+                    carrier="central_biomass_CHP_heat",
+                    )
+            else: 
+                network_solved.add("Generator", f"gen_{idx}",
+                    bus=link.bus1,
+                    p_nom=link.p_nom_opt*link.efficiency,
+                    carrier=carrier,
+                    marginal_cost=marg_cost
+                    )
+    return network_solved
+    
+def margina_cost_missing_gens():
+    marginal_costs = {
+     "powerd2025": {
+         "oil": 164.90901098901102,
+         "lignite": 67.38601398601398,
+         "coal": 76.07459207459208,
+         "urban central solid biomass CHP": 39.69634478996181
+     },
+     "powerd2030": {
+         "oil": 169.8246153846154,
+         "lignite": 86.11148018648018,
+         "coal": 88.3854895104895,
+         "urban central solid biomass CHP": 51.573854337152206
+     },
+     "powerd2035": {
+         "oil": 174.7402197802198,
+         "lignite": 104.834,
+         "coal": 100.7,
+         "urban central solid biomass CHP": 63.451363884342605
+     }
+ }
+ 
+    return marginal_costs
+
+
+
 def neighbor_reduction(scn_name, year=2045):
     network_solved = read_network(year=year)
     network_prepared = prepared_network(year=year)
@@ -656,7 +716,21 @@ def neighbor_reduction(scn_name, year=2045):
     network_solved.buses = network_solved.buses.drop(
         network_solved.buses.loc[foreign_buses.index].index
     )
+    
+    # Set country tag for all buses
+    network_solved.buses.country = network_solved.buses.index.str[:2]
+    neighbors = network_solved.buses[network_solved.buses.country != "DE"]
 
+    neighbors["new_index"] = (
+        db.next_etrago_id("bus") + neighbors.reset_index().index
+    )
+
+    #keep links that are connected to an central EU-bus(solid biomass, oil, llignite, coal)
+    #transform them to generators
+    if scn_name !='eGon100RE':
+        network_solved = import_missing_gens(neighbors, network_solved, scn_name)
+
+    
     # Add H2 demand of Fischer-Tropsch process and methanolisation
     # to industrial H2 demands
     industrial_hydrogen = network_prepared.loads.loc[
@@ -844,14 +918,6 @@ def neighbor_reduction(scn_name, year=2045):
     )
 
     # writing components of neighboring countries to etrago tables
-
-    # Set country tag for all buses
-    network_solved.buses.country = network_solved.buses.index.str[:2]
-    neighbors = network_solved.buses[network_solved.buses.country != "DE"]
-
-    neighbors["new_index"] = (
-        db.next_etrago_id("bus") + neighbors.reset_index().index
-    )
 
     # Use index of AC buses created by electrical_neigbors
     foreign_ac_buses = db.select_dataframe(
