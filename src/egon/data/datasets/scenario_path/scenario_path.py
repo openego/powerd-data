@@ -14,6 +14,9 @@ import egon.data.config
 
 from egon.data.datasets.pypsaeur import neighbor_reduction, prepared_network
 from egon.data.datasets.scenario_parameters import get_sector_parameters
+from egon.data.datasets.scenario_parameters.parameters import (
+    annualize_capital_costs,
+)
 
 sources = egon.data.config.datasets()["scenario_path"]["sources"]
 
@@ -868,6 +871,40 @@ def import_links(scn: str):
             if_exists="append",
             index=False,
         )
+        
+    ###adjust electrolyzer parameters according to Fraunhofer ISE 
+    efficiency = {
+        'powerd2025': 0.6535,
+        'powerd2030': 0.6666,
+        'powerd2035': 0.6805,
+        }
+    capital_cost = {
+        'powerd2025': 706_000,
+        'powerd2030': 504_000,
+        'powerd2035': 452_000,
+        }
+    lifetime = {
+        'powerd2025': 20,
+        'powerd2030': 25,
+        'powerd2035': 25,
+        }
+
+    old_cost =annualize_capital_costs(357_000, 30, 0.05)
+    new_cost = annualize_capital_costs(capital_cost[scn], lifetime[scn], 0.05)
+
+    sql_update= f"""
+    UPDATE grid.egon_etrago_link
+    SET capital_cost = (capital_cost - {old_cost} + {new_cost})
+    WHERE carrier = 'power_to_H2' AND scn_name = '{scn}';
+
+    UPDATE grid.egon_etrago_link
+    SET efficiency = {efficiency[scn]}
+    WHERE carrier = 'power_to_H2' AND scn_name = '{scn}';
+
+    """
+    db.execute_sql(sql_update)
+    
+    
     return
 
 
