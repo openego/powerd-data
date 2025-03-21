@@ -643,19 +643,19 @@ def import_missing_gens(neighbors, network_solved, scn_name):
             if carrier == 'urban central solid biomass CHP':
                 network_solved.add("Generator", f"gen_{idx}_electrical",
                     bus=link.bus1, 
-                    p_nom= link.p_nom_opt*link.efficiency,
+                    p_nom_opt= link.p_nom_opt*link.efficiency,
                     carrier="central_biomass_CHP",
                     marginal_cost=marg_cost
                     )
                 network_solved.add("Generator", f"gen_{idx}_heat",
                     bus=link.bus2,
-                    p_nom=link.p_nom_opt*link.efficiency2, 
+                    p_nom_opt=link.p_nom_opt*link.efficiency2, 
                     carrier="central_biomass_CHP_heat",
                     )
             else: 
                 network_solved.add("Generator", f"gen_{idx}",
                     bus=link.bus1,
-                    p_nom=link.p_nom_opt*link.efficiency,
+                    p_nom_opt=link.p_nom_opt*link.efficiency,
                     carrier=carrier,
                     marginal_cost=marg_cost
                     )
