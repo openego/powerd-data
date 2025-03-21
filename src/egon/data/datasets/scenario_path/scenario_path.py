@@ -1026,6 +1026,7 @@ def interpolate_marginal_costs(scn):
 
     marg_cost3["run_of_river"] = 0
     marg_cost3["solar_rooftop"] = 0.01
+    marg_cost3["rural_biomass_boiler"] = marg_cost2_heat["rural_biomass_boiler"]
 
     return marg_cost3
 
