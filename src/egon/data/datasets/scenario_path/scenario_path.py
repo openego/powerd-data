@@ -53,6 +53,7 @@ def clean_existing_scn_path_data():
                 "egon_etrago_temp_resolution",
                 "egon_etrago_ac_h2",
                 "egon_etrago_hv_busmap",
+                "egon_mv_grid_district",
             ]
         )
     ]
