@@ -975,7 +975,7 @@ def interpolate_marginal_costs(scn):
         )
 
     marg_cost3["run_of_river"] = 0
-    marg_cost3["solar_rooftop"] = 0
+    marg_cost3["solar_rooftop"] = 0.01
 
     return marg_cost3
 
