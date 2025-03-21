@@ -77,7 +77,7 @@ def import_network_structure(scn: str):
             AND (x!=9.4506 AND y!=42.5288)
             """,
         con=con,
-    )   #exclude isolated FR bus with defined koordinates
+    )  # exclude isolated FR bus with defined koordinates
 
     other_buses = pd.read_sql(
         sql="""
@@ -871,28 +871,28 @@ def import_links(scn: str):
             if_exists="append",
             index=False,
         )
-        
-    ###adjust electrolyzer parameters according to Fraunhofer ISE 
-    efficiency = {
-        'powerd2025': 0.6535,
-        'powerd2030': 0.6666,
-        'powerd2035': 0.6805,
-        }
-    capital_cost = {
-        'powerd2025': 706_000,
-        'powerd2030': 504_000,
-        'powerd2035': 452_000,
-        }
-    lifetime = {
-        'powerd2025': 20,
-        'powerd2030': 25,
-        'powerd2035': 25,
-        }
 
-    old_cost =annualize_capital_costs(357_000, 30, 0.05)
+    ###adjust electrolyzer parameters according to Fraunhofer ISE
+    efficiency = {
+        "powerd2025": 0.6535,
+        "powerd2030": 0.6666,
+        "powerd2035": 0.6805,
+    }
+    capital_cost = {
+        "powerd2025": 706_000,
+        "powerd2030": 504_000,
+        "powerd2035": 452_000,
+    }
+    lifetime = {
+        "powerd2025": 20,
+        "powerd2030": 25,
+        "powerd2035": 25,
+    }
+
+    old_cost = annualize_capital_costs(357_000, 30, 0.05)
     new_cost = annualize_capital_costs(capital_cost[scn], lifetime[scn], 0.05)
 
-    sql_update= f"""
+    sql_update = f"""
     UPDATE grid.egon_etrago_link
     SET capital_cost = (capital_cost - {old_cost} + {new_cost})
     WHERE carrier = 'power_to_H2' AND scn_name = '{scn}';
@@ -903,8 +903,7 @@ def import_links(scn: str):
 
     """
     db.execute_sql(sql_update)
-    
-    
+
     return
 
 
@@ -998,18 +997,31 @@ def load_scn_capacies_gen(
 
 
 def interpolate_marginal_costs(scn):
-    marg_cost1 = get_sector_parameters(
+    marg_cost1_elec = get_sector_parameters(
         sector="electricity", scenario="status2019"
     )["marginal_cost"]
-    marg_cost2 = get_sector_parameters(
+    marg_cost2_elec = get_sector_parameters(
         sector="electricity", scenario="eGon100RE"
     )["marginal_cost"]
+
+    marg_cost1_heat = get_sector_parameters(
+        sector="heat", scenario="status2019"
+    )["marginal_cost"]
+    marg_cost2_heat = get_sector_parameters(
+        sector="heat", scenario="eGon100RE"
+    )["marginal_cost"]
+
+    marg_cost1 = {**marg_cost1_elec, **marg_cost1_heat}
+    marg_cost2 = {**marg_cost2_elec, **marg_cost2_heat}
     marg_cost3 = {}
     for f in marg_cost2.keys():
-        marg_cost3[f] = (
-            marg_cost1[f]
-            + (marg_cost2[f] - marg_cost1[f]) * scaling_factor[scn]
-        )
+        if (f in marg_cost1.keys()) & (f in marg_cost2.keys()):
+            marg_cost3[f] = (
+                marg_cost1[f]
+                + (marg_cost2[f] - marg_cost1[f]) * scaling_factor[scn]
+            )
+        else:
+            continue
 
     marg_cost3["run_of_river"] = 0
     marg_cost3["solar_rooftop"] = 0.01
@@ -1302,11 +1314,11 @@ def import_generators(scn: str):
     refference_oil = scn1_gen[scn1_gen["carrier"] == "oil"].head(1)
     refference_oil["scn_name"] = scn
     refference_oil["carrier"] = "rural_oil_boiler"
-    refference_oil["marginal_cost"] = marg_cost3["oil"]
+    refference_oil["marginal_cost"] = marg_cost3["rural_oil_boiler"]
     refference_biomass = scn1_gen[scn1_gen["carrier"] == "oil"].head(1)
     refference_biomass["scn_name"] = scn
     refference_biomass["carrier"] = "rural_biomass_boiler"
-    refference_biomass["marginal_cost"] = marg_cost3["biomass"]
+    refference_biomass["marginal_cost"] = marg_cost3["rural_biomass_boiler"]
 
     load_t_rh = pd.read_sql(
         f"""
