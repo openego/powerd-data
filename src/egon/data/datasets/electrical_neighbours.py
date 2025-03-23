@@ -1310,6 +1310,7 @@ def tyndp_demand():
 def get_entsoe_token():
     """Check for token in home dir. If not exists, check in working dir"""
     token_path = path.join(path.expanduser("~"), ".entsoe-token")
+    print(f"0, token_path: {token_path}")
     if not os.path.isfile(token_path):
         logger.info(
             f"Token file not found at {token_path}. Will check in working directory."
@@ -1317,6 +1318,7 @@ def get_entsoe_token():
         token_path = Path(".entsoe-token")
         if os.path.isfile(token_path):
             logger.info(f"Token found at {token_path}")
+    print(f"1, token_path: {token_path}")
     entsoe_token = open(token_path, "r").read(36)
     if entsoe_token is None:
         raise FileNotFoundError("No entsoe-token found.")
@@ -1326,6 +1328,7 @@ def get_entsoe_token():
 def entsoe_historic_generation_capacities(
     year_start="20190101", year_end="20200101"
 ):
+    print(f"entsoe_historic_generation_capacities: year_start: {year_start}, year_end: {year_end}")
     entsoe_token = get_entsoe_token()
     client = entsoe.EntsoePandasClient(api_key=entsoe_token)
 
@@ -1410,6 +1413,7 @@ def entsoe_historic_generation_capacities(
 
 
 def entsoe_historic_demand(year_start="20190101", year_end="20200101"):
+    print(f"entsoe_historic_demand: year_start: {year_start}, year_end: {year_end}")
     entsoe_token = get_entsoe_token()
     client = entsoe.EntsoePandasClient(api_key=entsoe_token)
 
@@ -1586,6 +1590,8 @@ def insert_generators_sq(scn_name="status2019"):
         }
     else:
         raise ValueError("No valid scenario name!")
+
+    print(f"year_start_end: {year_start_end}")
 
     df_gen_sq, not_retrieved = entsoe_historic_generation_capacities(
         **year_start_end
@@ -1872,9 +1878,14 @@ def insert_loads_sq(scn_name="status2019"):
         year_start_end = {"year_start": "20190101", "year_end": "20200101"}
     elif scn_name == "status2023":
         year_start_end = {"year_start": "20230101", "year_end": "20240101"}
+    elif "status" in scn_name:
+        year_start_end = scn_name.split("status")[-1]
+        year_start_end = int(year_start_end)
+        year_start_end = {"year_start": str(year_start_end) + "0101",
+                          "year_end": str(year_start_end + 1) + "0101"}
     else:
         raise ValueError("No valid scenario name!")
-
+    print(f"insert_loads_sq year_start_end: {year_start_end}")
     df_load_sq, not_retrieved = entsoe_historic_demand(**year_start_end)
 
     if not_retrieved:
