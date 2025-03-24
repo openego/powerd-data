@@ -525,15 +525,16 @@ def cascade_per_technology(
             )
         else:
             # Select target value for Germany
-            target = db.select_dataframe(
-                f"""
+            print(f"Select target value for Germany: target sql: ")
+            q = f"""
                     SELECT SUM(capacity) AS capacity
                     FROM {sources['scenario_capacities']['schema']}.
                     {sources['scenario_capacities']['table']} a
                     WHERE scenario_name = '{scenario}'
                     AND carrier = 'residential_rural_heat_pump'
                     """
-            )
+
+            target = db.select_dataframe(q)
 
             heat_per_mv["share"] = (
                 heat_per_mv.remaining_demand
