@@ -494,6 +494,8 @@ def cascade_per_technology(
 
     tech = technologies[technologies.priority == technologies.priority.max()]
 
+    print(f"tech.index: {tech.index}")
+
     # Distribute heat pumps linear to remaining demand.
     if tech.index == "heat_pump":
         if distribution_level == "federal_state":
@@ -557,6 +559,8 @@ def cascade_per_technology(
                 "scenario": scenario,
             }
         )
+
+    print(f"append_df.size: {append_df.size}")
 
     if append_df.size > 0:
         append_df["carrier"] = tech.index[0]
