@@ -671,11 +671,45 @@ def import_links(scn: str):
         geom_col="geom",
     ).set_index("bus_id")
 
-    h2_grid_to_h2 = h2_grid_b[
-        ~h2_grid_b.index.isin(
-            pd.concat([h2_grid3["bus0"], h2_grid3["bus1"]], ignore_index=True)
-        )
-    ].copy()
+    if scn == "powerd2025":
+        h2_grid_to_h2 = h2_grid_b
+    elif scn == "powerd2030":
+        h2_grid_to_h2 = h2_grid_b[
+            (
+                ~h2_grid_b.index.isin(
+                    pd.concat(
+                        [h2_grid3["bus0"], h2_grid3["bus1"]], ignore_index=True
+                    )
+                )
+            )
+            | (
+                h2_grid_b.index.isin(
+                    [
+                        45185,
+                        45279,
+                        45075,
+                        45074,
+                        45073,
+                        45066,
+                        45067,
+                        45248,
+                        45071,
+                        45070,
+                        45250,
+                        45168,
+                        45270,
+                        45159,
+                        45160,
+                        45236,
+                        45301,
+                        45278,
+                        45182,
+                    ]
+                )
+            )
+        ].copy()
+    elif scn == "powerd2035":
+        h2_grid_to_h2 = []
 
     if len(h2_grid_to_h2) > 0:
         h2_grid_to_h2["carrier"] = "H2"
