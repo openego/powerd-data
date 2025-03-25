@@ -418,37 +418,6 @@ def import_links(scn: str):
         index=False,
     )
 
-    dsm3_t = pd.read_sql(
-        """
-        SELECT * FROM grid.egon_etrago_link_timeseries
-        WHERE link_id IN(
-        SELECT link_id FROM grid.egon_etrago_link
-        WHERE bus0 IN (
-            SELECT bus_id FROM grid.egon_etrago_bus
-            WHERE country = 'DE'
-            AND scn_name = 'eGon100RE'
-        )
-        AND bus1 IN (
-            SELECT bus_id FROM grid.egon_etrago_bus
-            WHERE country = 'DE'
-            AND scn_name = 'eGon100RE'
-        )
-        AND carrier = 'dsm')
-        AND scn_name = 'eGon100RE'
-        """,
-        con,
-    )
-
-    dsm3_t["scn_name"] = scn
-
-    dsm3_t.to_sql(
-        name="egon_etrago_link_timeseries",
-        con=con,
-        schema="grid",
-        if_exists="append",
-        index=False,
-    )
-
     # dealing with rural_heat_pump
     link_rhp1 = (
         scn1_link[scn1_link["carrier"].isin(["rural_heat_pump"])]
@@ -475,37 +444,6 @@ def import_links(scn: str):
     link_rhp3.reset_index(inplace=True)
     link_rhp3.to_sql(
         name="egon_etrago_link",
-        con=con,
-        schema="grid",
-        if_exists="append",
-        index=False,
-    )
-
-    link_rhp3_t = pd.read_sql(
-        """
-        SELECT * FROM grid.egon_etrago_link_timeseries
-        WHERE link_id IN(
-        SELECT link_id FROM grid.egon_etrago_link
-        WHERE bus0 IN (
-            SELECT bus_id FROM grid.egon_etrago_bus
-            WHERE country = 'DE'
-            AND scn_name = 'eGon100RE'
-        )
-        AND bus1 IN (
-            SELECT bus_id FROM grid.egon_etrago_bus
-            WHERE country = 'DE'
-            AND scn_name = 'eGon100RE'
-        )
-        AND carrier = 'rural_heat_pump')
-        AND scn_name = 'eGon100RE'
-        """,
-        con,
-    )
-
-    link_rhp3_t["scn_name"] = scn
-
-    link_rhp3_t.to_sql(
-        name="egon_etrago_link_timeseries",
         con=con,
         schema="grid",
         if_exists="append",
@@ -905,6 +843,39 @@ def import_links(scn: str):
     """
     db.execute_sql(sql_update)
 
+    # dealing with links time-series
+    for carrier in scn2_link.carrier.unique():
+        ts = pd.read_sql(
+            """
+            SELECT * FROM grid.egon_etrago_link_timeseries
+            WHERE link_id IN(
+            SELECT link_id FROM grid.egon_etrago_link
+            WHERE bus0 IN (
+                SELECT bus_id FROM grid.egon_etrago_bus
+                WHERE country = 'DE'
+                AND scn_name = 'eGon100RE'
+            )
+            AND bus1 IN (
+                SELECT bus_id FROM grid.egon_etrago_bus
+                WHERE country = 'DE'
+                AND scn_name = 'eGon100RE'
+            )
+            AND carrier = '{carrier}')
+            AND scn_name = 'eGon100RE'
+            """,
+            con,
+        )
+
+        if len(ts):
+            ts["scn_name"] = scn
+
+            ts.to_sql(
+                name="egon_etrago_link_timeseries",
+                con=con,
+                schema="grid",
+                if_exists="append",
+                index=False,
+            )
     return
 
 
@@ -1026,7 +997,9 @@ def interpolate_marginal_costs(scn):
 
     marg_cost3["run_of_river"] = 0
     marg_cost3["solar_rooftop"] = 0.01
-    marg_cost3["rural_biomass_boiler"] = marg_cost2_heat["rural_biomass_boiler"]
+    marg_cost3["rural_biomass_boiler"] = marg_cost2_heat[
+        "rural_biomass_boiler"
+    ]
 
     return marg_cost3
 
