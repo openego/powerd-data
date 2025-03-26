@@ -777,26 +777,32 @@ def import_links(scn: str):
             con,
         )
 
-        del_h2_salcavern_bus = pd.read_sql(
-            f"""
-        SELECT bus_id, carrier FROM grid.egon_etrago_bus
-        WHERE scn_name = '{scn}'
-        AND carrier = 'H2_saltcavern'
-        AND ((bus_id IN {tuple(del_h2_salcavern_link.bus0)}) OR
-             (bus_id IN {tuple(del_h2_salcavern_link.bus1)}))
-        """,
-            con,
-        )
+        if len(del_h2_salcavern_link) > 0:
+            del_h2_salcavern_bus = pd.read_sql(
+                f"""
+            SELECT bus_id, carrier FROM grid.egon_etrago_bus
+            WHERE scn_name = '{scn}'
+            AND carrier = 'H2_saltcavern'
+            AND ((bus_id IN {tuple(del_h2_salcavern_link.bus0)}) OR
+                 (bus_id IN {tuple(del_h2_salcavern_link.bus1)}))
+            """,
+                con,
+            )
+        else:
+            del_h2_salcavern_bus = []
 
-        del_h2_underground_store = pd.read_sql(
-            f"""
-        SELECT store_id, carrier, bus FROM grid.egon_etrago_store
-        WHERE scn_name = '{scn}'
-        AND carrier = 'H2_underground'
-        AND bus IN {tuple(del_h2_salcavern_bus.bus_id)}
-        """,
-            con,
-        )
+        if len(del_h2_salcavern_bus) > 0:
+            del_h2_underground_store = pd.read_sql(
+                f"""
+            SELECT store_id, carrier, bus FROM grid.egon_etrago_store
+            WHERE scn_name = '{scn}'
+            AND carrier = 'H2_underground'
+            AND bus IN {tuple(del_h2_salcavern_bus.bus_id)}
+            """,
+                con,
+            )
+        else:
+            del_h2_underground_store = []
 
         if len(del_h2_grid_link) > 0:
             db.execute_sql(
