@@ -915,34 +915,6 @@ def import_links(scn: str):
             index=False,
         )
 
-    # delete H2_grid and H2_pipeline links connected to H2 buses
-
-    delete_pipe = pd.read_sql(
-        f"""
-    SELECT link_id, bus0, bus1, carrier FROM grid.egon_etrago_link
-    WHERE scn_name = '{scn}'
-    AND carrier IN ('H2_grid', 'H2_pipeline')
-    AND ((bus0 IN (SELECT bus_id FROM grid.egon_etrago_bus
-              WHERE scn_name = '{scn}'
-              AND carrier = 'H2'
-              AND country = 'DE')) OR
-         (bus1 IN (SELECT bus_id FROM grid.egon_etrago_bus
-               WHERE scn_name = '{scn}'
-               AND carrier = 'H2'
-               AND country = 'DE')))
-    """,
-        con,
-    )
-
-    if len(delete_pipe) > 0:
-        db.execute_sql(
-            f"""
-        DELETE FROM grid.egon_etrago_link
-        WHERE scn_name = '{scn}'
-        AND link_id IN {tuple(delete_pipe.link_id)}
-        """
-        )
-
     ###adjust electrolyzer parameters according to Fraunhofer ISE
     efficiency = {
         "powerd2025": 0.6535,
@@ -2207,3 +2179,30 @@ def import_foreign(scn: str, year):
         if_exists="append",
         index=False,
     )
+
+    # delete H2_grid and H2_pipeline links connected to H2 buses
+    delete_pipe = pd.read_sql(
+        f"""
+    SELECT link_id, bus0, bus1, carrier FROM grid.egon_etrago_link
+    WHERE scn_name = '{scn}'
+    AND carrier IN ('H2_grid', 'H2_pipeline')
+    AND ((bus0 IN (SELECT bus_id FROM grid.egon_etrago_bus
+              WHERE scn_name = '{scn}'
+              AND carrier = 'H2'
+              AND country = 'DE')) OR
+         (bus1 IN (SELECT bus_id FROM grid.egon_etrago_bus
+               WHERE scn_name = '{scn}'
+               AND carrier = 'H2'
+               AND country = 'DE')))
+    """,
+        con,
+    )
+
+    if len(delete_pipe) > 0:
+        db.execute_sql(
+            f"""
+        DELETE FROM grid.egon_etrago_link
+        WHERE scn_name = '{scn}'
+        AND link_id IN {tuple(delete_pipe.link_id)}
+        """
+        )
