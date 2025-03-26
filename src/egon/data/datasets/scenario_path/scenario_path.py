@@ -798,37 +798,41 @@ def import_links(scn: str):
             con,
         )
 
-        db.execute_sql(
-            f"""
-        DELETE FROM grid.egon_etrago_link
-        WHERE scn_name = '{scn}'
-        AND link_id IN {tuple(del_h2_grid_link.link_id)}
-        """
-        )
+        if len(del_h2_grid_link) > 0:
+            db.execute_sql(
+                f"""
+            DELETE FROM grid.egon_etrago_link
+            WHERE scn_name = '{scn}'
+            AND link_id IN {tuple(del_h2_grid_link.link_id)}
+            """
+            )
 
-        db.execute_sql(
-            f"""
-        DELETE FROM grid.egon_etrago_link
-        WHERE scn_name = '{scn}'
-        AND link_id IN {tuple(del_h2_salcavern_link.link_id)}
-        """
-        )
+        if len(del_h2_salcavern_link) > 0:
+            db.execute_sql(
+                f"""
+            DELETE FROM grid.egon_etrago_link
+            WHERE scn_name = '{scn}'
+            AND link_id IN {tuple(del_h2_salcavern_link.link_id)}
+            """
+            )
 
-        db.execute_sql(
-            f"""
-        DELETE FROM grid.egon_etrago_bus
-        WHERE scn_name = '{scn}'
-        AND bus_id IN {tuple(del_h2_salcavern_bus.bus_id)}
-        """
-        )
+        if len(del_h2_salcavern_bus) > 0:
+            db.execute_sql(
+                f"""
+            DELETE FROM grid.egon_etrago_bus
+            WHERE scn_name = '{scn}'
+            AND bus_id IN {tuple(del_h2_salcavern_bus.bus_id)}
+            """
+            )
 
-        db.execute_sql(
-            f"""
-        DELETE FROM grid.egon_etrago_store
-        WHERE scn_name = '{scn}'
-        AND store_id IN {tuple(del_h2_underground_store.store_id)}
-        """
-        )
+        if len(del_h2_underground_store) > 0:
+            db.execute_sql(
+                f"""
+            DELETE FROM grid.egon_etrago_store
+            WHERE scn_name = '{scn}'
+            AND store_id IN {tuple(del_h2_underground_store.store_id)}
+            """
+            )
 
         ch4_b = gpd.read_postgis(
             f"""
