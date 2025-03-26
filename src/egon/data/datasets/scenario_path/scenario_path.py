@@ -721,20 +721,49 @@ def import_links(scn: str):
             )
         ].copy()
     elif scn == "powerd2035":
-        h2_grid_to_h2 = []
+        h2_grid_to_h2 = h2_grid_b[
+            (
+                ~h2_grid_b.index.isin(
+                    pd.concat(
+                        [h2_grid3["bus0"], h2_grid3["bus1"]], ignore_index=True
+                    )
+                )
+            )
+            | (
+                h2_grid_b.index.isin(
+                    [
+                        45070,
+                        45250,
+                        45278,
+                        45182,
+                    ]
+                )
+            )
+        ].copy()
 
     if len(h2_grid_to_h2) > 0:
         h2_grid_to_h2["carrier"] = "H2"
         h2_grid_to_h2["scn_name"] = scn
 
         # delete H2_grid isolated, associated H2_saltcaverns links,
-        # H2_saltcavern buses and H2_underground stores
+        # H2_saltcavern buses, H2_underground stores and H2_grid links (islands)
         db.execute_sql(
             f"""
         DELETE FROM grid.egon_etrago_bus
         WHERE scn_name = '{scn}'
         AND bus_id IN {tuple(h2_grid_to_h2.index)}
         """
+        )
+
+        del_h2_grid_link = pd.read_sql(
+            f"""
+        SELECT link_id, bus0, bus1, carrier FROM grid.egon_etrago_link
+        WHERE scn_name = '{scn}'
+        AND carrier = 'H2_grid'
+        AND ((bus0 IN {tuple(h2_grid_to_h2.index)}) OR
+             (bus1 IN {tuple(h2_grid_to_h2.index)}))
+        """,
+            con,
         )
 
         del_h2_salcavern_link = pd.read_sql(
@@ -767,6 +796,14 @@ def import_links(scn: str):
         AND bus IN {tuple(del_h2_salcavern_bus.bus_id)}
         """,
             con,
+        )
+
+        db.execute_sql(
+            f"""
+        DELETE FROM grid.egon_etrago_link
+        WHERE scn_name = '{scn}'
+        AND link_id IN {tuple(del_h2_grid_link.link_id)}
+        """
         )
 
         db.execute_sql(
