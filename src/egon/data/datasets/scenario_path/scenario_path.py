@@ -671,6 +671,16 @@ def import_links(scn: str):
         geom_col="geom",
     ).set_index("bus_id")
 
+    h2_grid_links = gpd.read_postgis(
+        f"""
+            SELECT * FROM grid.egon_etrago_link
+            WHERE scn_name = '{scn}'
+            AND carrier = 'H2_grid'
+            """,
+        con,
+        geom_col="geom",
+    ).set_index("link_id")
+
     if scn == "powerd2025":
         h2_grid_to_h2 = h2_grid_b
     elif scn == "powerd2030":
@@ -678,7 +688,8 @@ def import_links(scn: str):
             (
                 ~h2_grid_b.index.isin(
                     pd.concat(
-                        [h2_grid3["bus0"], h2_grid3["bus1"]], ignore_index=True
+                        [h2_grid_links["bus0"], h2_grid_links["bus1"]],
+                        ignore_index=True,
                     )
                 )
             )
@@ -902,6 +913,34 @@ def import_links(scn: str):
             schema="grid",
             if_exists="append",
             index=False,
+        )
+
+    # delete H2_grid and H2_pipeline links connected to H2 buses
+
+    delete_pipe = pd.read_sql(
+        f"""
+    SELECT link_id, bus0, bus1, carrier FROM grid.egon_etrago_link
+    WHERE scn_name = '{scn}'
+    AND carrier IN ('H2_grid', 'H2_pipeline')
+    AND ((bus0 IN (SELECT bus_id FROM grid.egon_etrago_bus
+              WHERE scn_name = '{scn}'
+              AND carrier = 'H2'
+              AND country = 'DE')) OR
+         (bus1 IN (SELECT bus_id FROM grid.egon_etrago_bus
+               WHERE scn_name = '{scn}'
+               AND carrier = 'H2'
+               AND country = 'DE')))
+    """,
+        con,
+    )
+
+    if len(delete_pipe) > 0:
+        db.execute_sql(
+            f"""
+        DELETE FROM grid.egon_etrago_link
+        WHERE scn_name = '{scn}'
+        AND link_id IN {tuple(delete_pipe.link_id)}
+        """
         )
 
     ###adjust electrolyzer parameters according to Fraunhofer ISE
