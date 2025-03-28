@@ -1,15 +1,12 @@
 from pathlib import Path
-from urllib.request import urlretrieve
-import os
-import subprocess
 
 import numpy as np
 import pandas as pd
 import pypsa
 import geopandas as gpd
-from shapely.geometry import Point, LineString
+from shapely.geometry import LineString
 
-from egon.data import config, db
+from egon.data import db
 import egon.data.config
 
 from egon.data.datasets.pypsaeur import neighbor_reduction, prepared_network
