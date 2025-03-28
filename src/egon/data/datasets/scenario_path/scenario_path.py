@@ -1,19 +1,18 @@
 from pathlib import Path
 
+from shapely.geometry import LineString
+import geopandas as gpd
 import numpy as np
 import pandas as pd
 import pypsa
-import geopandas as gpd
-from shapely.geometry import LineString
 
 from egon.data import db
-import egon.data.config
-
 from egon.data.datasets.pypsaeur import neighbor_reduction, prepared_network
 from egon.data.datasets.scenario_parameters import get_sector_parameters
 from egon.data.datasets.scenario_parameters.parameters import (
     annualize_capital_costs,
 )
+import egon.data.config
 
 sources = egon.data.config.datasets()["scenario_path"]["sources"]
 
