@@ -949,6 +949,8 @@ def import_links(scn: str):
 
     # dealing with links time-series
     for carrier in scn2_link.carrier.unique():
+        if carrier == "central_heat_pump":
+            continue
         ts = pd.read_sql(
             f"""
             SELECT * FROM grid.egon_etrago_link_timeseries
