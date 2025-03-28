@@ -950,7 +950,7 @@ def import_links(scn: str):
     # dealing with links time-series
     for carrier in scn2_link.carrier.unique():
         ts = pd.read_sql(
-            """
+            f"""
             SELECT * FROM grid.egon_etrago_link_timeseries
             WHERE link_id IN(
             SELECT link_id FROM grid.egon_etrago_link
