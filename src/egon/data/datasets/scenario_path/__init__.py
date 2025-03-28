@@ -1,13 +1,13 @@
 from egon.data.datasets import Dataset
 from egon.data.datasets.scenario_path.scenario_path import (
     clean_existing_scn_path_data,
-    import_network_structure,
+    import_foreign,
     import_generators,
-    import_loads,
     import_links,
+    import_loads,
+    import_network_structure,
     import_storage_units,
     import_stores,
-    import_foreign,
 )
 
 
