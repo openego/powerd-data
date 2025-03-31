@@ -97,7 +97,7 @@ def nuts_mapping():
     return nuts_mapping
 
 
-def insert_capacities_status2019(scenario: str) -> None:
+def insert_capacities_status_quo(scenario: str) -> None:
     """Insert capacity of rural heat pumps for status quo
 
     Returns
@@ -847,7 +847,7 @@ for scenario in scenarios:
     if "status" in scenario:
         tasks += (
             wrapped_partial(
-                insert_capacities_status2019, scenario=scenario,
+                insert_capacities_status_quo, scenario=scenario,
                 postfix=f"_{scenario[-2:]}"
             ),
         )
