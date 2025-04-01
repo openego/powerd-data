@@ -14,7 +14,7 @@ def hts_to_etrago(scenario):
 
     assert isinstance(scenario, str), f"scenario hs to be string but got scenario: {scenario}"
 
-    if scenario == "status2019":
+    if "status" in scenario:
         carriers = ["central_heat", "rural_heat"]
 
     for carrier in carriers:
@@ -227,7 +227,7 @@ class HtsEtragoTable(Dataset):
     def __init__(self, dependencies):
         super().__init__(
             name="HtsEtragoTable",
-            version="0.0.8",
+            version="0.0.9",
             dependencies=dependencies,
             tasks=(demand),
         )

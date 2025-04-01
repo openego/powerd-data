@@ -89,7 +89,6 @@ def insert_individual_power_to_heat(scenario):
     heat_pumps = db.select_dataframe(q)
 
     print("len heat_pumps", len(heat_pumps))
-    print(heat_pumps.head(10))
 
     # Assign voltage level
     heat_pumps["voltage_level"] = 7
@@ -302,7 +301,7 @@ def insert_power_to_heat_per_level(
     None.
 
     """
-    # sources = config.datasets()["etrago_heat"]["sources"]  todo: unused, can be deleted?
+    sources = config.datasets()["etrago_heat"]["sources"]
     targets = config.datasets()["etrago_heat"]["targets"]
 
     if "central" in carrier:
@@ -325,9 +324,6 @@ def insert_power_to_heat_per_level(
     )
 
     # Create topology of heat pumps
-    print("len(geom_buses)", len(geom_buses))
-    print("len gdf", len(gdf))
-
     gdf["geom_power"] = geom_buses.geom[gdf.power_bus].values
     gdf["geom_heat"] = geom_buses.loc[gdf.heat_bus, "geom"].reset_index().geom
     gdf["geometry"] = gdf.apply(

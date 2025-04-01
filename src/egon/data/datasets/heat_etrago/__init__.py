@@ -263,8 +263,7 @@ def insert_store(scenario, carrier):
 
 def store():
     for scenario in config.settings()["egon-data"]["--scenarios"]:
-        # todo: thats not correct? if "status" not in scenario:
-        if scenario != "status2019":  # todo: only if not 2019 ?
+        if "status" not in scenario:
             insert_store(scenario, "central_heat")
             insert_store(scenario, "rural_heat")
 
@@ -622,7 +621,7 @@ class HeatEtrago(Dataset):
     def __init__(self, dependencies):
         super().__init__(
             name="HeatEtrago",
-            version="0.0.12",
+            version="0.0.13",
             dependencies=dependencies,
             tasks=(buses, supply, store),
         )
