@@ -1073,7 +1073,7 @@ def generate_model_data_status2019_remaining():
     has not been processed in the parallel tasks before.
     """
     generate_model_data_bunch(
-        scenario_name="status2019",
+        scenario_name="status2023",
         bunch=range(MVGD_MIN_COUNT, len(load_grid_district_ids())),
     )
 

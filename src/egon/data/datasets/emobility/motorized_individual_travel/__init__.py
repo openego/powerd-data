@@ -487,7 +487,7 @@ class MotorizedIndividualTravel(Dataset):
                     )
                 )
 
-            if scenario_name == "status2019":
+            if "status" in scenario_name:
                 tasks.add(generate_model_data_status2019_remaining)
             elif scenario_name == "eGon2035":
                 tasks.add(generate_model_data_eGon2035_remaining)
