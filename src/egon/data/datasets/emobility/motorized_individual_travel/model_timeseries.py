@@ -736,7 +736,7 @@ def write_model_data_to_db(
         #   * lowflex: use dumb charging load
         #   * status2019: also dumb charging
 
-        if scenario_name=='status2019':
+        if "status" in scenario_name:
             write_load(
                 scenario_name=scenario_name,
                 connection_bus_id=etrago_bus.bus_id,
