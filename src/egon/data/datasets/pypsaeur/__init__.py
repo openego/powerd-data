@@ -575,116 +575,128 @@ def combine_decentral_and_rural_heat(network_solved, network_prepared):
     return network_prepared, network_solved
 
 
-
 def combine_residenial_services_heat_load(network_prepared):
     ###combining loads
     residential_rural_loads = network_prepared.loads[
         network_prepared.loads.carrier.str.contains("residential rural heat")
     ]
-    
+
     for i, row in residential_rural_loads.iterrows():
         if i in network_prepared.loads_t.p_set.columns:
             network_prepared.loads_t.p_set[
                 i.replace("residential", "services")
             ] += network_prepared.loads_t.p_set[i]
     network_prepared.mremove("Load", residential_rural_loads.index)
-    
-    
+
     target_carriers = ["services rural heat"]
 
     rural_heat_loads = network_prepared.loads[
         network_prepared.loads.carrier.isin(target_carriers)
     ]
-    
-    #rename carrier
-    network_prepared.loads.loc[rural_heat_loads.index, "carrier"] = "rural heat"
-    
-    #rename bus
+
+    # rename carrier
+    network_prepared.loads.loc[rural_heat_loads.index, "carrier"] = (
+        "rural heat"
+    )
+
+    # rename bus
     network_prepared.loads.loc[rural_heat_loads.index, "bus"] = (
         network_prepared.loads.loc[rural_heat_loads.index, "bus"]
         .str.replace("services rural heat", "rural heat")
         .str.replace("residential rural heat", "rural heat")
     )
-    
-    #rename index
+
+    # rename index
     network_prepared.loads.rename(
-        index=lambda x: x.replace("services rural heat", "rural heat")
-                          .replace("residential rural heat", "rural heat"),
-        inplace=True
+        index=lambda x: x.replace("services rural heat", "rural heat").replace(
+            "residential rural heat", "rural heat"
+        ),
+        inplace=True,
     )
-    
-    #rename timeseries columns
+
+    # rename timeseries columns
     network_prepared.loads_t.p_set.columns = (
-        network_prepared.loads_t.p_set.columns.str.replace("services rural heat", "rural heat")
-                                          .str.replace("residential rural heat", "rural heat")
-                                          )
-    
+        network_prepared.loads_t.p_set.columns.str.replace(
+            "services rural heat", "rural heat"
+        ).str.replace("residential rural heat", "rural heat")
+    )
+
     ####combining heat_pumps
-    network_prepared.links_t.efficiency.columns = (network_prepared.links_t.efficiency.columns.str.replace("services rural", "rural heat")
-                                      .str.replace("residential rural", "rural")
-                                      )
-    
+    network_prepared.links_t.efficiency.columns = (
+        network_prepared.links_t.efficiency.columns.str.replace(
+            "services rural", "rural heat"
+        ).str.replace("residential rural", "rural")
+    )
+
     return network_prepared
 
 
-
 def import_missing_gens(neighbors, network_solved, scn_name):
-    carriers_to_keep=['oil', 'lignite', 'coal', 'urban central solid biomass CHP']
+    carriers_to_keep = [
+        "oil",
+        "lignite",
+        "coal",
+        "urban central solid biomass CHP",
+    ]
     marg = margina_cost_missing_gens()
-    
-    for carrier in carriers_to_keep:    
+
+    for carrier in carriers_to_keep:
         links = network_solved.links[network_solved.links.carrier == carrier]
-        links_neighbor = links[
-            links['bus1'].isin(neighbors.index)
-        ]
-        marg_cost= marg[scn_name][carrier]
+        links_neighbor = links[links["bus1"].isin(neighbors.index)]
+        marg_cost = marg[scn_name][carrier]
         print(marg_cost)
         for idx, link in links_neighbor.iterrows():
-            if carrier == 'urban central solid biomass CHP':
-                network_solved.add("Generator", f"gen_{idx}_electrical",
-                    bus=link.bus1, 
-                    p_nom_opt= link.p_nom_opt*link.efficiency,
-                    carrier="central_biomass_CHP",
-                    marginal_cost=marg_cost
-                    )
-                network_solved.add("Generator", f"gen_{idx}_heat",
-                    bus=link.bus2,
-                    p_nom_opt=link.p_nom_opt*link.efficiency2, 
-                    carrier="central_biomass_CHP_heat",
-                    )
-            else: 
-                network_solved.add("Generator", f"gen_{idx}",
+            if carrier == "urban central solid biomass CHP":
+                network_solved.add(
+                    "Generator",
+                    f"gen_{idx}_electrical",
                     bus=link.bus1,
-                    p_nom_opt=link.p_nom_opt*link.efficiency,
+                    p_nom_opt=link.p_nom_opt * link.efficiency,
+                    carrier="central_biomass_CHP",
+                    marginal_cost=marg_cost,
+                )
+                network_solved.add(
+                    "Generator",
+                    f"gen_{idx}_heat",
+                    bus=link.bus2,
+                    p_nom_opt=link.p_nom_opt * link.efficiency2,
+                    carrier="central_biomass_CHP_heat",
+                )
+            else:
+                network_solved.add(
+                    "Generator",
+                    f"gen_{idx}",
+                    bus=link.bus1,
+                    p_nom_opt=link.p_nom_opt * link.efficiency,
                     carrier=carrier,
-                    marginal_cost=marg_cost
-                    )
+                    marginal_cost=marg_cost,
+                )
     return network_solved
-    
+
+
 def margina_cost_missing_gens():
     marginal_costs = {
-     "powerd2025": {
-         "oil": 164.90901098901102,
-         "lignite": 67.38601398601398,
-         "coal": 76.07459207459208,
-         "urban central solid biomass CHP": 39.69634478996181
-     },
-     "powerd2030": {
-         "oil": 169.8246153846154,
-         "lignite": 86.11148018648018,
-         "coal": 88.3854895104895,
-         "urban central solid biomass CHP": 51.573854337152206
-     },
-     "powerd2035": {
-         "oil": 174.7402197802198,
-         "lignite": 104.834,
-         "coal": 100.7,
-         "urban central solid biomass CHP": 63.451363884342605
-     }
- }
- 
-    return marginal_costs
+        "powerd2025": {
+            "oil": 164.90901098901102,
+            "lignite": 67.38601398601398,
+            "coal": 76.07459207459208,
+            "urban central solid biomass CHP": 39.69634478996181,
+        },
+        "powerd2030": {
+            "oil": 169.8246153846154,
+            "lignite": 86.11148018648018,
+            "coal": 88.3854895104895,
+            "urban central solid biomass CHP": 51.573854337152206,
+        },
+        "powerd2035": {
+            "oil": 174.7402197802198,
+            "lignite": 104.834,
+            "coal": 100.7,
+            "urban central solid biomass CHP": 63.451363884342605,
+        },
+    }
 
+    return marginal_costs
 
 
 def neighbor_reduction(scn_name, year=2045):
@@ -716,7 +728,7 @@ def neighbor_reduction(scn_name, year=2045):
     network_solved.buses = network_solved.buses.drop(
         network_solved.buses.loc[foreign_buses.index].index
     )
-    
+
     # Set country tag for all buses
     network_solved.buses.country = network_solved.buses.index.str[:2]
     neighbors = network_solved.buses[network_solved.buses.country != "DE"]
@@ -725,12 +737,13 @@ def neighbor_reduction(scn_name, year=2045):
         db.next_etrago_id("bus") + neighbors.reset_index().index
     )
 
-    #keep links that are connected to an central EU-bus(solid biomass, oil, llignite, coal)
-    #transform them to generators
-    if scn_name !='eGon100RE':
-        network_solved = import_missing_gens(neighbors, network_solved, scn_name)
+    # keep links that are connected to an central EU-bus(solid biomass, oil, llignite, coal)
+    # transform them to generators
+    if scn_name != "eGon100RE":
+        network_solved = import_missing_gens(
+            neighbors, network_solved, scn_name
+        )
 
-    
     # Add H2 demand of Fischer-Tropsch process and methanolisation
     # to industrial H2 demands
     industrial_hydrogen = network_prepared.loads.loc[
@@ -745,7 +758,7 @@ def neighbor_reduction(scn_name, year=2045):
         .mul(network_solved.snapshot_weightings.generators, axis=0)
         .sum()
     )
-    
+
     methanolisation = (
         network_solved.links_t.p0[
             network_solved.links.loc[
@@ -1027,11 +1040,13 @@ def neighbor_reduction(scn_name, year=2045):
 
     # loads
     # imported from prenetwork in 1h-resolution
-    
-    #adjusting index-, bus- and carrier-name for loads for powerd2025
-    if scn_name=='powerd2025':
-        network_prepared = combine_residenial_services_heat_load(network_prepared)
-        
+
+    # adjusting index-, bus- and carrier-name for loads for powerd2025
+    if scn_name == "powerd2025":
+        network_prepared = combine_residenial_services_heat_load(
+            network_prepared
+        )
+
     neighbor_loads = network_prepared.loads[
         network_prepared.loads.bus.isin(neighbors.index)
     ]
@@ -1171,7 +1186,7 @@ def neighbor_reduction(scn_name, year=2045):
         index=True,
         index_label="bus_id",
     )
-    
+
     # prepare and write neighboring crossborder lines to etrago tables
     def lines_to_etrago(neighbor_lines=neighbor_lines, scn=scn_name):
         neighbor_lines["scn_name"] = scn
@@ -1209,9 +1224,9 @@ def neighbor_reduction(scn_name, year=2045):
             .set_crs(4326)
         )
 
-        neighbor_lines["lifetime"] = get_sector_parameters("electricity", 'eGon100RE')[
-            "lifetime"
-        ]["ac_ehv_overhead_line"]
+        neighbor_lines["lifetime"] = get_sector_parameters(
+            "electricity", "eGon100RE"
+        )["lifetime"]["ac_ehv_overhead_line"]
 
         neighbor_lines.to_postgis(
             "egon_etrago_line",
@@ -1393,7 +1408,7 @@ def neighbor_reduction(scn_name, year=2045):
     neighbor_links = neighbor_links[
         ~neighbor_links.carrier.isin(excluded_carriers)
     ]
-      
+
     # Combine CHP_CC and CHP
     chp_cc = neighbor_links[
         neighbor_links.carrier == "urban central gas CHP CC"
@@ -1407,22 +1422,24 @@ def neighbor_reduction(scn_name, year=2045):
             neighbor_links.Link == row.Link.replace("CHP CC", "CHP"), "p_nom"
         ] += row.p_nom
         neighbor_links.drop(index, inplace=True)
-        
+
     # Combine heat pumps
     # Like in Germany, there are air heat pumps in central heat grids
     # and ground heat pumps in rural areas
-    
-    #consider aso urban decentral air heat pumps  in rural_heat_pumps
+
+    # consider aso urban decentral air heat pumps  in rural_heat_pumps
     mask = neighbor_links["Link"].str.contains("urban decentral air", na=False)
-    neighbor_links.loc[mask, "Link"] = neighbor_links.loc[mask, "Link"].str.replace("urban decentral", "rural")
+    neighbor_links.loc[mask, "Link"] = neighbor_links.loc[
+        mask, "Link"
+    ].str.replace("urban decentral", "rural")
     rural_air = neighbor_links[neighbor_links.carrier == "rural air heat pump"]
-    
+
     for index, row in rural_air.iterrows():
         neighbor_links.loc[
             neighbor_links.Link == row.Link.replace("air", "ground"),
             "p_nom_opt",
         ] += row.p_nom_opt
-        
+
         neighbor_links.loc[
             neighbor_links.Link == row.Link.replace("air", "ground"), "p_nom"
         ] += row.p_nom
@@ -1547,7 +1564,6 @@ def neighbor_reduction(scn_name, year=2045):
         columns=["Load"],
         errors="ignore",
     )
-  
 
     neighbor_loads.to_sql(
         "egon_etrago_load",
