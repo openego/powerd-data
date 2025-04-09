@@ -1,5 +1,4 @@
-"""The module containing all parameters for the scenario table
-"""
+"""The module containing all parameters for the scenario table"""
 
 import pandas as pd
 
@@ -1229,8 +1228,8 @@ def heat(scenario):
             "central_gas_boiler": read_costs(
                 costs, "central gas boiler", "VOM"
             ),
-            "rural_biomass_boiler": 51,  # considering an efficiency of 0.8
-            "rural_oil_boiler": 67.2,  # considering an efficiency of 0.9
+            "rural_biomass_boiler": 51,  # fuel cost / eff. eff = 0.8 from pypsaeur. fuel cost from global_settings
+            "rural_oil_boiler": 67.2,  # CO2 cost + fuel cost / eff. eff = 0.9 from pypsaeur. fuel cost from global_settings
             "central_resistive_heater": read_costs(
                 costs, "central resistive heater", "VOM"
             ),
@@ -1319,8 +1318,8 @@ def heat(scenario):
             "central_gas_boiler": read_costs(
                 costs, "central gas boiler", "VOM"
             ),
-            "rural_biomass_boiler": 10,  # considering an efficiency of 0.8
-            "rural_oil_boiler": 59.7,  # considering an efficiency of 0.9
+            "rural_biomass_boiler": 10,  # fuel cost / eff. eff = 0.8 from pypsaeur. fuel cost from global_settings
+            "rural_oil_boiler": 59.7,  # CO2 cost + fuel cost / eff. eff = 0.9 from pypsaeur. fuel cost from global_settings
             "central_resistive_heater": read_costs(
                 costs, "central resistive heater", "VOM"
             ),
