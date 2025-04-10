@@ -675,6 +675,16 @@ def import_missing_gens(neighbors, network_solved, scn_name):
 
 
 def margina_cost_missing_gens():
+    """
+    Define marginal_cost for foreign generators by interpolating
+    marginal_costs defined in the parameters.py . The values 
+    include Fuel-costs, VOM and CO2-costs.
+
+    Returns
+    -------
+    marginal_costs : dict
+
+    """
     marginal_costs = {
         "powerd2025": {
             "oil": 164.90901098901102,
