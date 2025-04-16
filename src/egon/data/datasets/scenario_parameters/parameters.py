@@ -910,7 +910,7 @@ def gas(scenario):
             ),
             "Heat_exchanger": 25_000,  # [EUR/MW_th] cost assumption for one additional heat_exchanger; source: project internal cost assumption by Fraunhofer ISE
             "Heat_pipeline": 400_000,  # [EUR/MW/km]; average value for DN100-pipeline; source: L. Zimmermann, MODELLIERUNG DER ABWÄRMENUTZUNG VON ELEKTROLYSEUREN IN DEUTSCHLAND FÜR EINE TECHNO - ÖKONOMISCHE OPTIMIERUNG EINES SEKTOR - GEKOPPELTEN ENERGIESYSTEM, 2024
-            "O2_components": 5000,  # [EUR] ; source toDO: ask sayed
+            "O2_components": 5000,  # [EUR] ; source: Sayed Sadat, Modeling Regional Utilization of the electrolysers Co-Products Oxygen and Heat in Germany, 2024
         }
 
         # overnight_costs for O2_pipeinecosts related to pipeline_diameter
@@ -920,7 +920,7 @@ def gas(scenario):
             0.3: 400_000,  # EUR/km
             0.2: 350_000,  # EUR/km
             0: 300_000,  # EUR/km   (costs for any other pipeline diameter)
-        }
+        }     # source: Sayed Sadat, Modeling Regional Utilization of the electrolysers Co-Products Oxygen and Heat in Germany, 2024
 
         # Insert lifetime
         parameters["lifetime"] = {
@@ -942,7 +942,7 @@ def gas(scenario):
             ),
             "Heat_exchanger": 20,  # assumption based on lifetime heat_exchanger; source: E. van der Roest, R. Bol, T. Fens und A. van Wijk, „Utilisation of waste heat from PEM electrolysers - Unlocking local optimisation, 2023
             "Heat_pipeline": 20,
-            "O2_components": 25,  # source toDO: ask sayed
+            "O2_components": 25,  # source: Sayed Sadat, Modeling Regional Utilization of the electrolysers Co-Products Oxygen and Heat in Germany, 2024
         }
 
         # Insert costs
