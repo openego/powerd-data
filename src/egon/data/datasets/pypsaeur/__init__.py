@@ -363,7 +363,7 @@ def solve_network():
         print("Pypsa-eur is not executed due to the settings of egon-data")
 
 
-def read_network(planning_horizon=3):
+def read_network(planning_horizon=3, year=2045):
     if config.settings()["egon-data"]["--run-pypsa-eur"]:
         with open(
             __path__[0] + "/datasets/pypsaeur/config_solve.yaml", "r"
@@ -392,7 +392,7 @@ def read_network(planning_horizon=3):
             / "21122024_3h_clean_run"
             / "results"
             / "postnetworks"
-            / "base_s_39_lc1.25__cb40ex0-T-H-I-B-solar+p3-dist1_2045.nc"
+            / f"base_s_39_lc1.25__cb40ex0-T-H-I-B-solar+p3-dist1_{year}.nc"
         )
 
     return pypsa.Network(target_file)
@@ -575,9 +575,143 @@ def combine_decentral_and_rural_heat(network_solved, network_prepared):
     return network_prepared, network_solved
 
 
-def neighbor_reduction():
-    network_solved = read_network()
-    network_prepared = prepared_network(planning_horizon="2045")
+def combine_residenial_services_heat_load(network_prepared):
+    ###combining loads
+    residential_rural_loads = network_prepared.loads[
+        network_prepared.loads.carrier.str.contains("residential rural heat")
+    ]
+
+    for i, row in residential_rural_loads.iterrows():
+        if i in network_prepared.loads_t.p_set.columns:
+            network_prepared.loads_t.p_set[
+                i.replace("residential", "services")
+            ] += network_prepared.loads_t.p_set[i]
+    network_prepared.mremove("Load", residential_rural_loads.index)
+
+    target_carriers = ["services rural heat"]
+
+    rural_heat_loads = network_prepared.loads[
+        network_prepared.loads.carrier.isin(target_carriers)
+    ]
+
+    # rename carrier
+    network_prepared.loads.loc[rural_heat_loads.index, "carrier"] = (
+        "rural heat"
+    )
+
+    # rename bus
+    network_prepared.loads.loc[rural_heat_loads.index, "bus"] = (
+        network_prepared.loads.loc[rural_heat_loads.index, "bus"]
+        .str.replace("services rural heat", "rural heat")
+        .str.replace("residential rural heat", "rural heat")
+    )
+
+    # rename index
+    network_prepared.loads.rename(
+        index=lambda x: x.replace("services rural heat", "rural heat").replace(
+            "residential rural heat", "rural heat"
+        ),
+        inplace=True,
+    )
+
+    # rename timeseries columns
+    network_prepared.loads_t.p_set.columns = (
+        network_prepared.loads_t.p_set.columns.str.replace(
+            "services rural heat", "rural heat"
+        ).str.replace("residential rural heat", "rural heat")
+    )
+
+    ####combining heat_pumps
+    network_prepared.links_t.efficiency.columns = (
+        network_prepared.links_t.efficiency.columns.str.replace(
+            "services rural", "rural heat"
+        ).str.replace("residential rural", "rural")
+    )
+
+    return network_prepared
+
+
+def import_missing_gens(neighbors, network_solved, scn_name):
+    carriers_to_keep = [
+        "oil",
+        "lignite",
+        "coal",
+        "urban central solid biomass CHP",
+    ]
+    marg = margina_cost_missing_gens()
+
+    for carrier in carriers_to_keep:
+        links = network_solved.links[network_solved.links.carrier == carrier]
+        links_neighbor = links[links["bus1"].isin(neighbors.index)]
+        marg_cost = marg[scn_name][carrier]
+        print(marg_cost)
+        for idx, link in links_neighbor.iterrows():
+            if carrier == "urban central solid biomass CHP":
+                network_solved.add(
+                    "Generator",
+                    f"gen_{idx}_electrical",
+                    bus=link.bus1,
+                    p_nom_opt=link.p_nom_opt * link.efficiency,
+                    carrier="central_biomass_CHP",
+                    marginal_cost=marg_cost,
+                )
+                network_solved.add(
+                    "Generator",
+                    f"gen_{idx}_heat",
+                    bus=link.bus2,
+                    p_nom_opt=link.p_nom_opt * link.efficiency2,
+                    carrier="central_biomass_CHP_heat",
+                )
+            else:
+                network_solved.add(
+                    "Generator",
+                    f"gen_{idx}",
+                    bus=link.bus1,
+                    p_nom_opt=link.p_nom_opt * link.efficiency,
+                    carrier=carrier,
+                    marginal_cost=marg_cost,
+                )
+    return network_solved
+
+
+def margina_cost_missing_gens():
+    """
+    Define marginal_cost for foreign generators by interpolating
+    marginal_costs defined in the parameters.py . The values 
+    include Fuel-costs, VOM and CO2-costs.
+
+    Returns
+    -------
+    marginal_costs : dict
+
+    """
+    marginal_costs = {
+        "powerd2025": {
+            "oil": 164.90901098901102,
+            "lignite": 67.38601398601398,
+            "coal": 76.07459207459208,
+            "urban central solid biomass CHP": 39.69634478996181,
+        },
+        "powerd2030": {
+            "oil": 169.8246153846154,
+            "lignite": 86.11148018648018,
+            "coal": 88.3854895104895,
+            "urban central solid biomass CHP": 51.573854337152206,
+        },
+        "powerd2035": {
+            "oil": 174.7402197802198,
+            "lignite": 104.834,
+            "coal": 100.7,
+            "urban central solid biomass CHP": 63.451363884342605,
+        },
+    }
+
+    return marginal_costs
+
+
+def neighbor_reduction(scn_name, year=2045):
+    network_solved = read_network(year=year)
+    network_prepared = prepared_network(year=year)
 
     # network.links.drop("pipe_retrofit", axis="columns", inplace=True)
 
@@ -605,6 +739,21 @@ def neighbor_reduction():
         network_solved.buses.loc[foreign_buses.index].index
     )
 
+    # Set country tag for all buses
+    network_solved.buses.country = network_solved.buses.index.str[:2]
+    neighbors = network_solved.buses[network_solved.buses.country != "DE"]
+
+    neighbors["new_index"] = (
+        db.next_etrago_id("bus") + neighbors.reset_index().index
+    )
+
+    # keep links that are connected to an central EU-bus(solid biomass, oil, llignite, coal)
+    # transform them to generators
+    if scn_name != "eGon100RE":
+        network_solved = import_missing_gens(
+            neighbors, network_solved, scn_name
+        )
+
     # Add H2 demand of Fischer-Tropsch process and methanolisation
     # to industrial H2 demands
     industrial_hydrogen = network_prepared.loads.loc[
@@ -619,6 +768,7 @@ def neighbor_reduction():
         .mul(network_solved.snapshot_weightings.generators, axis=0)
         .sum()
     )
+
     methanolisation = (
         network_solved.links_t.p0[
             network_solved.links.loc[
@@ -642,7 +792,6 @@ def neighbor_reduction():
             / 8760
         )
     # drop foreign lines and links from the 2nd row
-
     network_solved.lines = network_solved.lines.drop(
         network_solved.lines[
             (
@@ -793,14 +942,6 @@ def neighbor_reduction():
 
     # writing components of neighboring countries to etrago tables
 
-    # Set country tag for all buses
-    network_solved.buses.country = network_solved.buses.index.str[:2]
-    neighbors = network_solved.buses[network_solved.buses.country != "DE"]
-
-    neighbors["new_index"] = (
-        db.next_etrago_id("bus") + neighbors.reset_index().index
-    )
-
     # Use index of AC buses created by electrical_neigbors
     foreign_ac_buses = db.select_dataframe(
         """
@@ -909,6 +1050,13 @@ def neighbor_reduction():
 
     # loads
     # imported from prenetwork in 1h-resolution
+
+    # adjusting index-, bus- and carrier-name for loads for powerd2025
+    if scn_name == "powerd2025":
+        network_prepared = combine_residenial_services_heat_load(
+            network_prepared
+        )
+
     neighbor_loads = network_prepared.loads[
         network_prepared.loads.bus.isin(neighbors.index)
     ]
@@ -980,7 +1128,7 @@ def neighbor_reduction():
     # Connect to local database
     engine = db.engine()
 
-    neighbors["scn_name"] = "eGon100RE"
+    neighbors["scn_name"] = scn_name
     neighbors.index = neighbors["new_index"]
 
     # Correct geometry for non AC buses
@@ -1050,7 +1198,7 @@ def neighbor_reduction():
     )
 
     # prepare and write neighboring crossborder lines to etrago tables
-    def lines_to_etrago(neighbor_lines=neighbor_lines, scn="eGon100RE"):
+    def lines_to_etrago(neighbor_lines=neighbor_lines, scn=scn_name):
         neighbor_lines["scn_name"] = scn
         neighbor_lines["cables"] = 3 * neighbor_lines["num_parallel"].astype(
             int
@@ -1086,9 +1234,9 @@ def neighbor_reduction():
             .set_crs(4326)
         )
 
-        neighbor_lines["lifetime"] = get_sector_parameters("electricity", scn)[
-            "lifetime"
-        ]["ac_ehv_overhead_line"]
+        neighbor_lines["lifetime"] = get_sector_parameters(
+            "electricity", "eGon100RE"
+        )["lifetime"]["ac_ehv_overhead_line"]
 
         neighbor_lines.to_postgis(
             "egon_etrago_line",
@@ -1099,9 +1247,9 @@ def neighbor_reduction():
             index_label="line_id",
         )
 
-    lines_to_etrago(neighbor_lines=neighbor_lines, scn="eGon100RE")
+    lines_to_etrago(neighbor_lines=neighbor_lines, scn=scn_name)
 
-    def links_to_etrago(neighbor_links, scn="eGon100RE", extendable=True):
+    def links_to_etrago(neighbor_links, scn=scn_name, extendable=True):
         """Prepare and write neighboring crossborder links to eTraGo table
 
         This function prepare the neighboring crossborder links
@@ -1288,25 +1436,33 @@ def neighbor_reduction():
     # Combine heat pumps
     # Like in Germany, there are air heat pumps in central heat grids
     # and ground heat pumps in rural areas
+
+    # consider aso urban decentral air heat pumps  in rural_heat_pumps
+    mask = neighbor_links["Link"].str.contains("urban decentral air", na=False)
+    neighbor_links.loc[mask, "Link"] = neighbor_links.loc[
+        mask, "Link"
+    ].str.replace("urban decentral", "rural")
     rural_air = neighbor_links[neighbor_links.carrier == "rural air heat pump"]
+
     for index, row in rural_air.iterrows():
         neighbor_links.loc[
             neighbor_links.Link == row.Link.replace("air", "ground"),
             "p_nom_opt",
         ] += row.p_nom_opt
+
         neighbor_links.loc[
             neighbor_links.Link == row.Link.replace("air", "ground"), "p_nom"
         ] += row.p_nom
         neighbor_links.drop(index, inplace=True)
     links_to_etrago(
         neighbor_links[neighbor_links.carrier.isin(extendable_links_carriers)],
-        "eGon100RE",
+        scn_name,
     )
     links_to_etrago(
         neighbor_links[
             ~neighbor_links.carrier.isin(extendable_links_carriers)
         ],
-        "eGon100RE",
+        scn_name,
         extendable=False,
     )
     # Include links time-series
@@ -1352,7 +1508,7 @@ def neighbor_reduction():
         ev_p_max_pu.rename(columns={i: new_index[0]}, inplace=True)
 
     # prepare neighboring generators for etrago tables
-    neighbor_gens["scn_name"] = "eGon100RE"
+    neighbor_gens["scn_name"] = scn_name
     neighbor_gens["p_nom"] = neighbor_gens["p_nom_opt"]
     neighbor_gens["p_nom_extendable"] = False
 
@@ -1396,7 +1552,7 @@ def neighbor_reduction():
     )
 
     # prepare neighboring loads for etrago tables
-    neighbor_loads["scn_name"] = "eGon100RE"
+    neighbor_loads["scn_name"] = scn_name
 
     # Unify carrier names
     neighbor_loads.carrier = neighbor_loads.carrier.str.replace(" ", "_")
@@ -1429,7 +1585,7 @@ def neighbor_reduction():
     )
 
     # prepare neighboring stores for etrago tables
-    neighbor_stores["scn_name"] = "eGon100RE"
+    neighbor_stores["scn_name"] = scn_name
 
     # Unify carrier names
     neighbor_stores.carrier = neighbor_stores.carrier.str.replace(" ", "_")
@@ -1481,7 +1637,7 @@ def neighbor_reduction():
     )
 
     # prepare neighboring storage_units for etrago tables
-    neighbor_storage["scn_name"] = "eGon100RE"
+    neighbor_storage["scn_name"] = scn_name
 
     # Unify carrier names
     neighbor_storage.carrier = neighbor_storage.carrier.str.replace(" ", "_")
@@ -1513,7 +1669,7 @@ def neighbor_reduction():
         columns=["scn_name", "temp_id", "p_set"],
         index=neighbor_loads_t.columns,
     )
-    neighbor_loads_t_etrago["scn_name"] = "eGon100RE"
+    neighbor_loads_t_etrago["scn_name"] = scn_name
     neighbor_loads_t_etrago["temp_id"] = 1
     for i in neighbor_loads_t.columns:
         neighbor_loads_t_etrago["p_set"][i] = neighbor_loads_t[
@@ -1534,7 +1690,7 @@ def neighbor_reduction():
         columns=["scn_name", "temp_id", "p_max_pu", "efficiency"],
         index=neighbor_eff_t.columns.to_list() + ev_p_max_pu.columns.to_list(),
     )
-    neighbor_link_t_etrago["scn_name"] = "eGon100RE"
+    neighbor_link_t_etrago["scn_name"] = scn_name
     neighbor_link_t_etrago["temp_id"] = 1
     for i in neighbor_eff_t.columns:
         neighbor_link_t_etrago["efficiency"][i] = neighbor_eff_t[
@@ -1557,7 +1713,7 @@ def neighbor_reduction():
         columns=["scn_name", "temp_id", "p_max_pu"],
         index=neighbor_gens_t.columns,
     )
-    neighbor_gens_t_etrago["scn_name"] = "eGon100RE"
+    neighbor_gens_t_etrago["scn_name"] = scn_name
     neighbor_gens_t_etrago["temp_id"] = 1
     for i in neighbor_gens_t.columns:
         neighbor_gens_t_etrago["p_max_pu"][i] = neighbor_gens_t[
@@ -1578,7 +1734,7 @@ def neighbor_reduction():
         columns=["scn_name", "temp_id", "e_min_pu"],
         index=neighbor_stores_t.columns,
     )
-    neighbor_stores_t_etrago["scn_name"] = "eGon100RE"
+    neighbor_stores_t_etrago["scn_name"] = scn_name
     neighbor_stores_t_etrago["temp_id"] = 1
     for i in neighbor_stores_t.columns:
         neighbor_stores_t_etrago["e_min_pu"][i] = neighbor_stores_t[
@@ -1599,7 +1755,7 @@ def neighbor_reduction():
         columns=["scn_name", "temp_id", "inflow"],
         index=neighbor_storage_t.columns,
     )
-    neighbor_storage_t_etrago["scn_name"] = "eGon100RE"
+    neighbor_storage_t_etrago["scn_name"] = scn_name
     neighbor_storage_t_etrago["temp_id"] = 1
     for i in neighbor_storage_t.columns:
         neighbor_storage_t_etrago["inflow"][i] = neighbor_storage_t[
@@ -1620,7 +1776,7 @@ def neighbor_reduction():
         neighbor_lines_t_etrago = pd.DataFrame(
             columns=["scn_name", "s_max_pu"], index=neighbor_lines_t.columns
         )
-        neighbor_lines_t_etrago["scn_name"] = "eGon100RE"
+        neighbor_lines_t_etrago["scn_name"] = scn_name
 
         for i in neighbor_lines_t.columns:
             neighbor_lines_t_etrago["s_max_pu"][i] = neighbor_lines_t[
@@ -1637,7 +1793,7 @@ def neighbor_reduction():
         )
 
 
-def prepared_network(planning_horizon=3):
+def prepared_network(planning_horizon=3, year=2045):
     if egon.data.config.settings()["egon-data"]["--run-pypsa-eur"]:
         with open(
             __path__[0] + "/datasets/pypsaeur/config_prepare.yaml", "r"
@@ -1667,7 +1823,7 @@ def prepared_network(planning_horizon=3):
             / "results"
             / "prenetworks"
             / "prenetwork_post-manipulate_pre-solve"
-            / "base_s_39_lc1.25__cb40ex0-T-H-I-B-solar+p3-dist1_2045.nc"
+            / f"base_s_39_lc1.25__cb40ex0-T-H-I-B-solar+p3-dist1_{year}.nc"
         )
 
     return pypsa.Network(target_file.absolute().as_posix())
