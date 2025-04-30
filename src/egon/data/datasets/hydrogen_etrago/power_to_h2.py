@@ -767,7 +767,7 @@ def insert_power_to_h2_to_power():
                     "carrier": "PtH2_O2",
                     "efficiency": 1,  
                     "lifetime": 25,  
-                    "p_nom": o2_ec_h,  
+                    "p_nom": o2_ec,  
                     "p_nom_max": float('inf'),  
                     "p_nom_extendable": True,
                     "capital_cost": capital_costs,  
